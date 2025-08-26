@@ -90,7 +90,7 @@ local iyassets = {
     ["infiniteyield/assets/edittheme.png"] = "rbxassetid://4911962991",
     ["infiniteyield/assets/editwaypoints.png"] = "rbxassetid://5147488592",
     ["infiniteyield/assets/imgstudiopluginlogo.png"] = "rbxassetid://4113050383",
-    ["infiniteyield/assets/logo.png"] = "rbxassetid://1352543873",
+    ["milky.gt.tc/assets/favicon.svg"] = "rbxassetid://1352543873",
     ["infiniteyield/assets/minimize.png"] = "rbxassetid://2406617031",
     ["infiniteyield/assets/pin.png"] = "rbxassetid://6234691350",
     ["infiniteyield/assets/reference.png"] = "rbxassetid://3523243755",
@@ -723,7 +723,7 @@ Logo.BackgroundTransparency = 1
 Logo.BorderSizePixel = 0
 Logo.Position = UDim2.new(0, 125, 0, 127)
 Logo.Size = UDim2.new(0, 10, 0, 10)
-Logo.Image = getcustomasset("infiniteyield/assets/logo.png")
+Logo.Image = getcustomasset("milky.gt.tc/assets/favicon.svg")
 Logo.ImageTransparency = 0
 Logo.ZIndex = 10
 
