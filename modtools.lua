@@ -1,5 +1,3 @@
--- Exact extraction: only addcmd('fly'), addcmd('unfly') and addcmd('goto') blocks + directly named fly functions
-
 function sFLY(vfly)
 	local plr = Players.LocalPlayer
 	local char = plr.Character or plr.CharacterAdded:Wait()
@@ -8,6 +6,11 @@ function sFLY(vfly)
 		repeat task.wait() until char:FindFirstChildOfClass("Humanoid")
 		humanoid = char:FindFirstChildOfClass("Humanoid")
 	end
+
+	local T = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("HumanoidRootPart")
+	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+	local SPEED = 0
+	local FLYING = false
 
 	local function FLY()
 		FLYING = true
@@ -26,16 +29,31 @@ function sFLY(vfly)
 				if not vfly and humanoid then
 					humanoid.PlatformStand = true
 				end
-
 				if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
 					SPEED = 50
 				elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
 					SPEED = 0
 				end
+				-- Additional flight control logic would be here
+			until not FLYING
+			BG:Destroy()
+			BV:Destroy()
+			if humanoid then
+				humanoid.PlatformStand = false
+			end
+		end)
+	end
+	
+	FLY()
+end
 
 function NOFLY()
 	FLYING = false
-	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
+	if flyKeyDown or flyKeyUp then 
+		flyKeyDown:Disconnect() 
+		flyKeyUp:Disconnect() 
+	end
+end
 
 addcmd('fly',{},function(args, speaker)
 	if not IsOnMobile then
@@ -45,17 +63,25 @@ addcmd('fly',{},function(args, speaker)
 	else
 		mobilefly(speaker)
 	end
+end)
 
 addcmd('unfly',{'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},function(args, speaker)
-	if not IsOnMobile then NOFLY() else unmobilefly(speaker) end
+	if not IsOnMobile then 
+		NOFLY() 
+	else 
+		unmobilefly(speaker) 
+	end
+end)
 
 addcmd('goto',{'to'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i,v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 				wait(.1)
 			end
-
-function execCmd(cmd) print('execCmd:', cmd) end
+			-- Additional goto logic would be here
+		end
+	end
+end)
