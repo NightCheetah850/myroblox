@@ -1,10 +1,12 @@
--- Roblox Moderator Tools by @NexusTech
+-- Roblox Moderator Tools by @Rhamaardian - Mobile Compatible Version
 -- Fitur: Teleport to Player, Fly Mode, Player Monitoring
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local ContextActionService = game:GetService("ContextActionService")
+local GuiService = game:GetService("GuiService")
 
 -- Konfigurasi
 local ADMIN_USERNAME = "Rhamaardian" -- Ganti dengan username Roblox Anda
@@ -15,6 +17,8 @@ local FLY_SPEED = 2 -- Kecepatan terbang
 local flyEnabled = false
 local flyConnections = {}
 local playerGui = nil
+local mobileControlsGui = nil
+local isMobile = UserInputService.TouchEnabled
 
 -- Cek apakah pemain adalah admin/pemilik
 local function isAdmin(player)
@@ -74,6 +78,134 @@ local function createNotification(text, duration)
             notificationGui:Destroy()
         end)
     end)
+end
+
+-- Fungsi untuk membuat mobile control buttons
+local function createMobileControls()
+    if not playerGui or not isMobile then return end
+    
+    -- Hapus GUI lama jika ada
+    if playerGui:FindFirstChild("MobileControlsGui") then
+        playerGui.MobileControlsGui:Destroy()
+    end
+    
+    -- Buat GUI baru
+    mobileControlsGui = Instance.new("ScreenGui")
+    mobileControlsGui.Name = "MobileControlsGui"
+    mobileControlsGui.Parent = playerGui
+    mobileControlsGui.ResetOnSpawn = false
+    
+    -- Tombol untuk membuka menu moderator
+    local menuButton = Instance.new("TextButton")
+    menuButton.Size = UDim2.new(0, 50, 0, 50)
+    menuButton.Position = UDim2.new(1, -60, 0, 10)
+    menuButton.AnchorPoint = Vector2.new(1, 0)
+    menuButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    menuButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    menuButton.Font = Enum.Font.GothamBold
+    menuButton.TextSize = 16
+    menuButton.Text = "MOD"
+    menuButton.ZIndex = 10
+    menuButton.Parent = mobileControlsGui
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = menuButton
+    
+    menuButton.MouseButton1Click:Connect(function()
+        createTeleportGUI()
+    end)
+    
+    -- Fly controls (akan ditampilkan saat fly mode aktif)
+    local flyControls = Instance.new("Frame")
+    flyControls.Size = UDim2.new(0, 150, 0, 100)
+    flyControls.Position = UDim2.new(0.5, -75, 1, -110)
+    flyControls.AnchorPoint = Vector2.new(0.5, 1)
+    flyControls.BackgroundTransparency = 1
+    flyControls.Visible = false
+    flyControls.Name = "FlyControls"
+    flyControls.Parent = mobileControlsGui
+    
+    local upButton = Instance.new("TextButton")
+    upButton.Size = UDim2.new(0, 60, 0, 40)
+    upButton.Position = UDim2.new(0.5, -30, 0, 0)
+    upButton.AnchorPoint = Vector2.new(0.5, 0)
+    upButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    upButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    upButton.Font = Enum.Font.GothamBold
+    upButton.TextSize = 16
+    upButton.Text = "UP"
+    upButton.Parent = flyControls
+    
+    local upCorner = Instance.new("UICorner")
+    upCorner.CornerRadius = UDim.new(0, 4)
+    upCorner.Parent = upButton
+    
+    local downButton = Instance.new("TextButton")
+    downButton.Size = UDim2.new(0, 60, 0, 40)
+    downButton.Position = UDim2.new(0.5, -30, 0, 50)
+    downButton.AnchorPoint = Vector2.new(0.5, 0)
+    downButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    downButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    downButton.Font = Enum.Font.GothamBold
+    downButton.TextSize = 16
+    downButton.Text = "DOWN"
+    downButton.Parent = flyControls
+    
+    local downCorner = Instance.new("UICorner")
+    downCorner.CornerRadius = UDim.new(0, 4)
+    downCorner.Parent = downButton
+    
+    -- Handle fly button events
+    upButton.MouseButton1Touch:Connect(function()
+        if flyEnabled then
+            local player = Players.LocalPlayer
+            if player and player.Character then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart and humanoidRootPart:FindFirstChild("FlyBodyVelocity") then
+                    humanoidRootPart.FlyBodyVelocity.Velocity = Vector3.new(0, FLY_SPEED, 0)
+                end
+            end
+        end
+    end)
+    
+    upButton.TouchEnded:Connect(function()
+        if flyEnabled then
+            local player = Players.LocalPlayer
+            if player and player.Character then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart and humanoidRootPart:FindFirstChild("FlyBodyVelocity") then
+                    humanoidRootPart.FlyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                end
+            end
+        end
+    end)
+    
+    downButton.MouseButton1Touch:Connect(function()
+        if flyEnabled then
+            local player = Players.LocalPlayer
+            if player and player.Character then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart and humanoidRootPart:FindFirstChild("FlyBodyVelocity") then
+                    humanoidRootPart.FlyBodyVelocity.Velocity = Vector3.new(0, -FLY_SPEED, 0)
+                end
+            end
+        end
+    end)
+    
+    downButton.TouchEnded:Connect(function()
+        if flyEnabled then
+            local player = Players.LocalPlayer
+            if player and player.Character then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart and humanoidRootPart:FindFirstChild("FlyBodyVelocity") then
+                    humanoidRootPart.FlyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                end
+            end
+        end
+    end)
+    
+    return mobileControlsGui
 end
 
 -- Fungsi untuk membuat GUI form
@@ -168,12 +300,24 @@ local function createTeleportGUI()
             flyEnabled = false
             flyButton.Text = "FLY: OFF"
             flyButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            
+            -- Sembunyikan kontrol fly mobile
+            if mobileControlsGui and mobileControlsGui:FindFirstChild("FlyControls") then
+                mobileControlsGui.FlyControls.Visible = false
+            end
+            
             createNotification("Fly mode disabled", 2)
         else
             flyEnabled = true
             flyButton.Text = "FLY: ON"
             flyButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
-            createNotification("Fly mode enabled", 2)
+            
+            -- Tampilkan kontrol fly mobile
+            if mobileControlsGui and mobileControlsGui:FindFirstChild("FlyControls") then
+                mobileControlsGui.FlyControls.Visible = true
+            end
+            
+            createNotification("Fly mode enabled. Use the UP/DOWN buttons to control flight.", 3)
         end
     end)
     
@@ -311,26 +455,12 @@ local function toggleFlyMode()
         bodyGyro.Name = "FlyBodyGyro"
         bodyGyro.Parent = humanoidRootPart
         
-        -- Simpan koneksi untuk kontrol fly
-        table.insert(flyConnections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            
-            if input.KeyCode == Enum.KeyCode.Space then
-                bodyVelocity.Velocity = Vector3.new(0, FLY_SPEED, 0)
-            elseif input.KeyCode == Enum.KeyCode.LeftShift then
-                bodyVelocity.Velocity = Vector3.new(0, -FLY_SPEED, 0)
-            end
-        end))
+        -- Tampilkan kontrol fly mobile
+        if mobileControlsGui and mobileControlsGui:FindFirstChild("FlyControls") then
+            mobileControlsGui.FlyControls.Visible = true
+        end
         
-        table.insert(flyConnections, UserInputService.InputEnded:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            
-            if input.KeyCode == Enum.KeyCode.Space or input.KeyCode == Enum.KeyCode.LeftShift then
-                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            end
-        end))
-        
-        createNotification("Fly mode enabled. Use SPACE to go up, SHIFT to go down.", 3)
+        createNotification("Fly mode enabled. Use the UP/DOWN buttons to control flight.", 3)
     else
         -- Nonaktifkan fly mode
         for _, connection in ipairs(flyConnections) do
@@ -346,18 +476,38 @@ local function toggleFlyMode()
             humanoidRootPart.FlyBodyGyro:Destroy()
         end
         
+        -- Sembunyikan kontrol fly mobile
+        if mobileControlsGui and mobileControlsGui:FindFirstChild("FlyControls") then
+            mobileControlsGui.FlyControls.Visible = false
+        end
+        
         createNotification("Fly mode disabled", 2)
     end
 end
 
--- Fungsi untuk membuka GUI dengan command
-local function onChatMessage(message, player)
-    if not isAdmin(player) then return end
+-- Fungsi untuk membuka GUI dengan gesture (jika di mobile)
+local function setupMobileActivation()
+    if not isMobile then return end
     
-    if string.lower(message) == "/modtools" then
-        createTeleportGUI()
-        return
-    end
+    -- Double-tap untuk membuka menu
+    local lastTapTime = 0
+    local tapCount = 0
+    
+    UserInputService.TouchTap:Connect(function(touchPositions, gameProcessed)
+        if gameProcessed then return end
+        
+        local currentTime = tick()
+        if currentTime - lastTapTime < 0.5 then
+            tapCount = tapCount + 1
+            if tapCount >= 2 then
+                tapCount = 0
+                createTeleportGUI()
+            end
+        else
+            tapCount = 1
+        end
+        lastTapTime = currentTime
+    end)
 end
 
 -- Inisialisasi
@@ -373,11 +523,14 @@ local function initialize()
     
     playerGui = player:WaitForChild("PlayerGui")
     
-    -- Buat notifikasi bahwa tools tersedia
-    createNotification("Moderator tools loaded. Type /modtools to open the menu.", 5)
-    
-    -- Daftarkan event listener untuk chat
-    Players.PlayerChatted:Connect(onChatMessage)
+    -- Buat kontrol mobile jika diperlukan
+    if isMobile then
+        createMobileControls()
+        setupMobileActivation()
+        createNotification("Moderator tools loaded. Double-tap to open the menu.", 5)
+    else
+        createNotification("Moderator tools loaded. Type /modtools to open the menu.", 5)
+    end
     
     -- Update fly mode secara berkala
     RunService.Heartbeat:Connect(function()
