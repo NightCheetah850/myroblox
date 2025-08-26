@@ -15,7 +15,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 -- Buat ScreenGui utama jika belum ada
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "MapOwnerTools"
+screenGui.Name = "TeleportTools"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 
@@ -155,7 +155,7 @@ local function updatePlayerList()
                             local myRootPart = myCharacter:FindFirstChild("HumanoidRootPart")
                             
                             if myRootPart then
-                                -- Teleportasi ke posisi di depan pemain target :cite[5]
+                                -- Teleportasi ke posisi di depan pemain target
                                 local offset = humanoidRootPart.CFrame.LookVector * 5
                                 local newCFrame = humanoidRootPart.CFrame + offset + Vector3.new(0, 2, 0)
                                 myRootPart.CFrame = CFrame.new(newCFrame.Position, humanoidRootPart.Position)
@@ -163,7 +163,7 @@ local function updatePlayerList()
                                 -- Tutup popup setelah teleportasi
                                 togglePopup(false)
                                 
-                                -- Tampilkan notifikasi :cite[9]
+                                -- Tampilkan notifikasi
                                 game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
                                     Text = "Berhasil teleportasi ke " .. otherPlayer.Name,
                                     Color = Color3.new(0, 1, 0),
