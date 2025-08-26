@@ -1,393 +1,207 @@
--- Roblox Moderator Tools by @NexusTech
--- Fitur: Teleport to Player, Fly Mode, Player Monitoring
+--[[
+    Script Tools Teleportasi Pemain
+    Oleh: Creator Map
+    Deskripsi: Memunculkan UI untuk memilih pemain dan teleportasi ke lokasinya
+--]]
 
+-- Services
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
--- Konfigurasi
-local ADMIN_USERNAME = "Rhamaardian" -- Ganti dengan username Roblox Anda
-local TELEPORT_DURATION = 1.5 -- Durasi teleportasi dalam detik
-local FLY_SPEED = 2 -- Kecepatan terbang
+-- Variabel utama
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- Variabel global
-local flyEnabled = false
-local flyConnections = {}
-local playerGui = nil
+-- Buat ScreenGui utama jika belum ada
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MapOwnerTools"
+screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
 
--- Cek apakah pemain adalah admin/pemilik
-local function isAdmin(player)
-    return player.Name == ADMIN_USERNAME or player.UserId == game.CreatorId
-end
+-- Buat tombol utama
+local mainButton = Instance.new("TextButton")
+mainButton.Size = UDim2.new(0, 100, 0, 50)
+mainButton.Position = UDim2.new(0, 10, 0, 10)
+mainButton.Text = "Teleport to Player"
+mainButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+mainButton.TextColor3 = Color3.white
+mainButton.Font = Enum.Font.GothamBold
+mainButton.TextSize = 14
+mainButton.Parent = screenGui
 
--- Membuat notifikasi
-local function createNotification(text, duration)
-    if not playerGui then return end
-    
-    local notificationGui = Instance.new("ScreenGui")
-    notificationGui.Name = "NotificationGui"
-    notificationGui.Parent = playerGui
-    notificationGui.ResetOnSpawn = false
-    
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 300, 0, 60)
-    frame.Position = UDim2.new(0.5, -150, 0.1, 0)
-    frame.AnchorPoint = Vector2.new(0.5, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    frame.BorderSizePixel = 0
-    frame.Parent = notificationGui
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = frame
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -20, 1, -20)
-    label.Position = UDim2.new(0, 10, 0, 10)
-    label.BackgroundTransparency = 1
-    label.Text = text
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.Font = Enum.Font.GothamBold
-    label.TextSize = 14
-    label.TextWrapped = true
-    label.Parent = frame
-    
-    -- Animasi masuk
-    frame.Position = UDim2.new(0.5, -150, 0, -60)
-    local tweenIn = TweenService:Create(
-        frame,
-        TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0.5, -150, 0.1, 0)}
-    )
-    tweenIn:Play()
-    
-    -- Animasi keluar setelah durasi tertentu
-    delay(duration, function()
-        local tweenOut = TweenService:Create(
-            frame,
-            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-            {Position = UDim2.new(0.5, -150, 0, -60)}
-        )
-        tweenOut:Play()
-        tweenOut.Completed:Connect(function()
-            notificationGui:Destroy()
+-- Buat frame popup (awalnya tersembunyi)
+local popupFrame = Instance.new("Frame")
+popupFrame.Size = UDim2.new(0, 300, 0, 400)
+popupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+popupFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+popupFrame.BorderSizePixel = 0
+popupFrame.Visible = false
+popupFrame.Parent = screenGui
+
+-- Tambahkan UIStroke untuk efek visual
+local uiStroke = Instance.new("UIStroke")
+uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+uiStroke.Color = Color3.fromRGB(100, 100, 100)
+uiStroke.Thickness = 2
+uiStroke.Parent = popupFrame
+
+-- Tambahkan judul
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Pilih Pemain untuk Diteleportasi"
+title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+title.TextColor3 = Color3.white
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.Parent = popupFrame
+
+-- Tambahkan daftar scroll untuk pemain
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -10, 1, -50)
+scrollFrame.Position = UDim2.new(0, 5, 0, 45)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 5
+scrollFrame.Parent = popupFrame
+
+-- Tambukan UIListLayout untuk mengatur item pemain
+local listLayout = Instance.new("UIListLayout")
+listLayout.Padding = UDim.new(0, 5)
+listLayout.Parent = scrollFrame
+
+-- Tambahkan tombol tutup
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 100, 0, 30)
+closeButton.Position = UDim2.new(0.5, -50, 1, -35)
+closeButton.Text = "Tutup"
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+closeButton.TextColor3 = Color3.white
+closeButton.Font = Enum.Font.Gotham
+closeButton.TextSize = 14
+closeButton.Parent = popupFrame
+
+-- Fungsi untuk menampilkan/menyembunyikan popup dengan animasi
+local function togglePopup(visible)
+    if visible then
+        popupFrame.Visible = true
+        popupFrame.Size = UDim2.new(0, 10, 0, 10)  -- Mulai dari ukuran kecil
+        
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(popupFrame, tweenInfo, {
+            Size = UDim2.new(0, 300, 0, 400)
+        })
+        tween:Play()
+    else
+        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+        local tween = TweenService:Create(popupFrame, tweenInfo, {
+            Size = UDim2.new(0, 10, 0, 10)
+        })
+        
+        tween.Completed:Connect(function()
+            popupFrame.Visible = false
         end)
-    end)
+        tween:Play()
+    end
 end
 
--- Fungsi untuk membuat GUI form
-local function createTeleportGUI()
-    if not playerGui then return end
-    
-    -- Hapus GUI lama jika ada
-    if playerGui:FindFirstChild("TeleportGui") then
-        playerGui.TeleportGui:Destroy()
+-- Fungsi untuk memperbarui daftar pemain
+local function updatePlayerList()
+    -- Hapus semua item yang ada
+    for _, child in ipairs(scrollFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
     end
+	
+    -- Dapatkan semua pemain kecuali diri sendiri
+    local allPlayers = Players:GetPlayers()
     
-    -- Buat GUI baru
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "TeleportGui"
-    screenGui.Parent = playerGui
-    screenGui.ResetOnSpawn = false
-    
-    -- Frame utama
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 350, 0, 400)
-    mainFrame.Position = UDim2.new(0.5, -175, 0.5, -200)
-    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    mainFrame.BorderSizePixel = 0
-    mainFrame.ClipsDescendants = true
-    mainFrame.Parent = screenGui
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = mainFrame
-    
-    -- Judul
-    local title = Instance.new("TextLabel")
-    title.Text = "Moderator Tools"
-    title.Size = UDim2.new(1, 0, 0, 40)
-    title.Position = UDim2.new(0, 0, 0, 0)
-    title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    title.Font = Enum.Font.GothamBold
-    title.TextSize = 18
-    title.Parent = mainFrame
-    
-    local titleCorner = Instance.new("UICorner")
-    titleCorner.CornerRadius = UDim.new(0, 8)
-    titleCorner.Parent = title
-    
-    -- Tombol tutup
-    local closeButton = Instance.new("TextButton")
-    closeButton.Text = "X"
-    closeButton.Size = UDim2.new(0, 30, 0, 30)
-    closeButton.Position = UDim2.new(1, -35, 0, 5)
-    closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    closeButton.Font = Enum.Font.GothamBold
-    closeButton.TextSize = 16
-    closeButton.Parent = mainFrame
-    
-    closeButton.MouseButton1Click:Connect(function()
-        screenGui:Destroy()
-    end)
-    
-    -- Daftar pemain
-    local playerList = Instance.new("ScrollingFrame")
-    playerList.Size = UDim2.new(1, -20, 1, -150)
-    playerList.Position = UDim2.new(0, 10, 0, 50)
-    playerList.BackgroundTransparency = 1
-    playerList.ScrollBarThickness = 5
-    playerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-    playerList.Parent = mainFrame
-    
-    local uiListLayout = Instance.new("UIListLayout")
-    uiListLayout.Parent = playerList
-    uiListLayout.Padding = UDim.new(0, 5)
-    
-    uiListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        playerList.CanvasSize = UDim2.new(0, 0, 0, uiListLayout.AbsoluteContentSize.Y)
-    end)
-    
-    -- Tombol fly/unfly
-    local flyButton = Instance.new("TextButton")
-    flyButton.Text = "FLY: OFF"
-    flyButton.Size = UDim2.new(1, -20, 0, 40)
-    flyButton.Position = UDim2.new(0, 10, 1, -90)
-    flyButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    flyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    flyButton.Font = Enum.Font.GothamBold
-    flyButton.TextSize = 16
-    flyButton.Parent = mainFrame
-    
-    flyButton.MouseButton1Click:Connect(function()
-        if flyEnabled then
-            flyEnabled = false
-            flyButton.Text = "FLY: OFF"
-            flyButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-            createNotification("Fly mode disabled", 2)
-        else
-            flyEnabled = true
-            flyButton.Text = "FLY: ON"
-            flyButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
-            createNotification("Fly mode enabled", 2)
-        end
-    end)
-    
-    -- Fungsi untuk memperbarui daftar pemain
-    local function updatePlayerList()
-        for _, child in ipairs(playerList:GetChildren()) do
-            if child:IsA("TextButton") then
-                child:Destroy()
-            end
-        end
-        
-        local localPlayer = Players.LocalPlayer
-        if not localPlayer or not localPlayer.Character then return end
-        
-        local localPosition = localPlayer.Character:GetPivot().Position
-        
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= localPlayer and player.Character then
-                local playerButton = Instance.new("TextButton")
-                playerButton.Size = UDim2.new(1, 0, 0, 40)
+    for _, otherPlayer in ipairs(allPlayers) do
+        if otherPlayer ~= player then
+            local playerButton = Instance.new("TextButton")
+            playerButton.Size = UDim2.new(1, -10, 0, 40)
+            playerButton.Position = UDim2.new(0, 5, 0, 0)
+            playerButton.Text = otherPlayer.Name
+            playerButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            playerButton.TextColor3 = Color3.white
+            playerButton.Font = Enum.Font.Gotham
+            playerButton.TextSize = 14
+            playerButton.Parent = scrollFrame
+            
+            -- Tambahkan efek hover
+            playerButton.MouseEnter:Connect(function()
+                playerButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            end)
+            
+            playerButton.MouseLeave:Connect(function()
                 playerButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                playerButton.BorderSizePixel = 0
+            end)
+            
+            -- Hubungkan event klik untuk teleportasi
+            playerButton.MouseButton1Click:Connect(function()
+                -- Dapatkan karakter pemain target
+                local targetCharacter = otherPlayer.Character
                 
-                local distance = (player.Character:GetPivot().Position - localPosition).Magnitude
-                playerButton.Text = player.Name .. " | " .. tostring(math.floor(distance)) .. " studs"
-                
-                playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                playerButton.Font = Enum.Font.Gotham
-                playerButton.TextSize = 14
-                playerButton.Parent = playerList
-                
-                local buttonCorner = Instance.new("UICorner")
-                buttonCorner.CornerRadius = UDim.new(0, 4)
-                buttonCorner.Parent = playerButton
-                
-                playerButton.MouseButton1Click:Connect(function()
-                    local targetCharacter = player.Character
-                    if targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart") then
-                        local humanoid = localPlayer.Character:FindFirstChild("Humanoid")
-                        if humanoid then
-                            -- Simpan posisi sebelumnya untuk kembali
-                            local previousPosition = localPlayer.Character:GetPivot()
+                if targetCharacter then
+                    local humanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+                    
+                    if humanoidRootPart then
+                        -- Dapatkan karakter pemain sendiri
+                        local myCharacter = player.Character
+                        
+                        if myCharacter then
+                            local myRootPart = myCharacter:FindFirstChild("HumanoidRootPart")
                             
-                            -- Teleportasi ke pemain target dengan tween
-                            local tweenInfo = TweenInfo.new(
-                                TELEPORT_DURATION,
-                                Enum.EasingStyle.Quad,
-                                Enum.EasingDirection.Out
-                            )
-                            
-                            local tween = TweenService:Create(
-                                localPlayer.Character.HumanoidRootPart,
-                                tweenInfo,
-                                {CFrame = targetCharacter.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5)}
-                            )
-                            
-                            tween:Play()
-                            createNotification("Teleporting to " .. player.Name, 2)
-                            
-                            -- Buat tombol kembali
-                            if mainFrame:FindFirstChild("ReturnButton") then
-                                mainFrame.ReturnButton:Destroy()
-                            end
-                            
-                            local returnButton = Instance.new("TextButton")
-                            returnButton.Name = "ReturnButton"
-                            returnButton.Text = "Return to Previous Position"
-                            returnButton.Size = UDim2.new(1, -20, 0, 40)
-                            returnButton.Position = UDim2.new(0, 10, 1, -40)
-                            returnButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
-                            returnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                            returnButton.Font = Enum.Font.GothamBold
-                            returnButton.TextSize = 14
-                            returnButton.Parent = mainFrame
-                            
-                            local returnCorner = Instance.new("UICorner")
-                            returnCorner.CornerRadius = UDim.new(0, 4)
-                            returnCorner.Parent = returnButton
-                            
-                            returnButton.MouseButton1Click:Connect(function()
-                                local returnTween = TweenService:Create(
-                                    localPlayer.Character.HumanoidRootPart,
-                                    tweenInfo,
-                                    {CFrame = previousPosition}
-                                )
+                            if myRootPart then
+                                -- Teleportasi ke posisi di depan pemain target :cite[5]
+                                local offset = humanoidRootPart.CFrame.LookVector * 5
+                                local newCFrame = humanoidRootPart.CFrame + offset + Vector3.new(0, 2, 0)
+                                myRootPart.CFrame = CFrame.new(newCFrame.Position, humanoidRootPart.Position)
                                 
-                                returnTween:Play()
-                                returnButton:Destroy()
-                                createNotification("Returning to previous position", 2)
-                            end)
+                                -- Tutup popup setelah teleportasi
+                                togglePopup(false)
+                                
+                                -- Tampilkan notifikasi :cite[9]
+                                game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+                                    Text = "Berhasil teleportasi ke " .. otherPlayer.Name,
+                                    Color = Color3.new(0, 1, 0),
+                                    Font = Enum.Font.GothamBold,
+                                    FontSize = Enum.FontSize.Size18
+                                })
+                            end
                         end
                     else
-                        createNotification("Target player character not found", 2)
+                        warn("Pemain target tidak memiliki HumanoidRootPart")
                     end
-                end)
-            end
+                else
+                    warn("Pemain target tidak memiliki karakter")
+                end
+            end)
         end
     end
-    
-    -- Perbarui daftar pemain secara berkala
-    local updateConnection
-    updateConnection = RunService.Heartbeat:Connect(function()
-        updatePlayerList()
-    end)
-    
-    -- Hentikan update ketika GUI dihancurkan
-    screenGui.Destroying:Connect(function()
-        updateConnection:Disconnect()
-    end)
-    
-    -- Perbarui daftar pertama kali
+	
+    -- Perbarui ukuran scroll area berdasarkan jumlah item
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
+end
+
+-- Hubungkan event ke tombol utama
+mainButton.MouseButton1Click:Connect(function()
+    togglePopup(true)
     updatePlayerList()
-end
+end)
 
--- Fungsi untuk mengaktifkan/menonaktifkan fly mode
-local function toggleFlyMode()
-    local player = Players.LocalPlayer
-    if not player or not player.Character then return end
-    
-    local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-    if not humanoidRootPart then return end
-    
-    if flyEnabled then
-        -- Aktifkan fly mode
-        local bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyVelocity.MaxForce = Vector3.new(0, math.huge, 0)
-        bodyVelocity.Name = "FlyBodyVelocity"
-        bodyVelocity.Parent = humanoidRootPart
-        
-        local bodyGyro = Instance.new("BodyGyro")
-        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        bodyGyro.P = 1000
-        bodyGyro.D = 100
-        bodyGyro.Name = "FlyBodyGyro"
-        bodyGyro.Parent = humanoidRootPart
-        
-        -- Simpan koneksi untuk kontrol fly
-        table.insert(flyConnections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            
-            if input.KeyCode == Enum.KeyCode.Space then
-                bodyVelocity.Velocity = Vector3.new(0, FLY_SPEED, 0)
-            elseif input.KeyCode == Enum.KeyCode.LeftShift then
-                bodyVelocity.Velocity = Vector3.new(0, -FLY_SPEED, 0)
-            end
-        end))
-        
-        table.insert(flyConnections, UserInputService.InputEnded:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            
-            if input.KeyCode == Enum.KeyCode.Space or input.KeyCode == Enum.KeyCode.LeftShift then
-                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            end
-        end))
-        
-        createNotification("Fly mode enabled. Use SPACE to go up, SHIFT to go down.", 3)
-    else
-        -- Nonaktifkan fly mode
-        for _, connection in ipairs(flyConnections) do
-            connection:Disconnect()
-        end
-        flyConnections = {}
-        
-        if humanoidRootPart:FindFirstChild("FlyBodyVelocity") then
-            humanoidRootPart.FlyBodyVelocity:Destroy()
-        end
-        
-        if humanoidRootPart:FindFirstChild("FlyBodyGyro") then
-            humanoidRootPart.FlyBodyGyro:Destroy()
-        end
-        
-        createNotification("Fly mode disabled", 2)
-    end
-end
+-- Hubungkan event ke tombol tutup
+closeButton.MouseButton1Click:Connect(function()
+    togglePopup(false)
+end)
 
--- Fungsi untuk membuka GUI dengan command
-local function onChatMessage(message, player)
-    if not isAdmin(player) then return end
-    
-    if string.lower(message) == "/modtools" then
-        createTeleportGUI()
-        return
-    end
-end
+-- Perbarui daftar ketika pemain bergabung/keluar
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
 
--- Inisialisasi
-local function initialize()
-    local player = Players.LocalPlayer
-    if not player then return end
-    
-    -- Cek apakah pemain adalah admin
-    if not isAdmin(player) then
-        createNotification("Moderator tools are only available for admins", 5)
-        return
-    end
-    
-    playerGui = player:WaitForChild("PlayerGui")
-    
-    -- Buat notifikasi bahwa tools tersedia
-    createNotification("Moderator tools loaded. Type /modtools to open the menu.", 5)
-    
-    -- Daftarkan event listener untuk chat
-    Players.PlayerChatted:Connect(onChatMessage)
-    
-    -- Update fly mode secara berkala
-    RunService.Heartbeat:Connect(function()
-        toggleFlyMode()
-    end)
-end
-
--- Jalankan inisialisasi
-if Players.LocalPlayer then
-    initialize()
-else
-    Players.PlayerAdded:Connect(initialize)
-end
+-- Sesuaikan UI dengan perubahan ukuran layar
+RunService.Heartbeat:Connect(function()
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
+end)
