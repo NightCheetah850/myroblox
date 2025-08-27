@@ -1,4 +1,4 @@
--- Floating Menu Milky dengan Fitur Fly yang Diperbaiki
+-- Floating Menu Milky dengan Kontrol Joystick untuk Mobile
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
@@ -121,6 +121,62 @@ local CloseCorner = Instance.new("UICorner")
 CloseCorner.CornerRadius = UDim.new(1, 0)
 CloseCorner.Parent = CloseButton
 
+-- Joystick untuk kontrol mobile
+local JoystickFrame = Instance.new("Frame")
+JoystickFrame.Size = UDim2.new(0, 120, 0, 120)
+JoystickFrame.Position = UDim2.new(0, 50, 1, -170)
+JoystickFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+JoystickFrame.BackgroundTransparency = 0.5
+JoystickFrame.BorderSizePixel = 0
+JoystickFrame.Visible = false
+JoystickFrame.Parent = ScreenGui
+
+local JoystickCorner = Instance.new("UICorner")
+JoystickCorner.CornerRadius = UDim.new(1, 0)
+JoystickCorner.Parent = JoystickFrame
+
+local JoystickThumb = Instance.new("Frame")
+JoystickThumb.Size = UDim2.new(0, 50, 0, 50)
+JoystickThumb.Position = UDim2.new(0.5, -25, 0.5, -25)
+JoystickThumb.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+JoystickThumb.BorderSizePixel = 0
+JoystickThumb.Parent = JoystickFrame
+
+local JoystickThumbCorner = Instance.new("UICorner")
+JoystickThumbCorner.CornerRadius = UDim.new(1, 0)
+JoystickThumbCorner.Parent = JoystickThumb
+
+-- Tombol untuk naik/turun (mobile)
+local UpButton = Instance.new("TextButton")
+UpButton.Size = UDim2.new(0, 60, 0, 60)
+UpButton.Position = UDim2.new(1, -150, 1, -180)
+UpButton.Text = "↑"
+UpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+UpButton.Font = Enum.Font.GothamBold
+UpButton.TextSize = 24
+UpButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+UpButton.Visible = false
+UpButton.Parent = ScreenGui
+
+local UpButtonCorner = Instance.new("UICorner")
+UpButtonCorner.CornerRadius = UDim.new(1, 0)
+UpButtonCorner.Parent = UpButton
+
+local DownButton = Instance.new("TextButton")
+DownButton.Size = UDim2.new(0, 60, 0, 60)
+DownButton.Position = UDim2.new(1, -150, 1, -100)
+DownButton.Text = "↓"
+DownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+DownButton.Font = Enum.Font.GothamBold
+DownButton.TextSize = 24
+DownButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+DownButton.Visible = false
+DownButton.Parent = ScreenGui
+
+local DownButtonCorner = Instance.new("UICorner")
+DownButtonCorner.CornerRadius = UDim.new(1, 0)
+DownButtonCorner.Parent = DownButton
+
 -- Variabel untuk drag functionality
 local dragging = false
 local dragInput, dragStart, startPos
@@ -129,6 +185,11 @@ local dragInput, dragStart, startPos
 local isFlying = false
 local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
+
+-- Variabel untuk joystick
+local joystickActive = false
+local joystickCenter = Vector2.new(0, 0)
+local joystickRadius = 50
 
 -- Fungsi untuk mengupdate posisi button
 local function update(input)
@@ -168,7 +229,108 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Fungsi Fly yang Diperbaiki
+-- Fungsi untuk mengontrol joystick
+local function initJoystick()
+    JoystickFrame.Visible = true
+    UpButton.Visible = true
+    DownButton.Visible = true
+    
+    local joystickConnection
+    local upButtonPressed = false
+    local downButtonPressed = false
+    
+    -- Joystick movement
+    JoystickFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            joystickActive = true
+            joystickCenter = input.Position
+        end
+    end)
+    
+    JoystickFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch and joystickActive then
+            local touchPos = input.Position
+            local delta = touchPos - joystickCenter
+            local direction = delta.Unit
+            local magnitude = math.min(delta.Magnitude, joystickRadius)
+            
+            -- Update joystick thumb position
+            JoystickThumb.Position = UDim2.new(0.5, direction.X * magnitude - 25, 0.5, direction.Y * magnitude - 25)
+            
+            -- Calculate movement direction based on camera
+            local camera = workspace.CurrentCamera
+            local moveDirection = Vector3.new(0, 0, 0)
+            
+            if magnitude > 10 then  -- Deadzone
+                -- Horizontal movement (forward/backward/left/right)
+                moveDirection = moveDirection + camera.CFrame.LookVector * direction.Y * flySpeed
+                moveDirection = moveDirection + camera.CFrame.RightVector * direction.X * flySpeed
+            end
+            
+            -- Apply movement
+            if flyBodyVelocity then
+                flyBodyVelocity.Velocity = Vector3.new(moveDirection.X, flyBodyVelocity.Velocity.Y, moveDirection.Z)
+            end
+        end
+    end)
+    
+    JoystickFrame.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            joystickActive = false
+            -- Reset joystick position
+            TweenService:Create(
+                JoystickThumb,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0.5, -25, 0.5, -25)}
+            ):Play()
+            
+            -- Stop horizontal movement
+            if flyBodyVelocity then
+                flyBodyVelocity.Velocity = Vector3.new(0, flyBodyVelocity.Velocity.Y, 0)
+            end
+        end
+    end)
+    
+    -- Up button
+    UpButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            upButtonPressed = true
+            if flyBodyVelocity then
+                flyBodyVelocity.Velocity = Vector3.new(flyBodyVelocity.Velocity.X, flySpeed, flyBodyVelocity.Velocity.Z)
+            end
+        end
+    end)
+    
+    UpButton.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            upButtonPressed = false
+            if flyBodyVelocity and not downButtonPressed then
+                flyBodyVelocity.Velocity = Vector3.new(flyBodyVelocity.Velocity.X, 0, flyBodyVelocity.Velocity.Z)
+            end
+        end
+    end)
+    
+    -- Down button
+    DownButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            downButtonPressed = true
+            if flyBodyVelocity then
+                flyBodyVelocity.Velocity = Vector3.new(flyBodyVelocity.Velocity.X, -flySpeed, flyBodyVelocity.Velocity.Z)
+            end
+        end
+    end)
+    
+    DownButton.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            downButtonPressed = false
+            if flyBodyVelocity and not upButtonPressed then
+                flyBodyVelocity.Velocity = Vector3.new(flyBodyVelocity.Velocity.X, 0, flyBodyVelocity.Velocity.Z)
+            end
+        end
+    end)
+end
+
+-- Fungsi Fly yang Diperbaiki dengan Joystick
 local function toggleFly()
     if isFlying then
         -- Nonaktifkan fly
@@ -180,6 +342,11 @@ local function toggleFly()
             flyBodyGyro:Destroy()
             flyBodyGyro = nil
         end
+        
+        -- Sembunyikan joystick
+        JoystickFrame.Visible = false
+        UpButton.Visible = false
+        DownButton.Visible = false
         
         -- Kembalikan gravitasi
         if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
@@ -223,6 +390,9 @@ local function toggleFly()
                 character:FindFirstChildOfClass("Humanoid").PlatformStand = true
             end
             
+            -- Tampilkan joystick dan tombol kontrol
+            initJoystick()
+            
             isFlying = true
             
             -- Update UI
@@ -237,55 +407,16 @@ local function toggleFly()
                 {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
             ):Play()
             
-            -- Fly movement handler
+            -- Update orientation to match camera
             local connection
             connection = RunService.RenderStepped:Connect(function()
-                if not isFlying or not flyBodyVelocity or not flyBodyGyro then
-                    connection:Disconnect()
-                    return
-                end
-                
-                local character = LocalPlayer.Character
-                if not character or not character:FindFirstChild("HumanoidRootPart") then
+                if not isFlying or not flyBodyGyro then
                     connection:Disconnect()
                     return
                 end
                 
                 local camera = workspace.CurrentCamera
-                local rootPart = character.HumanoidRootPart
-                
-                -- Update orientation to match camera
                 flyBodyGyro.CFrame = camera.CFrame
-                
-                -- Calculate movement direction based on camera
-                local moveDirection = Vector3.new(0, 0, 0)
-                
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                    moveDirection = moveDirection + camera.CFrame.LookVector
-                end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                    moveDirection = moveDirection - camera.CFrame.LookVector
-                end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                    moveDirection = moveDirection - camera.CFrame.RightVector
-                end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                    moveDirection = moveDirection + camera.CFrame.RightVector
-                end
-                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                    moveDirection = moveDirection + Vector3.new(0, 1, 0)
-                end
-                if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                    moveDirection = moveDirection + Vector3.new(0, -1, 0)
-                end
-                
-                -- Normalize and apply speed
-                if moveDirection.Magnitude > 0 then
-                    moveDirection = moveDirection.Unit * flySpeed
-                end
-                
-                -- Apply movement
-                flyBodyVelocity.Velocity = moveDirection
             end)
         end
     end
@@ -392,6 +523,6 @@ end
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Fly feature improved with camera-based movement!",
+    Text = "Fly feature dengan joystick untuk mobile!",
     Duration = 5
 })
