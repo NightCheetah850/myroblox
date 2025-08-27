@@ -1,7 +1,8 @@
--- Floating Menu Milky dengan Fitur Fly dan Float untuk Delta Executor
+-- Floating Menu Milky dengan Fitur Fly dan Float yang Diperbaiki
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
 -- Main GUI
@@ -166,8 +167,8 @@ local dragInput, dragStart, startPos
 -- Variabel untuk fly dan float
 local isFlying = false
 local isFloating = false
-local flyBodyVelocity
-local flyBodyGyro
+local flyAlignPos, flyAlignOri
+local floatBodyVelocity
 
 -- Fungsi untuk mengupdate posisi button
 local function update(input)
@@ -207,17 +208,17 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Fungsi Fly
+-- Fungsi Fly yang Diperbaiki (seperti Infinite Yield)
 local function toggleFly()
     if isFlying then
         -- Nonaktifkan fly
-        if flyBodyVelocity then
-            flyBodyVelocity:Destroy()
-            flyBodyVelocity = nil
+        if flyAlignPos then
+            flyAlignPos:Destroy()
+            flyAlignPos = nil
         end
-        if flyBodyGyro then
-            flyBodyGyro:Destroy()
-            flyBodyGyro = nil
+        if flyAlignOri then
+            flyAlignOri:Destroy()
+            flyAlignOri = nil
         end
         isFlying = false
         
@@ -236,26 +237,19 @@ local function toggleFly()
         -- Aktifkan fly
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
-            if flyBodyVelocity then flyBodyVelocity:Destroy() end
-            if flyBodyGyro then flyBodyGyro:Destroy() end
+            if flyAlignPos then flyAlignPos:Destroy() end
+            if flyAlignOri then flyAlignOri:Destroy() end
             
-            flyBodyVelocity = Instance.new("BodyVelocity")
-            flyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            flyBodyVelocity.MaxForce = Vector3.new(0, 0, 0)
-            flyBodyVelocity.Parent = character.HumanoidRootPart
+            -- Gunakan AlignPosition dan AlignOrientation seperti Infinite Yield
+            flyAlignPos = Instance.new("AlignPosition")
+            flyAlignPos.MaxForce = 9e9
+            flyAlignPos.Responsiveness = 200
+            flyAlignPos.Parent = character.HumanoidRootPart
             
-            flyBodyGyro = Instance.new("BodyGyro")
-            flyBodyGyro.MaxTorque = Vector3.new(0, 0, 0)
-            flyBodyGyro.Parent = character.HumanoidRootPart
-            
-            -- Aktifkan kontrol setelah 0.1 detik
-            wait(0.1)
-            if flyBodyVelocity then
-                flyBodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-            end
-            if flyBodyGyro then
-                flyBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-            end
+            flyAlignOri = Instance.new("AlignOrientation")
+            flyAlignOri.MaxTorque = 9e9
+            flyAlignOri.Responsiveness = 200
+            flyAlignOri.Parent = character.HumanoidRootPart
             
             isFlying = true
             
@@ -270,14 +264,64 @@ local function toggleFly()
                 TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
                 {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
             ):Play()
+            
+            -- Fly movement handler
+            local flySpeed = 50
+            local connection
+            connection = RunService.RenderStepped:Connect(function()
+                if not isFlying or not flyAlignPos then
+                    connection:Disconnect()
+                    return
+                end
+                
+                local camera = workspace.CurrentCamera
+                local rootPart = character.HumanoidRootPart
+                
+                -- Update orientation to match camera
+                flyAlignOri.CFrame = camera.CFrame
+                
+                -- Calculate movement direction
+                local moveDirection = Vector3.new(0, 0, 0)
+                
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                    moveDirection = moveDirection + camera.CFrame.LookVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                    moveDirection = moveDirection - camera.CFrame.LookVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                    moveDirection = moveDirection - camera.CFrame.RightVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                    moveDirection = moveDirection + camera.CFrame.RightVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    moveDirection = moveDirection + Vector3.new(0, 1, 0)
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                    moveDirection = moveDirection - Vector3.new(0, 1, 0)
+                end
+                
+                -- Normalize and apply speed
+                if moveDirection.Magnitude > 0 then
+                    moveDirection = moveDirection.Unit * flySpeed
+                end
+                
+                -- Apply movement
+                flyAlignPos.Position = rootPart.Position + moveDirection
+            end)
         end
     end
 end
 
--- Fungsi Float
+-- Fungsi Float yang Diperbaiki
 local function toggleFloat()
     if isFloating then
         -- Nonaktifkan float
+        if floatBodyVelocity then
+            floatBodyVelocity:Destroy()
+            floatBodyVelocity = nil
+        end
         isFloating = false
         
         -- Update UI
@@ -293,22 +337,44 @@ local function toggleFloat()
         ):Play()
     else
         -- Aktifkan float
-        isFloating = true
-        
-        -- Update UI
-        TweenService:Create(
-            FloatToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-        ):Play()
-        TweenService:Create(
-            FloatSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-        ):Play()
-        
-        -- Float logic (contoh sederhana - bisa disesuaikan)
-        LocalPlayer.Character.Humanoid.UseJumpPower = true
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            if floatBodyVelocity then floatBodyVelocity:Destroy() end
+            
+            floatBodyVelocity = Instance.new("BodyVelocity")
+            floatBodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            floatBodyVelocity.MaxForce = Vector3.new(0, 9e9, 0)
+            floatBodyVelocity.Parent = character.HumanoidRootPart
+            
+            -- Buat karakter mengambang
+            floatBodyVelocity.Velocity = Vector3.new(0, 5, 0)
+            
+            isFloating = true
+            
+            -- Update UI
+            TweenService:Create(
+                FloatToggle,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+            ):Play()
+            TweenService:Create(
+                FloatSwitch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+            ):Play()
+            
+            -- Float maintenance loop
+            local connection
+            connection = RunService.Heartbeat:Connect(function()
+                if not isFloating or not floatBodyVelocity then
+                    connection:Disconnect()
+                    return
+                end
+                
+                -- Pertahankan kecepatan float
+                floatBodyVelocity.Velocity = Vector3.new(0, 5, 0)
+            end)
+        end
     end
 end
 
@@ -397,38 +463,8 @@ end
 setupSwitchHover(FlySwitch, FlyToggle)
 setupSwitchHover(FloatSwitch, FloatToggle)
 
--- Kontrol fly dengan keyboard
-local flySpeed = 50
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    
-    if isFlying and flyBodyVelocity then
-        if input.KeyCode == Enum.KeyCode.Space then
-            flyBodyVelocity.Velocity = Vector3.new(0, flySpeed, 0)
-        elseif input.KeyCode == Enum.KeyCode.LeftShift then
-            flyBodyVelocity.Velocity = Vector3.new(0, -flySpeed, 0)
-        elseif input.KeyCode == Enum.KeyCode.W then
-            flyBodyVelocity.Velocity = LocalPlayer.Character.HumanoidRootPart.CFrame.LookVector * flySpeed
-        elseif input.KeyCode == Enum.KeyCode.S then
-            flyBodyVelocity.Velocity = -LocalPlayer.Character.HumanoidRootPart.CFrame.LookVector * flySpeed
-        elseif input.KeyCode == Enum.KeyCode.A then
-            flyBodyVelocity.Velocity = -LocalPlayer.Character.HumanoidRootPart.CFrame.RightVector * flySpeed
-        elseif input.KeyCode == Enum.KeyCode.D then
-            flyBodyVelocity.Velocity = LocalPlayer.Character.HumanoidRootPart.CFrame.RightVector * flySpeed
-        end
-    end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-    if isFlying and flyBodyVelocity and (input.KeyCode == Enum.KeyCode.Space or input.KeyCode == Enum.KeyCode.LeftShift or
-       input.KeyCode == Enum.KeyCode.W or input.KeyCode == Enum.KeyCode.S or
-       input.KeyCode == Enum.KeyCode.A or input.KeyCode == Enum.KeyCode.D) then
-        flyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
-    end
-end)
-
--- Auto clean up saat karakter mati
-LocalPlayer.CharacterAdded:Connect(function(character)
+-- Auto clean up saat karakter mati atau respawn
+local function onCharacterAdded(character)
     character:WaitForChild("Humanoid").Died:Connect(function()
         if isFlying then
             toggleFly()
@@ -437,15 +473,30 @@ LocalPlayer.CharacterAdded:Connect(function(character)
             toggleFloat()
         end
     end)
+end
+
+LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+if LocalPlayer.Character then
+    onCharacterAdded(LocalPlayer.Character)
+end
+
+-- Kontrol fly dengan keyboard (WASD, Space, Shift)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    
+    if isFlying then
+        if input.KeyCode == Enum.KeyCode.Space then
+            -- Ditangani dalam fly loop
+        elseif input.KeyCode == Enum.KeyCode.LeftShift then
+            -- Ditangani dalam fly loop
+        end
+    end
 end)
 
-if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-    LocalPlayer.Character.Humanoid.Died:Connect(function()
-        if isFlying then
-            toggleFly()
-        end
-        if isFloating then
-            toggleFloat()
-        end
-    end)
-end
+-- Notifikasi
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Milky Menu Loaded",
+    Text = "Fly and Float features improved!",
+    Duration = 5
+})
