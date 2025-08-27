@@ -1,4 +1,4 @@
--- Floating Menu Milky dengan Fitur Fly dan Float yang Diperbaiki
+-- Floating Menu Milky dengan Fitur Fly yang Diperbaiki
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
@@ -33,8 +33,8 @@ UICorner.Parent = FloatingButton
 
 -- Popup Window
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 250)
-PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -125)
+PopupFrame.Size = UDim2.new(0, 300, 0, 200)
+PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
@@ -79,7 +79,7 @@ local FlyLabel = Instance.new("TextLabel")
 FlyLabel.Size = UDim2.new(0, 100, 1, 0)
 FlyLabel.Position = UDim2.new(0, 0, 0, 0)
 FlyLabel.BackgroundTransparency = 1
-FlyLabel.Text = "Fly:"
+FlyLabel.Text = "Terbang:"
 FlyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FlyLabel.Font = Enum.Font.Gotham
 FlyLabel.TextSize = 14
@@ -107,45 +107,6 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Float Switch
-local FloatFrame = Instance.new("Frame")
-FloatFrame.Size = UDim2.new(0, 260, 0, 30)
-FloatFrame.Position = UDim2.new(0, 20, 0, 140)
-FloatFrame.BackgroundTransparency = 1
-FloatFrame.Parent = PopupFrame
-
-local FloatLabel = Instance.new("TextLabel")
-FloatLabel.Size = UDim2.new(0, 100, 1, 0)
-FloatLabel.Position = UDim2.new(0, 0, 0, 0)
-FloatLabel.BackgroundTransparency = 1
-FloatLabel.Text = "Float:"
-FloatLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatLabel.Font = Enum.Font.Gotham
-FloatLabel.TextSize = 14
-FloatLabel.TextXAlignment = Enum.TextXAlignment.Left
-FloatLabel.Parent = FloatFrame
-
-local FloatSwitch = Instance.new("TextButton")
-FloatSwitch.Size = UDim2.new(0, 50, 0, 25)
-FloatSwitch.Position = UDim2.new(1, -50, 0, 2)
-FloatSwitch.Text = ""
-FloatSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-FloatSwitch.Parent = FloatFrame
-
-local FloatSwitchCorner = Instance.new("UICorner")
-FloatSwitchCorner.CornerRadius = UDim.new(0, 12)
-FloatSwitchCorner.Parent = FloatSwitch
-
-local FloatToggle = Instance.new("Frame")
-FloatToggle.Size = UDim2.new(0, 21, 0, 21)
-FloatToggle.Position = UDim2.new(0, 2, 0, 2)
-FloatToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-FloatToggle.Parent = FloatSwitch
-
-local FloatToggleCorner = Instance.new("UICorner")
-FloatToggleCorner.CornerRadius = UDim.new(0, 10)
-FloatToggleCorner.Parent = FloatToggle
-
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -35, 0, 5)
@@ -164,11 +125,10 @@ CloseCorner.Parent = CloseButton
 local dragging = false
 local dragInput, dragStart, startPos
 
--- Variabel untuk fly dan float
+-- Variabel untuk fly
 local isFlying = false
-local isFloating = false
-local flyAlignPos, flyAlignOri
-local floatBodyVelocity
+local flyBodyVelocity, flyBodyGyro
+local flySpeed = 50
 
 -- Fungsi untuk mengupdate posisi button
 local function update(input)
@@ -208,18 +168,24 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Fungsi Fly yang Diperbaiki (seperti Infinite Yield)
+-- Fungsi Fly yang Diperbaiki
 local function toggleFly()
     if isFlying then
         -- Nonaktifkan fly
-        if flyAlignPos then
-            flyAlignPos:Destroy()
-            flyAlignPos = nil
+        if flyBodyVelocity then
+            flyBodyVelocity:Destroy()
+            flyBodyVelocity = nil
         end
-        if flyAlignOri then
-            flyAlignOri:Destroy()
-            flyAlignOri = nil
+        if flyBodyGyro then
+            flyBodyGyro:Destroy()
+            flyBodyGyro = nil
         end
+        
+        -- Kembalikan gravitasi
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
+        end
+        
         isFlying = false
         
         -- Update UI
@@ -237,19 +203,25 @@ local function toggleFly()
         -- Aktifkan fly
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
-            if flyAlignPos then flyAlignPos:Destroy() end
-            if flyAlignOri then flyAlignOri:Destroy() end
+            if flyBodyVelocity then flyBodyVelocity:Destroy() end
+            if flyBodyGyro then flyBodyGyro:Destroy() end
             
-            -- Gunakan AlignPosition dan AlignOrientation seperti Infinite Yield
-            flyAlignPos = Instance.new("AlignPosition")
-            flyAlignPos.MaxForce = 9e9
-            flyAlignPos.Responsiveness = 200
-            flyAlignPos.Parent = character.HumanoidRootPart
+            -- Buat BodyVelocity dan BodyGyro
+            flyBodyVelocity = Instance.new("BodyVelocity")
+            flyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            flyBodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            flyBodyVelocity.Parent = character.HumanoidRootPart
             
-            flyAlignOri = Instance.new("AlignOrientation")
-            flyAlignOri.MaxTorque = 9e9
-            flyAlignOri.Responsiveness = 200
-            flyAlignOri.Parent = character.HumanoidRootPart
+            flyBodyGyro = Instance.new("BodyGyro")
+            flyBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            flyBodyGyro.P = 1000
+            flyBodyGyro.D = 50
+            flyBodyGyro.Parent = character.HumanoidRootPart
+            
+            -- Nonaktifkan gravitasi
+            if character:FindFirstChildOfClass("Humanoid") then
+                character:FindFirstChildOfClass("Humanoid").PlatformStand = true
+            end
             
             isFlying = true
             
@@ -266,10 +238,15 @@ local function toggleFly()
             ):Play()
             
             -- Fly movement handler
-            local flySpeed = 50
             local connection
             connection = RunService.RenderStepped:Connect(function()
-                if not isFlying or not flyAlignPos then
+                if not isFlying or not flyBodyVelocity or not flyBodyGyro then
+                    connection:Disconnect()
+                    return
+                end
+                
+                local character = LocalPlayer.Character
+                if not character or not character:FindFirstChild("HumanoidRootPart") then
                     connection:Disconnect()
                     return
                 end
@@ -278,9 +255,9 @@ local function toggleFly()
                 local rootPart = character.HumanoidRootPart
                 
                 -- Update orientation to match camera
-                flyAlignOri.CFrame = camera.CFrame
+                flyBodyGyro.CFrame = camera.CFrame
                 
-                -- Calculate movement direction
+                -- Calculate movement direction based on camera
                 local moveDirection = Vector3.new(0, 0, 0)
                 
                 if UserInputService:IsKeyDown(Enum.KeyCode.W) then
@@ -299,7 +276,7 @@ local function toggleFly()
                     moveDirection = moveDirection + Vector3.new(0, 1, 0)
                 end
                 if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                    moveDirection = moveDirection - Vector3.new(0, 1, 0)
+                    moveDirection = moveDirection + Vector3.new(0, -1, 0)
                 end
                 
                 -- Normalize and apply speed
@@ -308,71 +285,7 @@ local function toggleFly()
                 end
                 
                 -- Apply movement
-                flyAlignPos.Position = rootPart.Position + moveDirection
-            end)
-        end
-    end
-end
-
--- Fungsi Float yang Diperbaiki
-local function toggleFloat()
-    if isFloating then
-        -- Nonaktifkan float
-        if floatBodyVelocity then
-            floatBodyVelocity:Destroy()
-            floatBodyVelocity = nil
-        end
-        isFloating = false
-        
-        -- Update UI
-        TweenService:Create(
-            FloatToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            FloatSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    else
-        -- Aktifkan float
-        local character = LocalPlayer.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            if floatBodyVelocity then floatBodyVelocity:Destroy() end
-            
-            floatBodyVelocity = Instance.new("BodyVelocity")
-            floatBodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            floatBodyVelocity.MaxForce = Vector3.new(0, 9e9, 0)
-            floatBodyVelocity.Parent = character.HumanoidRootPart
-            
-            -- Buat karakter mengambang
-            floatBodyVelocity.Velocity = Vector3.new(0, 5, 0)
-            
-            isFloating = true
-            
-            -- Update UI
-            TweenService:Create(
-                FloatToggle,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-            ):Play()
-            TweenService:Create(
-                FloatSwitch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-            ):Play()
-            
-            -- Float maintenance loop
-            local connection
-            connection = RunService.Heartbeat:Connect(function()
-                if not isFloating or not floatBodyVelocity then
-                    connection:Disconnect()
-                    return
-                end
-                
-                -- Pertahankan kecepatan float
-                floatBodyVelocity.Velocity = Vector3.new(0, 5, 0)
+                flyBodyVelocity.Velocity = moveDirection
             end)
         end
     end
@@ -380,7 +293,6 @@ end
 
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
-FloatSwitch.MouseButton1Click:Connect(toggleFloat)
 
 -- Popup Controls
 FloatingButton.MouseButton1Click:Connect(function()
@@ -392,7 +304,7 @@ FloatingButton.MouseButton1Click:Connect(function()
     TweenService:Create(
         PopupFrame,
         TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 250), Position = UDim2.new(0.5, -150, 0.5, -125)}
+        {Size = UDim2.new(0, 300, 0, 200), Position = UDim2.new(0.5, -150, 0.5, -100)}
     ):Play()
 end)
 
@@ -461,16 +373,12 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
-setupSwitchHover(FloatSwitch, FloatToggle)
 
 -- Auto clean up saat karakter mati atau respawn
 local function onCharacterAdded(character)
     character:WaitForChild("Humanoid").Died:Connect(function()
         if isFlying then
             toggleFly()
-        end
-        if isFloating then
-            toggleFloat()
         end
     end)
 end
@@ -481,22 +389,9 @@ if LocalPlayer.Character then
     onCharacterAdded(LocalPlayer.Character)
 end
 
--- Kontrol fly dengan keyboard (WASD, Space, Shift)
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    
-    if isFlying then
-        if input.KeyCode == Enum.KeyCode.Space then
-            -- Ditangani dalam fly loop
-        elseif input.KeyCode == Enum.KeyCode.LeftShift then
-            -- Ditangani dalam fly loop
-        end
-    end
-end)
-
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Fly and Float features improved!",
+    Text = "Fly feature improved with camera-based movement!",
     Duration = 5
 })
