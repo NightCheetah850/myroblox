@@ -182,49 +182,10 @@ local FloatToggleCorner = Instance.new("UICorner")
 FloatToggleCorner.CornerRadius = UDim.new(0, 10)
 FloatToggleCorner.Parent = FloatToggle
 
--- EdgeJump Switch
-local EdgeJumpFrame = Instance.new("Frame")
-EdgeJumpFrame.Size = UDim2.new(0, 260, 0, 30)
-EdgeJumpFrame.Position = UDim2.new(0, 20, 0, 140)
-EdgeJumpFrame.BackgroundTransparency = 1
-EdgeJumpFrame.Parent = UtamaContent
-
-local EdgeJumpLabel = Instance.new("TextLabel")
-EdgeJumpLabel.Size = UDim2.new(0, 100, 1, 0)
-EdgeJumpLabel.Position = UDim2.new(0, 0, 0, 0)
-EdgeJumpLabel.BackgroundTransparency = 1
-EdgeJumpLabel.Text = "EdgeJump:"
-EdgeJumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-EdgeJumpLabel.Font = Enum.Font.Gotham
-EdgeJumpLabel.TextSize = 14
-EdgeJumpLabel.TextXAlignment = Enum.TextXAlignment.Left
-EdgeJumpLabel.Parent = EdgeJumpFrame
-
-local EdgeJumpSwitch = Instance.new("TextButton")
-EdgeJumpSwitch.Size = UDim2.new(0, 50, 0, 25)
-EdgeJumpSwitch.Position = UDim2.new(1, -50, 0, 2)
-EdgeJumpSwitch.Text = ""
-EdgeJumpSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-EdgeJumpSwitch.Parent = EdgeJumpFrame
-
-local EdgeJumpSwitchCorner = Instance.new("UICorner")
-EdgeJumpSwitchCorner.CornerRadius = UDim.new(0, 12)
-EdgeJumpSwitchCorner.Parent = EdgeJumpSwitch
-
-local EdgeJumpToggle = Instance.new("Frame")
-EdgeJumpToggle.Size = UDim2.new(0, 21, 0, 21)
-EdgeJumpToggle.Position = UDim2.new(0, 2, 0, 2)
-EdgeJumpToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-EdgeJumpToggle.Parent = EdgeJumpSwitch
-
-local EdgeJumpToggleCorner = Instance.new("UICorner")
-EdgeJumpToggleCorner.CornerRadius = UDim.new(0, 10)
-EdgeJumpToggleCorner.Parent = EdgeJumpToggle
-
 -- WalkSpeed Input
 local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
-WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.Parent = UtamaContent
 
@@ -271,7 +232,7 @@ SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 -- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.Parent = UtamaContent
 
@@ -459,10 +420,6 @@ local flyConnection
 local isFloating = false
 local floatBodyForce
 
--- Variabel untuk edge jump
-local isEdgeJumping = false
-local edgeJumpConnection
-
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
 local downButtonPressed = false
@@ -544,29 +501,6 @@ local function cleanUpFloat()
     end
 end
 
--- Fungsi untuk membersihkan edge jump
-local function cleanUpEdgeJump()
-    if edgeJumpConnection then
-        edgeJumpConnection:Disconnect()
-        edgeJumpConnection = nil
-    end
-    isEdgeJumping = false
-    
-    -- Update UI
-    if EdgeJumpToggle and EdgeJumpSwitch then
-        TweenService:Create(
-            EdgeJumpToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            EdgeJumpSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    end
-end
-
 -- Fungsi untuk memperbarui daftar pemain
 local function updatePlayerList()
     -- Hapus semua item daftar pemain yang ada
@@ -631,11 +565,6 @@ local function updatePlayerList()
                         -- Nonaktifkan float jika sedang aktif
                         if isFloating then
                             cleanUpFloat()
-                        end
-                        
-                        -- Nonaktifkan edge jump jika sedang aktif
-                        if isEdgeJumping then
-                            cleanUpEdgeJump()
                         end
                         
                         -- Tween ke pemain
@@ -755,11 +684,6 @@ local function updateWaypointList()
                 -- Nonaktifkan float jika sedang aktif
                 if isFloating then
                     cleanUpFloat()
-                end
-                
-                -- Nonaktifkan edge jump jika sedang aktif
-                if isEdgeJumping then
-                    cleanUpEdgeJump()
                 end
                 
                 -- Tween ke waypoint
@@ -925,18 +849,13 @@ local function toggleFly()
             cleanUpFloat()
         end
         
-        -- Nonaktifkan edge jump jika sedang aktif
-        if isEdgeJumping then
-            cleanUpEdgeJump()
-        end
-        
         -- Aktifkan fly
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
             -- Bersihkan sisa fly sebelumnya
             cleanUpFly()
             
-            -- Buat BodyVelocity and BodyGyro
+            -- Buat BodyVelocity dan BodyGyro
             flyBodyVelocity = Instance.new("BodyVelocity")
             flyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
             flyBodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
@@ -1023,11 +942,6 @@ local function toggleFloat()
             cleanUpFly()
         end
         
-        -- Nonaktifkan edge jump jika sedang aktif
-        if isEdgeJumping then
-            cleanUpEdgeJump()
-        end
-        
         -- Aktifkan float
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
@@ -1053,65 +967,6 @@ local function toggleFloat()
                 {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
             ):Play()
         end
-    end
-end
-
--- Fungsi EdgeJump/Unedgejump
-local function toggleEdgeJump()
-    if isEdgeJumping then
-        cleanUpEdgeJump()
-    else
-        -- Nonaktifkan fly jika sedang aktif
-        if isFlying then
-            cleanUpFly()
-        end
-        
-        -- Nonaktifkan float jika sedang aktif
-        if isFloating then
-            cleanUpFloat()
-        end
-        
-        -- Aktifkan edge jump
-        isEdgeJumping = true
-        
-        -- Update UI
-        TweenService:Create(
-            EdgeJumpToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-        ):Play()
-        TweenService:Create(
-            EdgeJumpSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-        ):Play()
-        
-        -- Setup edge jump detection
-        edgeJumpConnection = RunService.Heartbeat:Connect(function()
-            if not isEdgeJumping or not LocalPlayer.Character then
-                return
-            end
-            
-            local character = LocalPlayer.Character
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            local rootPart = character:FindFirstChild("HumanoidRootPart")
-            
-            if humanoid and rootPart and humanoid.FloorMaterial == Enum.Material.Air then
-                -- Raycast down to check if we're at an edge
-                local rayOrigin = rootPart.Position
-                local rayDirection = Vector3.new(0, -5, 0) -- Raycast 5 studs down
-                local raycastParams = RaycastParams.new()
-                raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-                raycastParams.FilterDescendantsInstances = {character}
-                
-                local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
-                
-                if not raycastResult and humanoid:GetState() ~= Enum.HumanoidStateType.Jumping then
-                    -- We're at an edge and not already jumping, so jump
-                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                end
-            end
-        end)
     end
 end
 
@@ -1163,7 +1018,6 @@ end)
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 FloatSwitch.MouseButton1Click:Connect(toggleFloat)
-EdgeJumpSwitch.MouseButton1Click:Connect(toggleEdgeJump)
 
 -- Event handler untuk WalkSpeed
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -1297,7 +1151,6 @@ end
 
 setupSwitchHover(FlySwitch, FlyToggle)
 setupSwitchHover(FloatSwitch, FloatToggle)
-setupSwitchHover(EdgeJumpSwitch, EdgeJumpToggle)
 
 -- Efek hover pada tombol Set WalkSpeed
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -1380,12 +1233,11 @@ local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
 -- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
-    -- Bersihkan fly, float, dan edge jump saat karakter mati
+    -- Bersihkan fly dan float saat karakter mati
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
         cleanUpFloat()
-        cleanUpEdgeJump()
     end)
 end
 
@@ -1401,7 +1253,6 @@ characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 local function cleanup()
     cleanUpFly()
     cleanUpFloat()
-    cleanUpEdgeJump()
     
     if playerAddedConn then
         playerAddedConn:Disconnect()
@@ -1433,7 +1284,7 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Duration = 5
 })
 
--- Pastikan fly, float, dan edge jump dimatikan saat game dimatikan
+-- Pastikan fly dan float dimatikan saat game dimatikan
 game:BindToClose(function()
     cleanup()
 end)
