@@ -1,9 +1,10 @@
--- Floating Menu Milky dengan Kontrol Tombol untuk Mobile
+-- Floating Menu Milky dengan Kontrol Tombol untuk Mobile dan Daftar Pemain
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
 
 -- Main GUI
 local ScreenGui = Instance.new("ScreenGui")
@@ -33,8 +34,8 @@ UICorner.Parent = FloatingButton
 
 -- Popup Window (diperbesar untuk menampung opsi baru)
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 250) -- Diperbesar untuk menampung opsi WalkSpeed
-PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -125)
+PopupFrame.Size = UDim2.new(0, 300, 0, 350) -- Diperbesar untuk menampung daftar pemain
+PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -175)
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
@@ -154,6 +155,43 @@ local SetWalkSpeedCorner = Instance.new("UICorner")
 SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
+-- Daftar Pemain
+local PlayerListFrame = Instance.new("Frame")
+PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
+PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+PlayerListFrame.Parent = PopupFrame
+
+local PlayerListCorner = Instance.new("UICorner")
+PlayerListCorner.CornerRadius = UDim.new(0, 6)
+PlayerListCorner.Parent = PlayerListFrame
+
+local PlayerListLabel = Instance.new("TextLabel")
+PlayerListLabel.Size = UDim2.new(1, 0, 0, 20)
+PlayerListLabel.Position = UDim2.new(0, 0, 0, 0)
+PlayerListLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+PlayerListLabel.Text = "Daftar Pemain"
+PlayerListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayerListLabel.Font = Enum.Font.Gotham
+PlayerListLabel.TextSize = 14
+PlayerListLabel.Parent = PlayerListFrame
+
+local PlayerListLabelCorner = Instance.new("UICorner")
+PlayerListLabelCorner.CornerRadius = UDim.new(0, 6)
+PlayerListLabelCorner.Parent = PlayerListLabel
+
+local PlayerListScroll = Instance.new("ScrollingFrame")
+PlayerListScroll.Size = UDim2.new(1, -10, 1, -30)
+PlayerListScroll.Position = UDim2.new(0, 5, 0, 25)
+PlayerListScroll.BackgroundTransparency = 1
+PlayerListScroll.ScrollBarThickness = 5
+PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerListScroll.Parent = PlayerListFrame
+
+local PlayerListLayout = Instance.new("UIListLayout")
+PlayerListLayout.Padding = UDim.new(0, 5)
+PlayerListLayout.Parent = PlayerListScroll
+
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -35, 0, 5)
@@ -223,6 +261,125 @@ local function update(input)
         startPos.Y.Scale, 
         startPos.Y.Offset + delta.Y
     )
+end
+
+-- Fungsi untuk memperbarui daftar pemain
+local function updatePlayerList()
+    -- Hapus semua item daftar pemain yang ada
+    for _, child in ipairs(PlayerListScroll:GetChildren()) do
+        if child:IsA("Frame") then
+            child:Destroy()
+        end
+    end
+    
+    -- Dapatkan semua pemain
+    local players = Players:GetPlayers()
+    local contentHeight = 0
+    
+    -- Tambahkan setiap pemain ke daftar
+    for _, player in ipairs(players) do
+        if player ~= LocalPlayer then
+            local playerItem = Instance.new("Frame")
+            playerItem.Size = UDim2.new(1, 0, 0, 30)
+            playerItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            playerItem.Parent = PlayerListScroll
+            
+            local playerItemCorner = Instance.new("UICorner")
+            playerItemCorner.CornerRadius = UDim.new(0, 4)
+            playerItemCorner.Parent = playerItem
+            
+            local playerName = Instance.new("TextLabel")
+            playerName.Size = UDim2.new(0.7, 0, 1, 0)
+            playerName.Position = UDim2.new(0, 5, 0, 0)
+            playerName.BackgroundTransparency = 1
+            playerName.Text = player.Name
+            playerName.TextColor3 = Color3.fromRGB(255, 255, 255)
+            playerName.Font = Enum.Font.Gotham
+            playerName.TextSize = 14
+            playerName.TextXAlignment = Enum.TextXAlignment.Left
+            playerName.Parent = playerItem
+            
+            local tweenButton = Instance.new("TextButton")
+            tweenButton.Size = UDim2.new(0.25, 0, 0.7, 0)
+            tweenButton.Position = UDim2.new(0.72, 0, 0.15, 0)
+            tweenButton.Text = "Tween"
+            tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+            tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            tweenButton.Font = Enum.Font.Gotham
+            tweenButton.TextSize = 12
+            tweenButton.Parent = playerItem
+            
+            local tweenButtonCorner = Instance.new("UICorner")
+            tweenButtonCorner.CornerRadius = UDim.new(0, 4)
+            tweenButtonCorner.Parent = tweenButton
+            
+            -- Event handler untuk tombol tween
+            tweenButton.MouseButton1Click:Connect(function()
+                local character = player.Character
+                if character and character:FindFirstChild("HumanoidRootPart") then
+                    local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        -- Nonaktifkan fly jika sedang aktif
+                        if isFlying then
+                            toggleFly()
+                        end
+                        
+                        -- Tween ke pemain
+                        local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if rootPart then
+                            local targetPosition = character.HumanoidRootPart.Position
+                            local tweenInfo = TweenInfo.new(
+                                (rootPart.Position - targetPosition).Magnitude / 50, -- Durasi berdasarkan jarak
+                                Enum.EasingStyle.Linear,
+                                Enum.EasingDirection.Out
+                            )
+                            
+                            local tween = TweenService:Create(rootPart, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+                            tween:Play()
+                            
+                            -- Feedback visual
+                            tweenButton.Text = "Moving..."
+                            tweenButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+                            
+                            tween.Completed:Connect(function()
+                                tweenButton.Text = "Tween"
+                                tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                            end)
+                        end
+                    end
+                else
+                    -- Feedback jika karakter tidak ditemukan
+                    tweenButton.Text = "No Char!"
+                    tweenButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+                    wait(1)
+                    tweenButton.Text = "Tween"
+                    tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                end
+            end)
+            
+            -- Efek hover pada tombol tween
+            tweenButton.MouseEnter:Connect(function()
+                TweenService:Create(
+                    tweenButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+                ):Play()
+            end)
+            
+            tweenButton.MouseLeave:Connect(function()
+                TweenService:Create(
+                    tweenButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+                ):Play()
+            end)
+            
+            contentHeight = contentHeight + 35
+        end
+    end
+    
+    -- Atur ukuran canvas scroll
+    PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
 -- Event handling untuk drag
@@ -462,11 +619,14 @@ FloatingButton.MouseButton1Click:Connect(function()
     PopupFrame.Size = UDim2.new(0, 0, 0, 0)
     PopupFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     
+    -- Perbarui daftar pemain
+    updatePlayerList()
+    
     -- Animasi muncul
     TweenService:Create(
         PopupFrame,
         TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 250), Position = UDim2.new(0.5, -150, 0.5, -125)}
+        {Size = UDim2.new(0, 300, 0, 350), Position = UDim2.new(0.5, -150, 0.5, -175)}
     ):Play()
 end)
 
@@ -562,6 +722,10 @@ local function onCharacterAdded(character)
     end)
 end
 
+-- Deteksi ketika pemain bergabung atau keluar
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+
 LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
 if LocalPlayer.Character then
@@ -571,6 +735,6 @@ end
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Fly feature dengan kontrol tombol untuk mobile!",
+    Text = "Fly feature dengan kontrol tombol untuk mobile dan daftar pemain!",
     Duration = 5
 })
