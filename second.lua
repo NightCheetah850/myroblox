@@ -33,9 +33,9 @@ local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = FloatingButton
 
--- Popup Window (diperbesar untuk menampung opsi baru)
+-- Popup Window (diperbesar untuk menampung ribbon dan konten)
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 400) -- Diperbesar untuk menampung lebih banyak opsi
+PopupFrame.Size = UDim2.new(0, 300, 0, 400)
 PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
@@ -46,36 +46,70 @@ local PopupCorner = Instance.new("UICorner")
 PopupCorner.CornerRadius = UDim.new(0, 12)
 PopupCorner.Parent = PopupFrame
 
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Position = UDim2.new(0, 0, 0, 0)
-Title.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-Title.Text = "Milky Menu"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 18
-Title.Parent = PopupFrame
+-- Ribbon Navigation
+local RibbonFrame = Instance.new("Frame")
+RibbonFrame.Size = UDim2.new(1, 0, 0, 40)
+RibbonFrame.Position = UDim2.new(0, 0, 0, 0)
+RibbonFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+RibbonFrame.BorderSizePixel = 0
+RibbonFrame.Parent = PopupFrame
 
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
-TitleCorner.Parent = Title
+local RibbonCorner = Instance.new("UICorner")
+RibbonCorner.CornerRadius = UDim.new(0, 12)
+RibbonCorner.Parent = RibbonFrame
+
+-- Ribbon Buttons
+local UtamaRibbon = Instance.new("TextButton")
+UtamaRibbon.Size = UDim2.new(0.5, 0, 1, 0)
+UtamaRibbon.Position = UDim2.new(0, 0, 0, 0)
+UtamaRibbon.Text = "Utama"
+UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+UtamaRibbon.Font = Enum.Font.GothamBold
+UtamaRibbon.TextSize = 14
+UtamaRibbon.Parent = RibbonFrame
+
+local TweenRibbon = Instance.new("TextButton")
+TweenRibbon.Size = UDim2.new(0.5, 0, 1, 0)
+TweenRibbon.Position = UDim2.new(0.5, 0, 0, 0)
+TweenRibbon.Text = "Tween"
+TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+TweenRibbon.Font = Enum.Font.GothamBold
+TweenRibbon.TextSize = 14
+TweenRibbon.Parent = RibbonFrame
+
+-- Content Frames
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Size = UDim2.new(1, 0, 1, -40)
+ContentFrame.Position = UDim2.new(0, 0, 0, 40)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Parent = PopupFrame
+
+-- Utama Content
+local UtamaContent = Instance.new("Frame")
+UtamaContent.Size = UDim2.new(1, 0, 1, 0)
+UtamaContent.Position = UDim2.new(0, 0, 0, 0)
+UtamaContent.BackgroundTransparency = 1
+UtamaContent.Visible = true
+UtamaContent.Parent = ContentFrame
 
 local Message = Instance.new("TextLabel")
 Message.Size = UDim2.new(1, -20, 0, 40)
-Message.Position = UDim2.new(0, 10, 0, 50)
+Message.Position = UDim2.new(0, 10, 0, 10)
 Message.BackgroundTransparency = 1
 Message.Text = "halo saya milky"
 Message.TextColor3 = Color3.fromRGB(255, 255, 255)
 Message.Font = Enum.Font.Gotham
 Message.TextSize = 16
-Message.Parent = PopupFrame
+Message.Parent = UtamaContent
 
 -- Fly Switch
 local FlyFrame = Instance.new("Frame")
 FlyFrame.Size = UDim2.new(0, 260, 0, 30)
-FlyFrame.Position = UDim2.new(0, 20, 0, 100)
+FlyFrame.Position = UDim2.new(0, 20, 0, 60)
 FlyFrame.BackgroundTransparency = 1
-FlyFrame.Parent = PopupFrame
+FlyFrame.Parent = UtamaContent
 
 local FlyLabel = Instance.new("TextLabel")
 FlyLabel.Size = UDim2.new(0, 100, 1, 0)
@@ -109,12 +143,12 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Float Switch (Opsi Baru)
+-- Float Switch
 local FloatFrame = Instance.new("Frame")
 FloatFrame.Size = UDim2.new(0, 260, 0, 30)
-FloatFrame.Position = UDim2.new(0, 20, 0, 140)
+FloatFrame.Position = UDim2.new(0, 20, 0, 100)
 FloatFrame.BackgroundTransparency = 1
-FloatFrame.Parent = PopupFrame
+FloatFrame.Parent = UtamaContent
 
 local FloatLabel = Instance.new("TextLabel")
 FloatLabel.Size = UDim2.new(0, 100, 1, 0)
@@ -151,9 +185,9 @@ FloatToggleCorner.Parent = FloatToggle
 -- WalkSpeed Input
 local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
-WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
 WalkSpeedFrame.BackgroundTransparency = 1
-WalkSpeedFrame.Parent = PopupFrame
+WalkSpeedFrame.Parent = UtamaContent
 
 local WalkSpeedLabel = Instance.new("TextLabel")
 WalkSpeedLabel.Size = UDim2.new(0, 100, 1, 0)
@@ -198,9 +232,9 @@ SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 -- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-PlayerListFrame.Parent = PopupFrame
+PlayerListFrame.Parent = UtamaContent
 
 local PlayerListCorner = Instance.new("UICorner")
 PlayerListCorner.CornerRadius = UDim.new(0, 6)
@@ -232,6 +266,99 @@ local PlayerListLayout = Instance.new("UIListLayout")
 PlayerListLayout.Padding = UDim.new(0, 5)
 PlayerListLayout.Parent = PlayerListScroll
 
+-- Tween Content
+local TweenContent = Instance.new("Frame")
+TweenContent.Size = UDim2.new(1, 0, 1, 0)
+TweenContent.Position = UDim2.new(0, 0, 0, 0)
+TweenContent.BackgroundTransparency = 1
+TweenContent.Visible = false
+TweenContent.Parent = ContentFrame
+
+-- Waypoint Input Form
+local WaypointFrame = Instance.new("Frame")
+WaypointFrame.Size = UDim2.new(0, 260, 0, 30)
+WaypointFrame.Position = UDim2.new(0, 20, 0, 10)
+WaypointFrame.BackgroundTransparency = 1
+WaypointFrame.Parent = TweenContent
+
+local WaypointLabel = Instance.new("TextLabel")
+WaypointLabel.Size = UDim2.new(0, 80, 1, 0)
+WaypointLabel.Position = UDim2.new(0, 0, 0, 0)
+WaypointLabel.BackgroundTransparency = 1
+WaypointLabel.Text = "Waypoint:"
+WaypointLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WaypointLabel.Font = Enum.Font.Gotham
+WaypointLabel.TextSize = 14
+WaypointLabel.TextXAlignment = Enum.TextXAlignment.Left
+WaypointLabel.Parent = WaypointFrame
+
+local WaypointBox = Instance.new("TextBox")
+WaypointBox.Size = UDim2.new(0, 120, 1, 0)
+WaypointBox.Position = UDim2.new(0, 80, 0, 0)
+WaypointBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+WaypointBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+WaypointBox.Font = Enum.Font.Gotham
+WaypointBox.TextSize = 14
+WaypointBox.Text = ""
+WaypointBox.PlaceholderText = "Nama Waypoint"
+WaypointBox.Parent = WaypointFrame
+
+local WaypointCorner = Instance.new("UICorner")
+WaypointCorner.CornerRadius = UDim.new(0, 6)
+WaypointCorner.Parent = WaypointBox
+
+local SetWaypointButton = Instance.new("TextButton")
+SetWaypointButton.Size = UDim2.new(0, 50, 1, 0)
+SetWaypointButton.Position = UDim2.new(1, -50, 0, 0)
+SetWaypointButton.Text = "Set"
+SetWaypointButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+SetWaypointButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SetWaypointButton.Font = Enum.Font.Gotham
+SetWaypointButton.TextSize = 14
+SetWaypointButton.Parent = WaypointFrame
+
+local SetWaypointCorner = Instance.new("UICorner")
+SetWaypointCorner.CornerRadius = UDim.new(0, 6)
+SetWaypointCorner.Parent = SetWaypointButton
+
+-- Daftar Waypoint
+local WaypointListFrame = Instance.new("Frame")
+WaypointListFrame.Size = UDim2.new(0, 260, 0, 280)
+WaypointListFrame.Position = UDim2.new(0, 20, 0, 50)
+WaypointListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+WaypointListFrame.Parent = TweenContent
+
+local WaypointListCorner = Instance.new("UICorner")
+WaypointListCorner.CornerRadius = UDim.new(0, 6)
+WaypointListCorner.Parent = WaypointListFrame
+
+local WaypointListLabel = Instance.new("TextLabel")
+WaypointListLabel.Size = UDim2.new(1, 0, 0, 20)
+WaypointListLabel.Position = UDim2.new(0, 0, 0, 0)
+WaypointListLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+WaypointListLabel.Text = "Daftar Waypoint"
+WaypointListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WaypointListLabel.Font = Enum.Font.Gotham
+WaypointListLabel.TextSize = 14
+WaypointListLabel.Parent = WaypointListFrame
+
+local WaypointListLabelCorner = Instance.new("UICorner")
+WaypointListLabelCorner.CornerRadius = UDim.new(0, 6)
+WaypointListLabelCorner.Parent = WaypointListLabel
+
+local WaypointListScroll = Instance.new("ScrollingFrame")
+WaypointListScroll.Size = UDim2.new(1, -10, 1, -30)
+WaypointListScroll.Position = UDim2.new(0, 5, 0, 25)
+WaypointListScroll.BackgroundTransparency = 1
+WaypointListScroll.ScrollBarThickness = 5
+WaypointListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+WaypointListScroll.Parent = WaypointListFrame
+
+local WaypointListLayout = Instance.new("UIListLayout")
+WaypointListLayout.Padding = UDim.new(0, 5)
+WaypointListLayout.Parent = WaypointListScroll
+
+-- Close Button
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -35, 0, 5)
@@ -289,13 +416,16 @@ local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
 local flyConnection
 
--- Variabel untuk float (opsi baru)
+-- Variabel untuk float
 local isFloating = false
 local floatBodyForce
 
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
 local downButtonPressed = false
+
+-- Variabel untuk waypoints
+local waypoints = {}
 
 -- Fungsi untuk mengupdate posisi button
 local function update(input)
@@ -348,7 +478,7 @@ local function cleanUpFly()
     end
 end
 
--- Fungsi untuk membersihkan float (opsi baru)
+-- Fungsi untuk membersihkan float
 local function cleanUpFloat()
     if floatBodyForce then
         floatBodyForce:Destroy()
@@ -493,6 +623,158 @@ local function updatePlayerList()
     
     -- Atur ukuran canvas scroll
     PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+end
+
+-- Fungsi untuk memperbarui daftar waypoint
+local function updateWaypointList()
+    -- Hapus semua item daftar waypoint yang ada
+    for _, child in ipairs(WaypointListScroll:GetChildren()) do
+        if child:IsA("Frame") then
+            child:Destroy()
+        end
+    end
+    
+    local contentHeight = 0
+    
+    -- Tambahkan setiap waypoint ke daftar
+    for name, position in pairs(waypoints) do
+        local waypointItem = Instance.new("Frame")
+        waypointItem.Size = UDim2.new(1, 0, 0, 30)
+        waypointItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        waypointItem.Parent = WaypointListScroll
+        
+        local waypointItemCorner = Instance.new("UICorner")
+        waypointItemCorner.CornerRadius = UDim.new(0, 4)
+        waypointItemCorner.Parent = waypointItem
+        
+        local waypointName = Instance.new("TextLabel")
+        waypointName.Size = UDim2.new(0.6, 0, 1, 0)
+        waypointName.Position = UDim2.new(0, 5, 0, 0)
+        waypointName.BackgroundTransparency = 1
+        waypointName.Text = name
+        waypointName.TextColor3 = Color3.fromRGB(255, 255, 255)
+        waypointName.Font = Enum.Font.Gotham
+        waypointName.TextSize = 14
+        waypointName.TextXAlignment = Enum.TextXAlignment.Left
+        waypointName.Parent = waypointItem
+        
+        local tweenButton = Instance.new("TextButton")
+        tweenButton.Size = UDim2.new(0.35, 0, 0.7, 0)
+        tweenButton.Position = UDim2.new(0.62, 0, 0.15, 0)
+        tweenButton.Text = "Tween"
+        tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tweenButton.Font = Enum.Font.Gotham
+        tweenButton.TextSize = 12
+        tweenButton.Parent = waypointItem
+        
+        local tweenButtonCorner = Instance.new("UICorner")
+        tweenButtonCorner.CornerRadius = UDim.new(0, 4)
+        tweenButtonCorner.Parent = tweenButton
+        
+        -- Event handler untuk tombol tween waypoint
+        tweenButton.MouseButton1Click:Connect(function()
+            local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                -- Nonaktifkan fly jika sedang aktif
+                if isFlying then
+                    cleanUpFly()
+                end
+                
+                -- Nonaktifkan float jika sedang aktif
+                if isFloating then
+                    cleanUpFloat()
+                end
+                
+                -- Tween ke waypoint
+                local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    local tweenInfo = TweenInfo.new(
+                        (rootPart.Position - position).Magnitude / 50, -- Durasi berdasarkan jarak
+                        Enum.EasingStyle.Linear,
+                        Enum.EasingDirection.Out
+                    )
+                    
+                    local tween = TweenService:Create(rootPart, tweenInfo, {CFrame = CFrame.new(position)})
+                    tween:Play()
+                    
+                    -- Feedback visual
+                    tweenButton.Text = "Moving..."
+                    tweenButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+                    
+                    tween.Completed:Connect(function()
+                        tweenButton.Text = "Tween"
+                        tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                    end)
+                end
+            end
+        end)
+        
+        -- Efek hover pada tombol tween waypoint
+        tweenButton.MouseEnter:Connect(function()
+            TweenService:Create(
+                tweenButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+            ):Play()
+        end)
+        
+        tweenButton.MouseLeave:Connect(function()
+            TweenService:Create(
+                tweenButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+            ):Play()
+        end)
+        
+        contentHeight = contentHeight + 35
+    end
+    
+    -- Atur ukuran canvas scroll
+    WaypointListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+end
+
+-- Fungsi untuk menyimpan waypoint
+local function setWaypoint()
+    local name = WaypointBox.Text
+    if name and name ~= "" then
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            waypoints[name] = character.HumanoidRootPart.Position
+            
+            -- Perbarui daftar waypoint
+            updateWaypointList()
+            
+            -- Feedback visual
+            TweenService:Create(
+                WaypointBox,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 150, 0)}
+            ):Play()
+            wait(0.3)
+            TweenService:Create(
+                WaypointBox,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+            ):Play()
+            
+            -- Kosongkan textbox
+            WaypointBox.Text = ""
+        end
+    else
+        -- Feedback jika input tidak valid
+        TweenService:Create(
+            WaypointBox,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(150, 0, 0)}
+        ):Play()
+        wait(0.3)
+        TweenService:Create(
+            WaypointBox,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+        ):Play()
+    end
 end
 
 -- Event handling untuk drag
@@ -650,7 +932,7 @@ local function toggleFly()
     end
 end
 
--- Fungsi Float/Unfloat (opsi baru)
+-- Fungsi Float/Unfloat
 local function toggleFloat()
     if isFloating then
         cleanUpFloat()
@@ -735,7 +1017,7 @@ end)
 
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
-FloatSwitch.MouseButton1Click:Connect(toggleFloat)  -- Event handler baru untuk float
+FloatSwitch.MouseButton1Click:Connect(toggleFloat)
 
 -- Event handler untuk WalkSpeed
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -744,6 +1026,46 @@ WalkSpeedBox.FocusLost:Connect(function(enterPressed)
     if enterPressed then
         setWalkSpeed()
     end
+end)
+
+-- Event handler untuk Waypoint
+SetWaypointButton.MouseButton1Click:Connect(setWaypoint)
+
+WaypointBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        setWaypoint()
+    end
+end)
+
+-- Fungsi untuk beralih antara ribbon
+local function switchRibbon(ribbonName)
+    if ribbonName == "Utama" then
+        UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        UtamaContent.Visible = true
+        TweenContent.Visible = false
+    else
+        UtamaRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        UtamaRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        TweenRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        TweenRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        UtamaContent.Visible = false
+        TweenContent.Visible = true
+        
+        -- Perbarui daftar waypoint saat beralih ke ribbon Tween
+        updateWaypointList()
+    end
+end
+
+-- Event handlers untuk ribbon
+UtamaRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Utama")
+end)
+
+TweenRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Tween")
 end)
 
 -- Popup Controls
@@ -828,7 +1150,7 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
-setupSwitchHover(FloatSwitch, FloatToggle)  -- Setup hover untuk float switch
+setupSwitchHover(FloatSwitch, FloatToggle)
 
 -- Efek hover pada tombol Set WalkSpeed
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -845,6 +1167,64 @@ SetWalkSpeedButton.MouseLeave:Connect(function()
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
     ):Play()
+end)
+
+-- Efek hover pada tombol Set Waypoint
+SetWaypointButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        SetWaypointButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+SetWaypointButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        SetWaypointButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
+-- Efek hover pada ribbon buttons
+UtamaRibbon.MouseEnter:Connect(function()
+    if UtamaContent.Visible == false then
+        TweenService:Create(
+            UtamaRibbon,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    end
+end)
+
+UtamaRibbon.MouseLeave:Connect(function()
+    if UtamaContent.Visible == false then
+        TweenService:Create(
+            UtamaRibbon,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+        ):Play()
+    end
+end)
+
+TweenRibbon.MouseEnter:Connect(function()
+    if TweenContent.Visible == false then
+        TweenService:Create(
+            TweenRibbon,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+        ):Play()
+    end
+end)
+
+TweenRibbon.MouseLeave:Connect(function()
+    if TweenContent.Visible == false then
+        TweenService:Create(
+            TweenRibbon,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+        ):Play()
+    end
 end)
 
 -- Deteksi ketika pemain bergabung atau keluar
@@ -900,7 +1280,7 @@ end)
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Fly dan Float feature dengan kontrol tombol untuk mobile dan daftar pemain!",
+    Text = "Menu dengan ribbon Utama dan Tween telah dimuat!",
     Duration = 5
 })
 
