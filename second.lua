@@ -31,10 +31,10 @@ local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = FloatingButton
 
--- Popup Window
+-- Popup Window (diperbesar untuk menampung opsi baru)
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 200)
-PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+PopupFrame.Size = UDim2.new(0, 300, 0, 250) -- Diperbesar untuk menampung opsi WalkSpeed
+PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -125)
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
@@ -106,6 +106,53 @@ FlyToggle.Parent = FlySwitch
 local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
+
+-- WalkSpeed Input
+local WalkSpeedFrame = Instance.new("Frame")
+WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
+WalkSpeedFrame.BackgroundTransparency = 1
+WalkSpeedFrame.Parent = PopupFrame
+
+local WalkSpeedLabel = Instance.new("TextLabel")
+WalkSpeedLabel.Size = UDim2.new(0, 100, 1, 0)
+WalkSpeedLabel.Position = UDim2.new(0, 0, 0, 0)
+WalkSpeedLabel.BackgroundTransparency = 1
+WalkSpeedLabel.Text = "WalkSpeed:"
+WalkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WalkSpeedLabel.Font = Enum.Font.Gotham
+WalkSpeedLabel.TextSize = 14
+WalkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+WalkSpeedLabel.Parent = WalkSpeedFrame
+
+local WalkSpeedBox = Instance.new("TextBox")
+WalkSpeedBox.Size = UDim2.new(0, 80, 1, 0)
+WalkSpeedBox.Position = UDim2.new(0, 100, 0, 0)
+WalkSpeedBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+WalkSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+WalkSpeedBox.Font = Enum.Font.Gotham
+WalkSpeedBox.TextSize = 14
+WalkSpeedBox.Text = "16"
+WalkSpeedBox.PlaceholderText = "Speed"
+WalkSpeedBox.Parent = WalkSpeedFrame
+
+local WalkSpeedCorner = Instance.new("UICorner")
+WalkSpeedCorner.CornerRadius = UDim.new(0, 6)
+WalkSpeedCorner.Parent = WalkSpeedBox
+
+local SetWalkSpeedButton = Instance.new("TextButton")
+SetWalkSpeedButton.Size = UDim2.new(0, 50, 1, 0)
+SetWalkSpeedButton.Position = UDim2.new(1, -50, 0, 0)
+SetWalkSpeedButton.Text = "Set"
+SetWalkSpeedButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+SetWalkSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SetWalkSpeedButton.Font = Enum.Font.Gotham
+SetWalkSpeedButton.TextSize = 14
+SetWalkSpeedButton.Parent = WalkSpeedFrame
+
+local SetWalkSpeedCorner = Instance.new("UICorner")
+SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
+SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
@@ -204,6 +251,41 @@ UserInputService.InputChanged:Connect(function(input)
         update(input)
     end
 end)
+
+-- Fungsi untuk mengatur WalkSpeed
+local function setWalkSpeed()
+    local speed = tonumber(WalkSpeedBox.Text)
+    if speed and speed > 0 then
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = speed
+            -- Feedback visual
+            TweenService:Create(
+                WalkSpeedBox,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 150, 0)}
+            ):Play()
+            wait(0.3)
+            TweenService:Create(
+                WalkSpeedBox,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+            ):Play()
+        end
+    else
+        -- Feedback jika input tidak valid
+        TweenService:Create(
+            WalkSpeedBox,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(150, 0, 0)}
+        ):Play()
+        wait(0.3)
+        TweenService:Create(
+            WalkSpeedBox,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+        ):Play()
+    end
+end
 
 -- Fungsi Fly yang Diperbaiki untuk Mobile
 local function toggleFly()
@@ -365,6 +447,15 @@ end)
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 
+-- Event handler untuk WalkSpeed
+SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
+
+WalkSpeedBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        setWalkSpeed()
+    end
+end)
+
 -- Popup Controls
 FloatingButton.MouseButton1Click:Connect(function()
     PopupFrame.Visible = true
@@ -375,7 +466,7 @@ FloatingButton.MouseButton1Click:Connect(function()
     TweenService:Create(
         PopupFrame,
         TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 200), Position = UDim2.new(0.5, -150, 0.5, -100)}
+        {Size = UDim2.new(0, 300, 0, 250), Position = UDim2.new(0.5, -150, 0.5, -125)}
     ):Play()
 end)
 
@@ -444,6 +535,23 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
+
+-- Efek hover pada tombol Set WalkSpeed
+SetWalkSpeedButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        SetWalkSpeedButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+SetWalkSpeedButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        SetWalkSpeedButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
 
 -- Auto clean up saat karakter mati atau respawn
 local function onCharacterAdded(character)
