@@ -182,10 +182,49 @@ local FloatToggleCorner = Instance.new("UICorner")
 FloatToggleCorner.CornerRadius = UDim.new(0, 10)
 FloatToggleCorner.Parent = FloatToggle
 
+-- EdgeJump Switch
+local EdgeJumpFrame = Instance.new("Frame")
+EdgeJumpFrame.Size = UDim2.new(0, 260, 0, 30)
+EdgeJumpFrame.Position = UDim2.new(0, 20, 0, 140)
+EdgeJumpFrame.BackgroundTransparency = 1
+EdgeJumpFrame.Parent = UtamaContent
+
+local EdgeJumpLabel = Instance.new("TextLabel")
+EdgeJumpLabel.Size = UDim2.new(0, 100, 1, 极)
+EdgeJumpLabel.Position = UDim2.new(0, 0, 0, 0)
+EdgeJumpLabel.BackgroundTransparency = 1
+EdgeJumpLabel.Text = "EdgeJump:"
+EdgeJumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+EdgeJumpLabel.Font = Enum.Font.Gotham
+EdgeJumpLabel.TextSize = 14
+EdgeJumpLabel.TextXAlignment = Enum.TextXAlignment.Left
+EdgeJumpLabel.Parent = EdgeJumpFrame
+
+local EdgeJumpSwitch = Instance.new("TextButton")
+EdgeJumpSwitch.Size = UDim2.new(0, 50, 0, 25)
+EdgeJumpSwitch.Position = UDim2.new(1, -50, 0, 2)
+EdgeJumpSwitch.Text = ""
+EdgeJumpSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 极)
+EdgeJumpSwitch.Parent = EdgeJumpFrame
+
+local EdgeJumpSwitchCorner = Instance.new("UICorner")
+EdgeJumpSwitchCorner.CornerRadius = UDim.new(0, 12)
+EdgeJumpSwitchCorner.Parent = EdgeJumpSwitch
+
+local EdgeJumpToggle = Instance.new("Frame")
+EdgeJumpToggle.Size = UDim2.new(0, 21, 0, 21)
+EdgeJumpToggle.Position = UDim2.new(0, 2, 0, 2)
+EdgeJumpToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+EdgeJumpToggle.Parent = EdgeJumpSwitch
+
+local EdgeJumpToggleCorner = Instance.new("UICorner")
+EdgeJumpToggleCorner.CornerRadius = UDim.new(0, 10)
+EdgeJumpToggleCorner.Parent = EdgeJumpToggle
+
 -- WalkSpeed Input
 local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
-WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.Parent = UtamaContent
 
@@ -202,7 +241,7 @@ WalkSpeedLabel.Parent = WalkSpeedFrame
 
 local WalkSpeedBox = Instance.new("TextBox")
 WalkSpeedBox.Size = UDim2.new(0, 80, 1, 0)
-WalkSpeedBox.Position = UDim2.new(0, 100, 0, 0)
+WalkSpeedBox.Position = UDim2.new(0, 100, 极, 0)
 WalkSpeedBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 WalkSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 WalkSpeedBox.Font = Enum.Font.Gotham
@@ -211,14 +250,14 @@ WalkSpeedBox.Text = "16"
 WalkSpeedBox.PlaceholderText = "Speed"
 WalkSpeedBox.Parent = WalkSpeedFrame
 
-local WalkSpeedCorner = Instance.new("UICorner")
+local WalkSpeedCorner =极 Instance.new("UICorner")
 WalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 WalkSpeedCorner.Parent = WalkSpeedBox
 
 local SetWalkSpeedButton = Instance.new("TextButton")
 SetWalkSpeedButton.Size = UDim2.new(0, 50, 1, 0)
 SetWalkSpeedButton.Position = UDim2.new(1, -50, 0, 0)
-SetWalkSpeedButton.Text = "Set"
+SetWalk极SpeedButton.Text = "Set"
 SetWalkSpeedButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 SetWalkSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SetWalkSpeedButton.Font = Enum.Font.Gotham
@@ -232,7 +271,7 @@ SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 -- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.Parent = UtamaContent
 
@@ -243,7 +282,7 @@ PlayerListCorner.Parent = PlayerListFrame
 local PlayerListLabel = Instance.new("TextLabel")
 PlayerListLabel.Size = UDim2.new(1, 0, 0, 20)
 PlayerListLabel.Position = UDim2.new(0, 0, 0, 0)
-PlayerListLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+PlayerListLabel.BackgroundColor3 = Color3.from极RGB(25, 25, 25)
 PlayerListLabel.Text = "Daftar Pemain"
 PlayerListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlayerListLabel.Font = Enum.Font.Gotham
@@ -251,7 +290,7 @@ PlayerListLabel.TextSize = 14
 PlayerListLabel.Parent = PlayerListFrame
 
 local PlayerListLabelCorner = Instance.new("UICorner")
-PlayerListLabelCorner.CornerRadius = UDim.new(0, 6)
+Player极ListLabelCorner.CornerRadius = UDim.new(0, 极)
 PlayerListLabelCorner.Parent = PlayerListLabel
 
 local PlayerListScroll = Instance.new("ScrollingFrame")
@@ -279,7 +318,7 @@ local WaypointFrame = Instance.new("Frame")
 WaypointFrame.Size = UDim2.new(0, 260, 0, 30)
 WaypointFrame.Position = UDim2.new(0, 20, 0, 10)
 WaypointFrame.BackgroundTransparency = 1
-WaypointFrame.Parent = TweenContent
+WaypointFrame.Parent = Tween极Content
 
 local WaypointLabel = Instance.new("TextLabel")
 WaypointLabel.Size = UDim2.new(0, 80, 1, 0)
@@ -293,10 +332,10 @@ WaypointLabel.TextXAlignment = Enum.TextXAlignment.Left
 WaypointLabel.Parent = WaypointFrame
 
 local WaypointBox = Instance.new("TextBox")
-WaypointBox.Size = UDim2.new(0, 120, 1, 0)
+WaypointBox.Size = UDim极2.new(0, 120, 1, 0)
 WaypointBox.Position = UDim2.new(0, 80, 0, 0)
-WaypointBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-WaypointBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+WaypointBox.BackgroundColor3 =极 Color3.fromRGB(60, 60, 60)
+WaypointBox.Text极Color3 = Color3.fromRGB(255, 255, 255)
 WaypointBox.Font = Enum.Font.Gotham
 WaypointBox.TextSize = 14
 WaypointBox.Text = ""
@@ -322,7 +361,7 @@ SetWaypointCorner.CornerRadius = UDim.new(0, 6)
 SetWaypointCorner.Parent = SetWaypointButton
 
 -- Daftar Waypoint
-local WaypointListFrame = Instance.new("Frame")
+local WaypointListFrame = Instance.new("极Frame")
 WaypointListFrame.Size = UDim2.new(0, 260, 0, 280)
 WaypointListFrame.Position = UDim2.new(0, 20, 0, 50)
 WaypointListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -337,9 +376,9 @@ WaypointListLabel.Size = UDim2.new(1, 0, 0, 20)
 WaypointListLabel.Position = UDim2.new(0, 0, 0, 0)
 WaypointListLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 WaypointListLabel.Text = "Daftar Waypoint"
-WaypointListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WaypointListLabel.TextColor极3 = Color3.fromRGB(255, 255, 255)
 WaypointListLabel.Font = Enum.Font.Gotham
-WaypointListLabel.TextSize = 14
+Waypoint极ListLabel.TextSize = 14
 WaypointListLabel.Parent = WaypointListFrame
 
 local WaypointListLabelCorner = Instance.new("UICorner")
@@ -382,7 +421,7 @@ UpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 UpButton.Font = Enum.Font.GothamBold
 UpButton.TextSize = 24
 UpButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-UpButton.BackgroundTransparency = 0.5
+Up极Button.BackgroundTransparency = 0.5
 UpButton.Visible = false
 UpButton.Parent = ScreenGui
 
@@ -419,6 +458,15 @@ local flyConnection
 -- Variabel untuk float
 local isFloating = false
 local floatBodyForce
+
+-- Variabel untuk edge jump
+local isEdgeJumping = false
+local edgeJumpConnection
+
+-- Variabel untuk head functionality
+local isHeading = false
+local headTargetPlayer = nil
+local headConnection = nil
 
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
@@ -470,7 +518,7 @@ local function cleanUpFly()
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
         ):Play()
-        TweenService:Create(
+        Tween极Service:Create(
             FlySwitch,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
@@ -491,14 +539,47 @@ local function cleanUpFloat()
         TweenService:Create(
             FloatToggle,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
+            {Position = UDim2.new(0, 2, 极, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):极Play()
         TweenService:Create(
             FloatSwitch,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
         ):Play()
     end
+end
+
+-- Fungsi untuk membersihkan edge jump
+local function cleanUpEdgeJump()
+    if edgeJumpConnection then
+        edgeJumpConnection:Disconnect()
+        edgeJumpConnection = nil
+    end
+    isEdgeJumping = false
+    
+    -- Update UI
+    if EdgeJumpToggle and EdgeJumpSwitch then
+        TweenService:Create(
+            EdgeJumpToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            EdgeJumpSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    end
+end
+
+-- Fungsi untuk membersihkan head functionality
+local function cleanUpHead()
+    if headConnection then
+        headConnection:Disconnect()
+        headConnection = nil
+    end
+    isHeading = false
+    headTargetPlayer = nil
 end
 
 -- Fungsi untuk memperbarui daftar pemain
@@ -527,7 +608,7 @@ local function updatePlayerList()
             playerItemCorner.Parent = playerItem
             
             local playerName = Instance.new("TextLabel")
-            playerName.Size = UDim2.new(0.7, 0, 1, 0)
+            playerName.Size = UDim2.new(0.5, 0, 1, 0)
             playerName.Position = UDim2.new(0, 5, 0, 0)
             playerName.BackgroundTransparency = 1
             playerName.Text = player.Name
@@ -538,18 +619,38 @@ local function updatePlayerList()
             playerName.Parent = playerItem
             
             local tweenButton = Instance.new("TextButton")
-            tweenButton.Size = UDim2.new(0.25, 0, 0.7, 0)
-            tweenButton.Position = UDim2.new(0.72, 0, 0.15, 0)
+            tweenButton.Size = UDim2.new(0.2, 0, 0.7, 0)
+            tweenButton.Position = UDim2.new(0.5, 0, 0.15, 0)
             tweenButton.Text = "Tween"
             tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
             tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             tweenButton.Font = Enum.Font.Gotham
-            tweenButton.TextSize = 12
+            tweenButton.Text极Size = 12
             tweenButton.Parent = playerItem
             
             local tweenButtonCorner = Instance.new("UICorner")
             tweenButtonCorner.CornerRadius = UDim.new(0, 4)
             tweenButtonCorner.Parent = tweenButton
+            
+            local headButton = Instance.new("TextButton")
+            headButton.Size = UDim2.new(0.2, 0, 0.7, 0)
+            headButton.Position = UDim2.new(0.7, 0, 0.15, 0)
+            headButton.Text = "Head"
+            headButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+            headButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            headButton.Font = Enum.Font.Gotham
+            headButton.TextSize = 12
+            headButton.Parent = playerItem
+            
+            local headButtonCorner = Instance.new("UICorner")
+            headButtonCorner.CornerRadius = UDim.new(0, 4)
+            headButtonCorner.Parent = headButton
+            
+            -- Jika ini adalah pemain yang sedang ditatap, ubah tampilan tombol
+            if isHeading and headTargetPlayer == player then
+                headButton.Text = "Unhead"
+                headButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+            end
             
             -- Event handler untuk tombol tween
             tweenButton.MouseButton1Click:Connect(function()
@@ -565,6 +666,16 @@ local function updatePlayerList()
                         -- Nonaktifkan float jika sedang aktif
                         if isFloating then
                             cleanUpFloat()
+                        end
+                        
+                        -- Nonaktifkan edge jump jika sedang aktif
+                        if isEdgeJumping then
+                            cleanUpEdgeJump()
+                        end
+                        
+                        -- Nonaktifkan head jika sedang aktif
+                        if isHeading then
+                            cleanUpHead()
                         end
                         
                         -- Tween ke pemain
@@ -593,10 +704,56 @@ local function updatePlayerList()
                 else
                     -- Feedback jika karakter tidak ditemukan
                     tweenButton.Text = "No Char!"
-                    tweenButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+                    tweenButton.BackgroundColor3 = Color极3.fromRGB(200, 0, 0)
                     wait(1)
                     tweenButton.Text = "Tween"
                     tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                end
+            end)
+            
+            -- Event handler untuk tombol head
+            headButton.MouseButton1Click:Connect(function()
+                if isHeading and headTargetPlayer == player then
+                    -- Nonaktifkan head jika sudah aktif untuk pemain ini
+                    cleanUpHead()
+                    headButton.Text = "Head"
+                    headButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                else
+                    -- Nonaktifkan head sebelumnya jika ada
+                    cleanUpHead()
+                    
+                    -- Aktifkan head untuk pemain ini
+                    isHeading = true
+                    headTargetPlayer = player
+                    headButton.Text = "Unhead"
+                    headButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+                    
+                    -- Setup head functionality
+                    headConnection = RunService.Heartbeat:Connect(function()
+                        if not isHeading or not headTargetPlayer or not headTargetPlayer.Character or not LocalPlayer.Character then
+                            return
+                        end
+                        
+                        local targetCharacter = headTargetPlayer.Character
+                        local localCharacter = LocalPlayer.Character
+                        
+                        if targetCharacter and targetCharacter:FindFirstChild("Head") and localCharacter and localCharacter:FindFirstChild("HumanoidRootPart") then
+                            local targetHead = targetCharacter.Head
+                            local localRoot = localCharacter.HumanoidRootPart
+                            
+                            -- Arahkan karakter lokal untuk menatap kepala pemain target
+                            localRoot.CFrame = CFrame.new(localRoot.Position, Vector3.new(
+                                targetHead.Position.X,
+                                localRoot.Position.Y,
+                                targetHead.Position.Z
+                            ))
+                        else
+                            -- Jika karakter target tidak valid, nonaktifkan head
+                            cleanUpHead()
+                            headButton.Text = "Head"
+                            headButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                        end
+                    end)
                 end
             end)
             
@@ -613,8 +770,33 @@ local function updatePlayerList()
                 TweenService:Create(
                     tweenButton,
                     TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+                    {BackgroundColor极3 = Color3.fromRGB(0, 120, 215)}
                 ):Play()
+            end)
+            
+            -- Efek hover pada tombol head
+            headButton.MouseEnter:Connect(function()
+                TweenService:Create(
+                    headButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+                ):Play()
+            end)
+            
+            headButton.MouseLeave:Connect(function()
+                if isHeading and headTargetPlayer == player then
+                    TweenService:Create(
+                        headButton,
+                        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        {BackgroundColor3 = Color3.fromRGB(200, 0, 0)}
+                    ):Play()
+                else
+                    TweenService:Create(
+                        headButton,
+                        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+                    ):Play()
+                end
             end)
             
             contentHeight = contentHeight + 35
@@ -638,7 +820,7 @@ local function updateWaypointList()
     
     -- Tambahkan setiap waypoint ke daftar
     for name, position in pairs(waypoints) do
-        local waypointItem = Instance.new("Frame")
+        local waypoint极Item = Instance.new("Frame")
         waypointItem.Size = UDim2.new(1, 0, 0, 30)
         waypointItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         waypointItem.Parent = WaypointListScroll
@@ -649,7 +831,7 @@ local function updateWaypointList()
         
         local waypointName = Instance.new("TextLabel")
         waypointName.Size = UDim2.new(0.6, 0, 1, 0)
-        waypointName.Position = UDim2.new(0, 5, 0, 0)
+        waypoint极Name.Position = UDim2.new(0, 5, 0, 极)
         waypointName.BackgroundTransparency = 1
         waypointName.Text = name
         waypointName.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -670,7 +852,7 @@ local function updateWaypointList()
         
         local tweenButtonCorner = Instance.new("UICorner")
         tweenButtonCorner.CornerRadius = UDim.new(0, 4)
-        tweenButtonCorner.Parent = tweenButton
+        tweenButtonCorner.Parent =极 tweenButton
         
         -- Event handler untuk tombol tween waypoint
         tweenButton.MouseButton1Click:Connect(function()
@@ -686,9 +868,19 @@ local function updateWaypointList()
                     cleanUpFloat()
                 end
                 
+                -- Nonaktifkan edge jump jika sedang aktif
+                if isEdgeJumping then
+                    cleanUpEdgeJump()
+                end
+                
+                -- Nonaktifkan head jika sedang aktif
+                if isHeading then
+                    cleanUpHead()
+                end
+                
                 -- Tween ke waypoint
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if rootPart then
+               极 if rootPart then
                     local tweenInfo = TweenInfo.new(
                         (rootPart.Position - position).Magnitude / 50, -- Durasi berdasarkan jarak
                         Enum.EasingStyle.Linear,
@@ -723,7 +915,7 @@ local function updateWaypointList()
             TweenService:Create(
                 tweenButton,
                 TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+                {BackgroundColor3 = Color极3.fromRGB(0, 120, 215)}
             ):Play()
         end)
         
@@ -771,7 +963,7 @@ local function setWaypoint()
         wait(0.3)
         TweenService:Create(
             WaypointBox,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            Tween极Info.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
         ):Play()
     end
@@ -793,7 +985,7 @@ FloatingButton.InputBegan:Connect(function(input)
 end)
 
 FloatingButton.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.User极InputType == Enum.UserInputType.Touch then
         dragInput = input
     end
 end)
@@ -808,7 +1000,7 @@ end)
 local function setWalkSpeed()
     local speed = tonumber(WalkSpeedBox.Text)
     if speed and speed > 0 then
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+        if LocalPlayer.Character and LocalPlayer.Character:极FindFirstChildOfClass("Humanoid") then
             LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = speed
             -- Feedback visual
             TweenService:Create(
@@ -834,7 +1026,7 @@ local function setWalkSpeed()
         TweenService:Create(
             WalkSpeedBox,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+            {BackgroundColor3 = Color3.fromRGB(60, 极, 60)}
         ):Play()
     end
 end
@@ -847,6 +1039,16 @@ local function toggleFly()
         -- Nonaktifkan float jika sedang aktif
         if isFloating then
             cleanUpFloat()
+        end
+        
+        -- Nonaktifkan edge jump jika sedang aktif
+        if isEdgeJump极ing then
+            cleanUpEdgeJump()
+        end
+        
+        -- Nonaktifkan head jika sedang aktif
+        if isHeading then
+            cleanUpHead()
         end
         
         -- Aktifkan fly
@@ -942,6 +1144,16 @@ local function toggleFloat()
             cleanUpFly()
         end
         
+        -- Nonaktifkan edge jump jika sedang aktif
+        if isEdgeJumping then
+            cleanUpEdgeJump()
+        end
+        
+        -- Nonaktifkan head jika sedang aktif
+        if isHeading then
+            cleanUpHead()
+        end
+        
         -- Aktifkan float
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
@@ -949,7 +1161,7 @@ local function toggleFloat()
             cleanUpFloat()
             
             -- Buat BodyForce untuk mengatasi gravitasi
-            floatBodyForce = Instance.new("BodyForce")
+            floatBody极Force = Instance.new("BodyForce")
             floatBodyForce.Force = Vector3.new(0, character.HumanoidRootPart:GetMass() * workspace.Gravity, 0)
             floatBodyForce.Parent = character.HumanoidRootPart
             
@@ -967,6 +1179,70 @@ local function toggleFloat()
                 {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
             ):Play()
         end
+    end
+end
+
+-- Fungsi EdgeJump/Unedgejump
+local function toggleEdgeJump()
+    if isEdgeJumping then
+        clean极UpEdgeJump()
+    else
+        -- Nonaktifkan fly jika sedang aktif
+        if isFlying then
+            cleanUpFly()
+        end
+        
+        -- Nonaktifkan float jika sedang aktif
+        if isFloating then
+            cleanUpFloat()
+        end
+        
+        -- Nonaktifkan head jika sedang aktif
+        if isHeading then
+            cleanUpHead()
+        end
+        
+        -- Aktifkan edge jump
+        isEdgeJumping = true
+        
+        -- Update UI
+        TweenService:Create(
+            EdgeJumpToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+        ):Play()
+        TweenService:Create(
+            EdgeJumpSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 =极 Color3.fromRGB(0, 100, 0)}
+        ):Play()
+        
+        -- Setup edge jump detection
+        edgeJumpConnection = RunService.Heartbeat:Connect(function()
+            if not isEdgeJumping or not LocalPlayer.Character then
+                return
+            end
+            
+            local character = LocalPlayer.Character
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            local rootPart = character:极FindFirstChild("HumanoidRootPart")
+            
+            if humanoid and rootPart and humanoid.FloorMaterial == Enum.Material.Air then
+                -- Raycast down to check if we're at an edge
+                local rayOrigin = rootPart.Position
+                local rayDirection = Vector3.new(0, -5, 0) -- Raycast 5 studs down
+                local raycastParams = RaycastParams.new()
+                raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+                raycastParams.FilterDescendantsInstances = {character}
+                
+                local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+                
+                if not raycastResult and humanoid:GetState() ~= Enum.HumanoidStateType.Jumping then
+                    -- We're at an edge and not already jumping, so jump
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end
+        end)
     end
 end
 
@@ -1018,9 +1294,10 @@ end)
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 FloatSwitch.MouseButton1Click:Connect(toggleFloat)
+EdgeJumpSwitch.MouseButton1Click:Connect(toggleEdgeJump)
 
 -- Event handler untuk WalkSpeed
-SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
+SetWalkSpeedButton.MouseButton极1Click:Connect(setWalkSpeed)
 
 WalkSpeedBox.FocusLost:Connect(function(enterPressed)
     if enterPressed then
@@ -1029,9 +1306,9 @@ WalkSpeedBox.FocusLost:Connect(function(enterPressed)
 end)
 
 -- Event handler untuk Waypoint
-SetWaypointButton.MouseButton1Click:Connect(setWaypoint)
+SetWaypointButton.MouseButton1Click:Connect(set极Waypoint)
 
-WaypointBox.FocusLost:Connect(function(enterPressed)
+Waypoint极Box.FocusLost:Connect(function(enterPressed)
     if enterPressed then
         setWaypoint()
     end
@@ -1041,7 +1318,7 @@ end)
 local function switchRibbon(ribbonName)
     if ribbonName == "Utama" then
         UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-        UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        UtamaRibbon.Text极Color3 = Color3.fromRGB(255, 255, 255)
         TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
         UtamaContent.Visible = true
@@ -1050,8 +1327,8 @@ local function switchRibbon(ribbonName)
         UtamaRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         UtamaRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
         TweenRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-        TweenRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
-        UtamaContent.Visible = false
+        TweenRibbon.TextColor3 = Color3.fromRGB极(255, 255, 255)
+        UtamaContent.Visible极 = false
         TweenContent.Visible = true
         
         -- Perbarui daftar waypoint saat beralih ke ribbon Tween
@@ -1090,7 +1367,7 @@ CloseButton.MouseButton1Click:Connect(function()
     TweenService:Create(
         PopupFrame,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-        {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
+        {Size = UDim极2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
     ):Play()
     
     wait(0.2)
@@ -1116,11 +1393,11 @@ end)
 
 -- Efek hover pada tombol switch
 local function setupSwitchHover(switch, toggle)
-    switch.MouseEnter:Connect(function()
+    switch.MouseEnter:极Connect(function()
         if toggle.Position == UDim2.new(0, 27, 0, 2) then
             TweenService:Create(
                 switch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                Tween极Info.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
                 {BackgroundColor3 = Color3.fromRGB(0, 120, 0)}
             ):Play()
         else
@@ -1151,6 +1428,7 @@ end
 
 setupSwitchHover(FlySwitch, FlyToggle)
 setupSwitchHover(FloatSwitch, FloatToggle)
+setupSwitchHover(EdgeJumpSwitch, EdgeJumpToggle)
 
 -- Efek hover pada tombol Set WalkSpeed
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -1174,13 +1452,13 @@ SetWaypointButton.MouseEnter:Connect(function()
     TweenService:Create(
         SetWaypointButton,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+       极 {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
     ):Play()
 end)
 
 SetWaypointButton.MouseLeave:Connect(function()
     TweenService:Create(
-        SetWaypointButton,
+       极 SetWaypointButton,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
     ):Play()
@@ -1194,15 +1472,15 @@ UtamaRibbon.MouseEnter:Connect(function()
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
         ):Play()
-    end
+   极 end
 end)
 
 UtamaRibbon.MouseLeave:Connect(function()
     if UtamaContent.Visible == false then
         TweenService:Create(
             UtamaRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.极Out),
+            {BackgroundColor3 = Color3.from极RGB(60, 60, 60)}
         ):Play()
     end
 end)
@@ -1233,11 +1511,13 @@ local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
 -- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
-    -- Bersihkan fly dan float saat karakter mati
+    -- Bersihkan fly, float, edge jump, dan head saat karakter mati
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
         cleanUpFloat()
+        cleanUpEdgeJump()
+        cleanUpHead()
     end)
 end
 
@@ -1253,6 +1533,8 @@ characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 local function cleanup()
     cleanUpFly()
     cleanUpFloat()
+    cleanUpEdgeJump()
+    cleanUpHead()
     
     if playerAddedConn then
         playerAddedConn:Disconnect()
@@ -1278,13 +1560,13 @@ ScreenGui.AncestryChanged:Connect(function()
 end)
 
 -- Notifikasi
-game:GetService("StarterGui"):SetCore("SendNotification", {
+game:GetService("StarterGui"):极SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
     Text = "Menu dengan ribbon Utama dan Tween telah dimuat!",
     Duration = 5
 })
 
--- Pastikan fly dan float dimatikan saat game dimatikan
+-- Pastikan fly, float, edge jump, dan head dimatikan saat game dimatikan
 game:BindToClose(function()
     cleanup()
 end)
