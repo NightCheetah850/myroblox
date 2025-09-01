@@ -427,6 +427,10 @@ local downButtonPressed = false
 -- Variabel untuk waypoints
 local waypoints = {}
 
+-- Variabel untuk head functionality
+local headingPlayer = nil
+local headConnection = nil
+
 -- Fungsi untuk mengupdate posisi button
 local function update(input)
     local delta = input.Position - dragStart
@@ -501,6 +505,15 @@ local function cleanUpFloat()
     end
 end
 
+-- Fungsi untuk membersihkan head
+local function cleanUpHead()
+    if headConnection then
+        headConnection:Disconnect()
+        headConnection = nil
+    end
+    headingPlayer = nil
+end
+
 -- Fungsi untuk memperbarui daftar pemain
 local function updatePlayerList()
     -- Hapus semua item daftar pemain yang ada
@@ -527,7 +540,7 @@ local function updatePlayerList()
             playerItemCorner.Parent = playerItem
             
             local playerName = Instance.new("TextLabel")
-            playerName.Size = UDim2.new(0.7, 0, 1, 0)
+            playerName.Size = UDim2.new(0.4, 0, 1, 0)
             playerName.Position = UDim2.new(0, 5, 0, 0)
             playerName.BackgroundTransparency = 1
             playerName.Text = player.Name
@@ -537,9 +550,25 @@ local function updatePlayerList()
             playerName.TextXAlignment = Enum.TextXAlignment.Left
             playerName.Parent = playerItem
             
+            -- Tombol Head/Unhead
+            local headButton = Instance.new("TextButton")
+            headButton.Size = UDim2.new(0.25, 0, 0.7, 0)
+            headButton.Position = UDim2.new(0.4, 0, 0.15, 0)
+            headButton.Text = headingPlayer == player and "Unhead" or "Head"
+            headButton.BackgroundColor3 = headingPlayer == player and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(0, 120, 215)
+            headButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            headButton.Font = Enum.Font.Gotham
+            headButton.TextSize = 12
+            headButton.Parent = playerItem
+            
+            local headButtonCorner = Instance.new("UICorner")
+            headButtonCorner.CornerRadius = UDim.new(0, 4)
+            headButtonCorner.Parent = headButton
+            
+            -- Tombol Tween
             local tweenButton = Instance.new("TextButton")
             tweenButton.Size = UDim2.new(0.25, 0, 0.7, 0)
-            tweenButton.Position = UDim2.new(0.72, 0, 0.15, 0)
+            tweenButton.Position = UDim2.new(0.67, 0, 0.15, 0)
             tweenButton.Text = "Tween"
             tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
             tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -550,6 +579,53 @@ local function updatePlayerList()
             local tweenButtonCorner = Instance.new("UICorner")
             tweenButtonCorner.CornerRadius = UDim.new(0, 4)
             tweenButtonCorner.Parent = tweenButton
+            
+            -- Event handler untuk tombol head
+            headButton.MouseButton1Click:Connect(function()
+                if headingPlayer == player then
+                    -- Unhead jika sudah heading ke player ini
+                    cleanUpHead()
+                    headButton.Text = "Head"
+                    headButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                else
+                    -- Head ke player ini
+                    cleanUpHead()
+                    
+                    headingPlayer = player
+                    headButton.Text = "Unhead"
+                    headButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+                    
+                    -- Update semua tombol head di daftar pemain
+                    for _, item in ipairs(PlayerListScroll:GetChildren()) do
+                        if item:IsA("Frame") then
+                            local otherHeadButton = item:FindFirstChildWhichIsA("TextButton")
+                            local otherPlayerName = item:FindFirstChildWhichIsA("TextLabel")
+                            if otherHeadButton and otherPlayerName and otherPlayerName.Text ~= player.Name then
+                                otherHeadButton.Text = "Head"
+                                otherHeadButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                            end
+                        end
+                    end
+                    
+                    -- Buat connection untuk mengupdate arah pandang
+                    headConnection = RunService.RenderStepped:Connect(function()
+                        if not headingPlayer or not headingPlayer.Character or not headingPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            cleanUpHead()
+                            updatePlayerList()
+                            return
+                        end
+                        
+                        local character = LocalPlayer.Character
+                        if character and character:FindFirstChild("HumanoidRootPart") then
+                            local rootPart = character.HumanoidRootPart
+                            local targetPosition = headingPlayer.Character.HumanoidRootPart.Position
+                            
+                            -- Menghadap ke pemain (hanya rotasi Y)
+                            rootPart.CFrame = CFrame.new(rootPart.Position, Vector3.new(targetPosition.X, rootPart.Position.Y, targetPosition.Z))
+                        end
+                    end)
+                end
+            end)
             
             -- Event handler untuk tombol tween
             tweenButton.MouseButton1Click:Connect(function()
@@ -597,6 +673,27 @@ local function updatePlayerList()
                     wait(1)
                     tweenButton.Text = "Tween"
                     tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+                end
+            end)
+            
+            -- Efek hover pada tombol head
+            headButton.MouseEnter:Connect(function()
+                if headingPlayer ~= player then
+                    TweenService:Create(
+                        headButton,
+                        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+                    ):Play()
+                end
+            end)
+            
+            headButton.MouseLeave:Connect(function()
+                if headingPlayer ~= player then
+                    TweenService:Create(
+                        headButton,
+                        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+                    ):Play()
                 end
             end)
             
@@ -849,6 +946,12 @@ local function toggleFly()
             cleanUpFloat()
         end
         
+        -- Nonaktifkan head jika sedang aktif
+        if headingPlayer then
+            cleanUpHead()
+            updatePlayerList()
+        end
+        
         -- Aktifkan fly
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
@@ -940,6 +1043,12 @@ local function toggleFloat()
         -- Nonaktifkan fly jika sedang aktif
         if isFlying then
             cleanUpFly()
+        end
+        
+        -- Nonaktifkan head jika sedang aktif
+        if headingPlayer then
+            cleanUpHead()
+            updatePlayerList()
         end
         
         -- Aktifkan float
@@ -1233,11 +1342,13 @@ local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
 -- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
-    -- Bersihkan fly dan float saat karakter mati
+    -- Bersihkan fly, float, dan head saat karakter mati
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
         cleanUpFloat()
+        cleanUpHead()
+        updatePlayerList()
     end)
 end
 
@@ -1253,6 +1364,7 @@ characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 local function cleanup()
     cleanUpFly()
     cleanUpFloat()
+    cleanUpHead()
     
     if playerAddedConn then
         playerAddedConn:Disconnect()
@@ -1284,7 +1396,7 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Duration = 5
 })
 
--- Pastikan fly dan float dimatikan saat game dimatikan
+-- Pastikan fly, float, dan head dimatikan saat game dimatikan
 game:BindToClose(function()
     cleanup()
 end)
