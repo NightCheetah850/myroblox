@@ -35,8 +35,8 @@ UICorner.Parent = FloatingButton
 
 -- Popup Window (diperbesar untuk menampung opsi baru)
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 350) -- Diperbesar untuk menampung daftar pemain
-PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -175)
+PopupFrame.Size = UDim2.new(0, 300, 0, 400) -- Diperbesar untuk menampung lebih banyak opsi
+PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
@@ -109,10 +109,49 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
+-- Float Switch (Opsi Baru)
+local FloatFrame = Instance.new("Frame")
+FloatFrame.Size = UDim2.new(0, 260, 0, 30)
+FloatFrame.Position = UDim2.new(0, 20, 0, 140)
+FloatFrame.BackgroundTransparency = 1
+FloatFrame.Parent = PopupFrame
+
+local FloatLabel = Instance.new("TextLabel")
+FloatLabel.Size = UDim2.new(0, 100, 1, 0)
+FloatLabel.Position = UDim2.new(0, 0, 0, 0)
+FloatLabel.BackgroundTransparency = 1
+FloatLabel.Text = "Mengambang:"
+FloatLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatLabel.Font = Enum.Font.Gotham
+FloatLabel.TextSize = 14
+FloatLabel.TextXAlignment = Enum.TextXAlignment.Left
+FloatLabel.Parent = FloatFrame
+
+local FloatSwitch = Instance.new("TextButton")
+FloatSwitch.Size = UDim2.new(0, 50, 0, 25)
+FloatSwitch.Position = UDim2.new(1, -50, 0, 2)
+FloatSwitch.Text = ""
+FloatSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+FloatSwitch.Parent = FloatFrame
+
+local FloatSwitchCorner = Instance.new("UICorner")
+FloatSwitchCorner.CornerRadius = UDim.new(0, 12)
+FloatSwitchCorner.Parent = FloatSwitch
+
+local FloatToggle = Instance.new("Frame")
+FloatToggle.Size = UDim2.new(0, 21, 0, 21)
+FloatToggle.Position = UDim2.new(0, 2, 0, 2)
+FloatToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+FloatToggle.Parent = FloatSwitch
+
+local FloatToggleCorner = Instance.new("UICorner")
+FloatToggleCorner.CornerRadius = UDim.new(0, 10)
+FloatToggleCorner.Parent = FloatToggle
+
 -- WalkSpeed Input
 local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
-WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.Parent = PopupFrame
 
@@ -159,7 +198,7 @@ SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 -- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.Parent = PopupFrame
 
@@ -250,6 +289,10 @@ local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
 local flyConnection
 
+-- Variabel untuk float (opsi baru)
+local isFloating = false
+local floatBodyForce
+
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
 local downButtonPressed = false
@@ -299,6 +342,29 @@ local function cleanUpFly()
         ):Play()
         TweenService:Create(
             FlySwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    end
+end
+
+-- Fungsi untuk membersihkan float (opsi baru)
+local function cleanUpFloat()
+    if floatBodyForce then
+        floatBodyForce:Destroy()
+        floatBodyForce = nil
+    end
+    isFloating = false
+    
+    -- Update UI
+    if FloatToggle and FloatSwitch then
+        TweenService:Create(
+            FloatToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            FloatSwitch,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
         ):Play()
@@ -364,6 +430,11 @@ local function updatePlayerList()
                         -- Nonaktifkan fly jika sedang aktif
                         if isFlying then
                             cleanUpFly()
+                        end
+                        
+                        -- Nonaktifkan float jika sedang aktif
+                        if isFloating then
+                            cleanUpFloat()
                         end
                         
                         -- Tween ke pemain
@@ -491,6 +562,11 @@ local function toggleFly()
     if isFlying then
         cleanUpFly()
     else
+        -- Nonaktifkan float jika sedang aktif
+        if isFloating then
+            cleanUpFloat()
+        end
+        
         -- Aktifkan fly
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
@@ -574,6 +650,44 @@ local function toggleFly()
     end
 end
 
+-- Fungsi Float/Unfloat (opsi baru)
+local function toggleFloat()
+    if isFloating then
+        cleanUpFloat()
+    else
+        -- Nonaktifkan fly jika sedang aktif
+        if isFlying then
+            cleanUpFly()
+        end
+        
+        -- Aktifkan float
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            -- Bersihkan sisa float sebelumnya
+            cleanUpFloat()
+            
+            -- Buat BodyForce untuk mengatasi gravitasi
+            floatBodyForce = Instance.new("BodyForce")
+            floatBodyForce.Force = Vector3.new(0, character.HumanoidRootPart:GetMass() * workspace.Gravity, 0)
+            floatBodyForce.Parent = character.HumanoidRootPart
+            
+            isFloating = true
+            
+            -- Update UI
+            TweenService:Create(
+                FloatToggle,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+            ):Play()
+            TweenService:Create(
+                FloatSwitch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+            ):Play()
+        end
+    end
+end
+
 -- Event handlers untuk tombol kontrol
 UpButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch then
@@ -621,6 +735,7 @@ end)
 
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
+FloatSwitch.MouseButton1Click:Connect(toggleFloat)  -- Event handler baru untuk float
 
 -- Event handler untuk WalkSpeed
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -644,7 +759,7 @@ FloatingButton.MouseButton1Click:Connect(function()
     TweenService:Create(
         PopupFrame,
         TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 350), Position = UDim2.new(0.5, -150, 0.5, -175)}
+        {Size = UDim2.new(0, 300, 0, 400), Position = UDim2.new(0.5, -150, 0.5, -200)}
     ):Play()
 end)
 
@@ -713,6 +828,7 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
+setupSwitchHover(FloatSwitch, FloatToggle)  -- Setup hover untuk float switch
 
 -- Efek hover pada tombol Set WalkSpeed
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -737,10 +853,11 @@ local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
 -- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
-    -- Bersihkan fly saat karakter mati
+    -- Bersihkan fly dan float saat karakter mati
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
+        cleanUpFloat()
     end)
 end
 
@@ -755,6 +872,7 @@ characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 -- Fungsi untuk membersihkan semua event connections saat script dihentikan
 local function cleanup()
     cleanUpFly()
+    cleanUpFloat()
     
     if playerAddedConn then
         playerAddedConn:Disconnect()
@@ -782,11 +900,11 @@ end)
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Fly feature dengan kontrol tombol untuk mobile dan daftar pemain!",
+    Text = "Fly dan Float feature dengan kontrol tombol untuk mobile dan daftar pemain!",
     Duration = 5
 })
 
--- Pastikan fly dimatikan saat game dimatikan
+-- Pastikan fly dan float dimatikan saat game dimatikan
 game:BindToClose(function()
     cleanup()
 end)
