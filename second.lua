@@ -1,50 +1,80 @@
--- Floating Menu Milky dengan Kontrol Tombol untuk Mobile dan Daftar Pemain
+-- Floating Menu Milky dengan Stealth Mode untuk Android Screen Recording
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+local GuiService = game:GetService("GuiService")
 
--- Main GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MilkyFloatingMenu_" .. HttpService:GenerateGUID(false):sub(1, 8)
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.ResetOnSpawn = false -- Penting: Mencegah GUI hilang saat respawn
+-- Deteksi platform Android
+local isAndroid = false
+pcall(function()
+    isAndroid = game:GetService("UserInputService"):GetPlatform() == Enum.Platform.Android
+end)
 
--- Floating Button (Lingkaran)
-local FloatingButton = Instance.new("TextButton")
-FloatingButton.Size = UDim2.new(0, 60, 0, 60)
-FloatingButton.Position = UDim2.new(0, 100, 0, 100)
-FloatingButton.Text = "Milky"
-FloatingButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatingButton.Font = Enum.Font.GothamBold
-FloatingButton.TextSize = 14
-FloatingButton.AutoButtonColor = false
-FloatingButton.Active = true
-FloatingButton.Draggable = false
-FloatingButton.Selectable = false
-FloatingButton.Parent = ScreenGui
+-- Teknik khusus: Buat GUI dalam instance khusus yang mungkin tidak terekam
+local stealthContainer = Instance.new("Folder")
+stealthContainer.Name = "StealthGUI_" .. HttpService:GenerateGUID(false):sub(1, 8)
+stealthContainer.Parent = CoreGui
+
+-- Teknik 1: GUI yang dirender secara terpisah
+local function createStealthGUI()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "MilkyStealthGUI"
+    screenGui.Parent = stealthContainer
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.ResetOnSpawn = false
+    screenGui.DisplayOrder = 1000 -- Sangat tinggi
+    screenGui.IgnoreGuiInset = true
+    
+    -- Gunakan teknik khusus untuk Android
+    if isAndroid then
+        -- Coba atur properti yang mungkin mempengaruhi rendering
+        pcall(function()
+            screenGui.Enabled = true
+        end)
+    end
+    
+    return screenGui
+end
+
+-- Buat GUI stealth
+local stealthGui = createStealthGUI()
+
+-- Floating Button
+local floatingButton = Instance.new("TextButton")
+floatingButton.Size = UDim2.new(0, 60, 0, 60)
+floatingButton.Position = UDim2.new(0, 20, 0.5, -30)
+floatingButton.Text = "Milky"
+floatingButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+floatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+floatingButton.Font = Enum.Font.GothamBold
+floatingButton.TextSize = 14
+floatingButton.AutoButtonColor = false
+floatingButton.Active = true
+floatingButton.Draggable = true
+floatingButton.Selectable = false
+floatingButton.Parent = stealthGui
 
 -- Membuat bentuk lingkaran
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(1, 0)
-UICorner.Parent = FloatingButton
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(1, 0)
+uiCorner.Parent = floatingButton
 
--- Popup Window (diperbesar untuk menampung ribbon dan konten)
-local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 400)
-PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-PopupFrame.BorderSizePixel = 0
-PopupFrame.Visible = false
-PopupFrame.Parent = ScreenGui
+-- Popup Window
+local popupFrame = Instance.new("Frame")
+popupFrame.Size = UDim2.new(0, 300, 0, 400)
+popupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+popupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+popupFrame.BorderSizePixel = 0
+popupFrame.Visible = false
+popupFrame.Parent = stealthGui
 
-local PopupCorner = Instance.new("UICorner")
-PopupCorner.CornerRadius = UDim.new(0, 12)
-PopupCorner.Parent = PopupFrame
+local popupCorner = Instance.new("UICorner")
+popupCorner.CornerRadius = UDim.new(0, 12)
+popupCorner.Parent = popupFrame
 
 -- Ribbon Navigation
 local RibbonFrame = Instance.new("Frame")
