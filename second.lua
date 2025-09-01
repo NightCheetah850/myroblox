@@ -8,9 +8,10 @@ local HttpService = game:GetService("HttpService")
 
 -- Main GUI
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MilkyFloatingMenu"
+ScreenGui.Name = "MilkyFloatingMenu_" .. HttpService:GenerateGUID(false):sub(1, 8)
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false -- Penting: Mencegah GUI hilang saat respawn
 
 -- Floating Button (Lingkaran)
 local FloatingButton = Instance.new("TextButton")
@@ -247,6 +248,7 @@ local dragInput, dragStart, startPos
 local isFlying = false
 local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
+local flyConnection
 
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
@@ -261,6 +263,46 @@ local function update(input)
         startPos.Y.Scale, 
         startPos.Y.Offset + delta.Y
     )
+end
+
+-- Fungsi untuk membersihkan fly
+local function cleanUpFly()
+    if flyBodyVelocity then
+        flyBodyVelocity:Destroy()
+        flyBodyVelocity = nil
+    end
+    if flyBodyGyro then
+        flyBodyGyro:Destroy()
+        flyBodyGyro = nil
+    end
+    if flyConnection then
+        flyConnection:Disconnect()
+        flyConnection = nil
+    end
+    isFlying = false
+    
+    -- Kembalikan gravitasi
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+        LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
+    end
+    
+    -- Sembunyikan tombol kontrol
+    UpButton.Visible = false
+    DownButton.Visible = false
+    
+    -- Update UI
+    if FlyToggle and FlySwitch then
+        TweenService:Create(
+            FlyToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            FlySwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    end
 end
 
 -- Fungsi untuk memperbarui daftar pemain
@@ -321,7 +363,7 @@ local function updatePlayerList()
                     if humanoid then
                         -- Nonaktifkan fly jika sedang aktif
                         if isFlying then
-                            toggleFly()
+                            cleanUpFly()
                         end
                         
                         -- Tween ke pemain
@@ -447,44 +489,13 @@ end
 -- Fungsi Fly yang Diperbaiki untuk Mobile
 local function toggleFly()
     if isFlying then
-        -- Nonaktifkan fly
-        if flyBodyVelocity then
-            flyBodyVelocity:Destroy()
-            flyBodyVelocity = nil
-        end
-        if flyBodyGyro then
-            flyBodyGyro:Destroy()
-            flyBodyGyro = nil
-        end
-        
-        -- Sembunyikan tombol kontrol
-        UpButton.Visible = false
-        DownButton.Visible = false
-        
-        -- Kembalikan gravitasi
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
-        end
-        
-        isFlying = false
-        
-        -- Update UI
-        TweenService:Create(
-            FlyToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            FlySwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
+        cleanUpFly()
     else
         -- Aktifkan fly
         local character = LocalPlayer.Character
         if character and character:FindFirstChild("HumanoidRootPart") then
-            if flyBodyVelocity then flyBodyVelocity:Destroy() end
-            if flyBodyGyro then flyBodyGyro:Destroy() end
+            -- Bersihkan sisa fly sebelumnya
+            cleanUpFly()
             
             -- Buat BodyVelocity dan BodyGyro
             flyBodyVelocity = Instance.new("BodyVelocity")
@@ -522,33 +533,40 @@ local function toggleFly()
             ):Play()
             
             -- Update orientation to match camera
-            local connection
-            connection = RunService.RenderStepped:Connect(function()
-                if not isFlying or not flyBodyGyro then
-                    connection:Disconnect()
+            flyConnection = RunService.RenderStepped:Connect(function()
+                if not isFlying or not flyBodyGyro or not flyBodyVelocity then
+                    if flyConnection then
+                        flyConnection:Disconnect()
+                        flyConnection = nil
+                    end
+                    return
+                end
+                
+                if not character or not character.Parent or not character:FindFirstChild("HumanoidRootPart") then
+                    cleanUpFly()
                     return
                 end
                 
                 local camera = workspace.CurrentCamera
-                flyBodyGyro.CFrame = camera.CFrame
-                
-                -- Kontrol vertikal dengan tombol
-                local verticalVelocity = 0
-                if upButtonPressed then
-                    verticalVelocity = flySpeed
-                elseif downButtonPressed then
-                    verticalVelocity = -flySpeed
-                end
-                
-                -- Kontrol horizontal dengan joystick virtual game
-                local horizontalVelocity = Vector3.new(0, 0, 0)
-                if character:FindFirstChildOfClass("Humanoid") then
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
-                    horizontalVelocity = Vector3.new(humanoid.MoveDirection.X * flySpeed, 0, humanoid.MoveDirection.Z * flySpeed)
-                end
-                
-                -- Gabungkan kecepatan horizontal dan vertikal
-                if flyBodyVelocity then
+                if camera then
+                    flyBodyGyro.CFrame = camera.CFrame
+                    
+                    -- Kontrol vertikal dengan tombol
+                    local verticalVelocity = 0
+                    if upButtonPressed then
+                        verticalVelocity = flySpeed
+                    elseif downButtonPressed then
+                        verticalVelocity = -flySpeed
+                    end
+                    
+                    -- Kontrol horizontal dengan joystick virtual game
+                    local horizontalVelocity = Vector3.new(0, 0, 0)
+                    if character:FindFirstChildOfClass("Humanoid") then
+                        local humanoid = character:FindFirstChildOfClass("Humanoid")
+                        horizontalVelocity = Vector3.new(humanoid.MoveDirection.X * flySpeed, 0, humanoid.MoveDirection.Z * flySpeed)
+                    end
+                    
+                    -- Gabungkan kecepatan horizontal dan vertikal
                     flyBodyVelocity.Velocity = horizontalVelocity + Vector3.new(0, verticalVelocity, 0)
                 end
             end)
@@ -713,24 +731,53 @@ SetWalkSpeedButton.MouseLeave:Connect(function()
     ):Play()
 end)
 
--- Auto clean up saat karakter mati atau respawn
+-- Deteksi ketika pemain bergabung atau keluar
+local playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
+local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
+
+-- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
-    character:WaitForChild("Humanoid").Died:Connect(function()
-        if isFlying then
-            toggleFly()
-        end
+    -- Bersihkan fly saat karakter mati
+    local humanoid = character:WaitForChild("Humanoid")
+    humanoid.Died:Connect(function()
+        cleanUpFly()
     end)
 end
 
--- Deteksi ketika pemain bergabung atau keluar
-Players.PlayerAdded:Connect(updatePlayerList)
-Players.PlayerRemoving:Connect(updatePlayerList)
-
-LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-
+-- Event untuk karakter yang baru ditambahkan
+local characterAddedConn
 if LocalPlayer.Character then
     onCharacterAdded(LocalPlayer.Character)
 end
+
+characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+-- Fungsi untuk membersihkan semua event connections saat script dihentikan
+local function cleanup()
+    cleanUpFly()
+    
+    if playerAddedConn then
+        playerAddedConn:Disconnect()
+        playerAddedConn = nil
+    end
+    
+    if playerRemovingConn then
+        playerRemovingConn:Disconnect()
+        playerRemovingConn = nil
+    end
+    
+    if characterAddedConn then
+        characterAddedConn:Disconnect()
+        characterAddedConn = nil
+    end
+end
+
+-- Hubungkan event untuk cleanup
+ScreenGui.AncestryChanged:Connect(function()
+    if not ScreenGui.Parent then
+        cleanup()
+    end
+end)
 
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -738,3 +785,8 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Text = "Fly feature dengan kontrol tombol untuk mobile dan daftar pemain!",
     Duration = 5
 })
+
+-- Pastikan fly dimatikan saat game dimatikan
+game:BindToClose(function()
+    cleanup()
+end)
