@@ -473,7 +473,7 @@ local PartsListLayout = Instance.new("UIListLayout")
 PartsListLayout.Padding = UDim.new(0, 5)
 PartsListLayout.Parent = PartsListScroll
 
--- Close Button
+-- Close Button (diubah menjadi Destroy Button)
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -35, 0, 5)
@@ -549,6 +549,10 @@ local headConnection = nil
 -- Variabel untuk parts
 local allParts = {}
 local filteredParts = {}
+
+-- Variabel untuk ESP
+local espConnections = {}
+local espHighlights = {}
 
 -- Fungsi untuk mengupdate posisi button
 local function update(input)
@@ -631,6 +635,138 @@ local function cleanUpHead()
         headConnection = nil
     end
     headingPlayer = nil
+end
+
+-- ==================== FUNGSI ESP ====================
+-- Fungsi untuk membuat ESP pada part
+local function createESP(partData)
+    if not partData or not partData.Object or not partData.Object.Parent then
+        return false
+    end
+    
+    local part = partData.Object
+    
+    -- Hapus ESP lama jika sudah ada
+    if espHighlights[part] then
+        espHighlights[part]:Destroy()
+        espHighlights[part] = nil
+    end
+    
+    if espConnections[part] then
+        espConnections[part]:Disconnect()
+        espConnections[part] = nil
+    end
+    
+    -- Buat Highlight untuk ESP
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "MilkyESP_" .. part.Name
+    highlight.Adornee = part
+    highlight.FillColor = Color3.fromRGB(0, 255, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0
+    highlight.Parent = game.CoreGui
+    
+    -- Buat BillboardGui untuk menampilkan nama
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "MilkyESPBillboard_" .. part.Name
+    billboard.Adornee = part
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+    billboard.Parent = game.CoreGui
+    
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    nameLabel.Position = UDim2.new(0, 0, 0, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = part.Name
+    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    nameLabel.TextStrokeTransparency = 0
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextSize = 14
+    nameLabel.Parent = billboard
+    
+    local parentLabel = Instance.new("TextLabel")
+    parentLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    parentLabel.Position = UDim2.new(0, 0, 0.5, 0)
+    parentLabel.BackgroundTransparency = 1
+    parentLabel.Text = "Parent: " .. part.Parent.Name
+    parentLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    parentLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    parentLabel.TextStrokeTransparency = 0
+    parentLabel.Font = Enum.Font.Gotham
+    parentLabel.TextSize = 12
+    parentLabel.Parent = billboard
+    
+    -- Simpan ESP objects
+    espHighlights[part] = highlight
+    espHighlights[part .. "_billboard"] = billboard
+    
+    -- Connection untuk menghapus ESP jika part dihapus
+    espConnections[part] = part.AncestryChanged:Connect(function()
+        if not part.Parent then
+            if espHighlights[part] then
+                espHighlights[part]:Destroy()
+                espHighlights[part] = nil
+            end
+            if espHighlights[part .. "_billboard"] then
+                espHighlights[part .. "_billboard"]:Destroy()
+                espHighlights[part .. "_billboard"] = nil
+            end
+            if espConnections[part] then
+                espConnections[part]:Disconnect()
+                espConnections[part] = nil
+            end
+        end
+    end)
+    
+    return true
+end
+
+-- Fungsi untuk menghapus ESP dari part
+local function removeESP(partData)
+    if not partData or not partData.Object then
+        return false
+    end
+    
+    local part = partData.Object
+    
+    if espHighlights[part] then
+        espHighlights[part]:Destroy()
+        espHighlights[part] = nil
+    end
+    
+    if espHighlights[part .. "_billboard"] then
+        espHighlights[part .. "_billboard"]:Destroy()
+        espHighlights[part .. "_billboard"] = nil
+    end
+    
+    if espConnections[part] then
+        espConnections[part]:Disconnect()
+        espConnections[part] = nil
+    end
+    
+    return true
+end
+
+-- Fungsi untuk membersihkan semua ESP
+local function cleanUpAllESP()
+    for part, highlight in pairs(espHighlights) do
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+    
+    for part, connection in pairs(espConnections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    
+    espHighlights = {}
+    espConnections = {}
 end
 
 -- ==================== FUNGSI PARTS YANG DIPERBAIKI ====================
@@ -778,7 +914,7 @@ local function updatePartsList()
     
     for _, partData in ipairs(filteredParts) do
         local partItem = Instance.new("Frame")
-        partItem.Size = UDim2.new(1, 0, 0, 50)
+        partItem.Size = UDim2.new(1, 0, 0, 60)
         partItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         partItem.Parent = PartsListScroll
         
@@ -788,7 +924,7 @@ local function updatePartsList()
         
         -- Nama Part
         local partName = Instance.new("TextLabel")
-        partName.Size = UDim2.new(0.7, 0, 0.4, 0)
+        partName.Size = UDim2.new(0.7, 0, 0.33, 0)
         partName.Position = UDim2.new(0, 5, 0, 0)
         partName.BackgroundTransparency = 1
         partName.Text = partData.Name
@@ -801,8 +937,8 @@ local function updatePartsList()
         
         -- Parent Part
         local partParent = Instance.new("TextLabel")
-        partParent.Size = UDim2.new(0.7, 0, 0.3, 0)
-        partParent.Position = UDim2.new(0, 5, 0.4, 0)
+        partParent.Size = UDim2.new(0.7, 0, 0.33, 0)
+        partParent.Position = UDim2.new(0, 5, 0.33, 0)
         partParent.BackgroundTransparency = 1
         partParent.Text = "Parent: " .. partData.Parent
         partParent.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -814,8 +950,8 @@ local function updatePartsList()
         
         -- Info Material/Collision
         local partInfo = Instance.new("TextLabel")
-        partInfo.Size = UDim2.new(0.7, 0, 0.3, 0)
-        partInfo.Position = UDim2.new(0, 5, 0.7, 0)
+        partInfo.Size = UDim2.new(0.7, 0, 0.34, 0)
+        partInfo.Position = UDim2.new(0, 5, 0.66, 0)
         partInfo.BackgroundTransparency = 1
         partInfo.Text = partData.Material .. " | Collide: " .. tostring(partData.CanCollide)
         partInfo.TextColor3 = Color3.fromRGB(150, 150, 150)
@@ -826,8 +962,8 @@ local function updatePartsList()
         
         -- Tombol Tween ke Part
         local tweenButton = Instance.new("TextButton")
-        tweenButton.Size = UDim2.new(0.25, 0, 0.7, 0)
-        tweenButton.Position = UDim2.new(0.72, 0, 0.15, 0)
+        tweenButton.Size = UDim2.new(0.2, 0, 0.5, 0)
+        tweenButton.Position = UDim2.new(0.72, 0, 0.1, 0)
         tweenButton.Text = "Tween"
         tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -838,6 +974,33 @@ local function updatePartsList()
         local tweenButtonCorner = Instance.new("UICorner")
         tweenButtonCorner.CornerRadius = UDim.new(0, 4)
         tweenButtonCorner.Parent = tweenButton
+        
+        -- Tombol ESP/UnESP
+        local espButton = Instance.new("TextButton")
+        espButton.Size = UDim2.new(0.2, 0, 0.5, 0)
+        espButton.Position = UDim2.new(0.72, 0, 0.1, 0)
+        espButton.Text = "ESP"
+        espButton.BackgroundColor3 = Color3.fromRGB(200, 120, 0)
+        espButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        espButton.Font = Enum.Font.Gotham
+        espButton.TextSize = 11
+        espButton.Visible = false
+        espButton.Parent = partItem
+        
+        local espButtonCorner = Instance.new("UICorner")
+        espButtonCorner.CornerRadius = UDim.new(0, 4)
+        espButtonCorner.Parent = espButton
+        
+        -- Cek apakah part ini sudah memiliki ESP aktif
+        if espHighlights[partData.Object] then
+            tweenButton.Visible = false
+            espButton.Visible = true
+            espButton.Text = "Un ESP"
+            espButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        else
+            tweenButton.Visible = true
+            espButton.Visible = false
+        end
         
         -- Event handler untuk tombol tween part
         tweenButton.MouseButton1Click:Connect(function()
@@ -884,7 +1047,28 @@ local function updatePartsList()
             end
         end)
         
-        -- Efek hover pada tombol
+        -- Event handler untuk tombol ESP
+        espButton.MouseButton1Click:Connect(function()
+            if espButton.Text == "ESP" then
+                -- Aktifkan ESP
+                if createESP(partData) then
+                    espButton.Text = "Un ESP"
+                    espButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+                    tweenButton.Visible = false
+                    espButton.Visible = true
+                end
+            else
+                -- Nonaktifkan ESP
+                if removeESP(partData) then
+                    espButton.Text = "ESP"
+                    espButton.BackgroundColor3 = Color3.fromRGB(200, 120, 0)
+                    tweenButton.Visible = true
+                    espButton.Visible = false
+                end
+            end
+        end)
+        
+        -- Efek hover pada tombol tween
         tweenButton.MouseEnter:Connect(function()
             TweenService:Create(
                 tweenButton,
@@ -901,7 +1085,40 @@ local function updatePartsList()
             ):Play()
         end)
         
-        contentHeight = contentHeight + 55
+        -- Efek hover pada tombol ESP
+        espButton.MouseEnter:Connect(function()
+            if espButton.Text == "ESP" then
+                TweenService:Create(
+                    espButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(180, 100, 0)}
+                ):Play()
+            else
+                TweenService:Create(
+                    espButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(180, 0, 0)}
+                ):Play()
+            end
+        end)
+        
+        espButton.MouseLeave:Connect(function()
+            if espButton.Text == "ESP" then
+                TweenService:Create(
+                    espButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(200, 120, 0)}
+                ):Play()
+            else
+                TweenService:Create(
+                    espButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(200, 0, 0)}
+                ):Play()
+            end
+        end)
+        
+        contentHeight = contentHeight + 65
     end
     
     PartsListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
@@ -1191,6 +1408,41 @@ local function setWaypoint()
     end
 end
 
+-- ==================== FUNGSI DESTROY SCRIPT ====================
+local function destroyScript()
+    -- Bersihkan semua fungsi aktif
+    cleanUpFly()
+    cleanUpFloat()
+    cleanUpHead()
+    cleanUpAllESP()
+    
+    -- Hapus semua koneksi event
+    if playerAddedConn then
+        playerAddedConn:Disconnect()
+    end
+    
+    if playerRemovingConn then
+        playerRemovingConn:Disconnect()
+    end
+    
+    if characterAddedConn then
+        characterAddedConn:Disconnect()
+    end
+    
+    -- Hancurkan GUI
+    if ScreenGui then
+        ScreenGui:Destroy()
+    end
+    
+    -- Notifikasi
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Milky Menu",
+        Text = "Script telah dihancurkan",
+        Duration = 3
+    })
+end
+
+-- ==================== EVENT HANDLERS ====================
 -- Event handling untuk drag
 FloatingButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -1524,31 +1776,39 @@ PartsRibbon.MouseButton1Click:Connect(function()
     switchRibbon("Parts")
 end)
 
--- Popup Controls
-FloatingButton.MouseButton1Click:Connect(function()
-    PopupFrame.Visible = true
-    PopupFrame.Size = UDim2.new(0, 0, 0, 0)
-    PopupFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    
-    updatePlayerList()
-    
-    TweenService:Create(
-        PopupFrame,
-        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 400), Position = UDim2.new(0.5, -150, 0.5, -200)}
-    ):Play()
-end)
+-- ==================== POPUP CONTROLS YANG DIPERBAIKI ====================
+local function togglePopup()
+    if PopupFrame.Visible then
+        -- Tutup popup dengan animasi
+        TweenService:Create(
+            PopupFrame,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
+        ):Play()
+        
+        wait(0.2)
+        PopupFrame.Visible = false
+    else
+        -- Buka popup dengan animasi
+        PopupFrame.Visible = true
+        PopupFrame.Size = UDim2.new(0, 0, 0, 0)
+        PopupFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+        
+        updatePlayerList()
+        
+        TweenService:Create(
+            PopupFrame,
+            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+            {Size = UDim2.new(0, 300, 0, 400), Position = UDim2.new(0.5, -150, 0.5, -200)}
+        ):Play()
+    end
+end
 
-CloseButton.MouseButton1Click:Connect(function()
-    TweenService:Create(
-        PopupFrame,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-        {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
-    ):Play()
-    
-    wait(0.2)
-    PopupFrame.Visible = false
-end)
+-- Event handler untuk floating button (toggle popup)
+FloatingButton.MouseButton1Click:Connect(togglePopup)
+
+-- Event handler untuk close button (destroy script)
+CloseButton.MouseButton1Click:Connect(destroyScript)
 
 -- Efek hover pada floating button
 FloatingButton.MouseEnter:Connect(function()
@@ -1740,43 +2000,14 @@ end
 
 characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
--- Fungsi untuk membersihkan semua event connections saat script dihentikan
-local function cleanup()
-    cleanUpFly()
-    cleanUpFloat()
-    cleanUpHead()
-    
-    if playerAddedConn then
-        playerAddedConn:Disconnect()
-        playerAddedConn = nil
-    end
-    
-    if playerRemovingConn then
-        playerRemovingConn:Disconnect()
-        playerRemovingConn = nil
-    end
-    
-    if characterAddedConn then
-        characterAddedConn:Disconnect()
-        characterAddedConn = nil
-    end
-end
-
--- Hubungkan event untuk cleanup
-ScreenGui.AncestryChanged:Connect(function()
-    if not ScreenGui.Parent then
-        cleanup()
-    end
-end)
-
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Menu dengan ribbon Utama, Tween, dan Parts interaktif telah dimuat!",
+    Text = "Menu dengan ESP dan fitur lengkap telah dimuat!",
     Duration = 5
 })
 
--- Pastikan fly, float, dan head dimatikan saat game dimatikan
+-- Pastikan semua fungsi dimatikan saat game dimatikan
 game:BindToClose(function()
-    cleanup()
+    destroyScript()
 end)
