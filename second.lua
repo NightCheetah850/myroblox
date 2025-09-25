@@ -1974,6 +1974,722 @@ PartsRibbon.MouseLeave:Connect(function()
     end
 end)
 
+-- ==================== RIBBON SCRIPT ====================
+
+-- Tambahkan ScriptRibbon setelah PartsRibbon
+local ScriptRibbon = Instance.new("TextButton")
+ScriptRibbon.Size = UDim2.new(0.25, 0, 1, 0) -- Diubah dari 0.334 menjadi 0.25 karena sekarang ada 4 ribbon
+ScriptRibbon.Position = UDim2.new(0.75, 0, 0, 0) -- Diubah dari 0.666 menjadi 0.75
+ScriptRibbon.Text = "Script"
+ScriptRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ScriptRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+ScriptRibbon.Font = Enum.Font.GothamBold
+ScriptRibbon.TextSize = 12
+ScriptRibbon.Parent = RibbonFrame
+
+-- Update ukuran ribbon yang lain karena sekarang ada 4 ribbon
+UtamaRibbon.Size = UDim2.new(0.25, 0, 1, 0) -- Diubah dari 0.333
+TweenRibbon.Size = UDim2.new(0.25, 0, 1, 0) -- Diubah dari 0.333
+TweenRibbon.Position = UDim2.new(0.25, 0, 0, 0) -- Diubah dari 0.333
+PartsRibbon.Size = UDim2.new(0.25, 0, 1, 0) -- Diubah dari 0.334
+PartsRibbon.Position = UDim2.new(0.5, 0, 0, 0) -- Diubah dari 0.666
+
+-- Script Content
+local ScriptContent = Instance.new("Frame")
+ScriptContent.Size = UDim2.new(1, 0, 1, 0)
+ScriptContent.Position = UDim2.new(0, 0, 0, 0)
+ScriptContent.BackgroundTransparency = 1
+ScriptContent.Visible = false
+ScriptContent.Parent = ContentFrame
+
+-- Info Game
+local GameInfoFrame = Instance.new("Frame")
+GameInfoFrame.Size = UDim2.new(0, 260, 0, 60)
+GameInfoFrame.Position = UDim2.new(0, 20, 0, 10)
+GameInfoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+GameInfoFrame.Parent = ScriptContent
+
+local GameInfoCorner = Instance.new("UICorner")
+GameInfoCorner.CornerRadius = UDim.new(0, 6)
+GameInfoCorner.Parent = GameInfoFrame
+
+local GameIcon = Instance.new("ImageLabel")
+GameIcon.Size = UDim2.new(0, 50, 0, 50)
+GameIcon.Position = UDim2.new(0, 5, 0, 5)
+GameIcon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+GameIcon.Image = "rbxasset://textures/ui/LuaApp/icons/ic-game.png"
+GameIcon.Parent = GameInfoFrame
+
+local GameIconCorner = Instance.new("UICorner")
+GameIconCorner.CornerRadius = UDim.new(0, 6)
+GameIconCorner.Parent = GameIcon
+
+local GameNameLabel = Instance.new("TextLabel")
+GameNameLabel.Size = UDim2.new(0, 195, 0, 25)
+GameNameLabel.Position = UDim2.new(0, 60, 0, 5)
+GameNameLabel.BackgroundTransparency = 1
+GameNameLabel.Text = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+GameNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+GameNameLabel.Font = Enum.Font.GothamBold
+GameNameLabel.TextSize = 14
+GameNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+GameNameLabel.TextTruncate = Enum.TextTruncate.AtEnd
+GameNameLabel.Parent = GameInfoFrame
+
+local GameIdLabel = Instance.new("TextLabel")
+GameIdLabel.Size = UDim2.new(0, 195, 0, 25)
+GameIdLabel.Position = UDim2.new(0, 60, 0, 30)
+GameIdLabel.BackgroundTransparency = 1
+GameIdLabel.Text = "Place ID: " .. game.PlaceId
+GameIdLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+GameIdLabel.Font = Enum.Font.Gotham
+GameIdLabel.TextSize = 12
+GameIdLabel.TextXAlignment = Enum.TextXAlignment.Left
+GameIdLabel.Parent = GameInfoFrame
+
+-- Pencarian Script
+local ScriptSearchFrame = Instance.new("Frame")
+ScriptSearchFrame.Size = UDim2.new(0, 260, 0, 30)
+ScriptSearchFrame.Position = UDim2.new(0, 20, 0, 80)
+ScriptSearchFrame.BackgroundTransparency = 1
+ScriptSearchFrame.Parent = ScriptContent
+
+local ScriptSearchLabel = Instance.new("TextLabel")
+ScriptSearchLabel.Size = UDim2.new(0, 80, 1, 0)
+ScriptSearchLabel.Position = UDim2.new(0, 0, 0, 0)
+ScriptSearchLabel.BackgroundTransparency = 1
+ScriptSearchLabel.Text = "Cari Script:"
+ScriptSearchLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ScriptSearchLabel.Font = Enum.Font.Gotham
+ScriptSearchLabel.TextSize = 14
+ScriptSearchLabel.TextXAlignment = Enum.TextXAlignment.Left
+ScriptSearchLabel.Parent = ScriptSearchFrame
+
+local ScriptSearchBox = Instance.new("TextBox")
+ScriptSearchBox.Size = UDim2.new(0, 150, 1, 0)
+ScriptSearchBox.Position = UDim2.new(0, 80, 0, 0)
+ScriptSearchBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ScriptSearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ScriptSearchBox.Font = Enum.Font.Gotham
+ScriptSearchBox.TextSize = 14
+ScriptSearchBox.Text = ""
+ScriptSearchBox.PlaceholderText = "Kata kunci script..."
+ScriptSearchBox.Parent = ScriptSearchFrame
+
+local ScriptSearchCorner = Instance.new("UICorner")
+ScriptSearchCorner.CornerRadius = UDim.new(0, 6)
+ScriptSearchCorner.Parent = ScriptSearchBox
+
+-- Tombol Refresh Script
+local RefreshScriptButton = Instance.new("TextButton")
+RefreshScriptButton.Size = UDim2.new(0, 80, 0, 30)
+RefreshScriptButton.Position = UDim2.new(0, 20, 0, 120)
+RefreshScriptButton.Text = "Refresh Script"
+RefreshScriptButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+RefreshScriptButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+RefreshScriptButton.Font = Enum.Font.Gotham
+RefreshScriptButton.TextSize = 12
+RefreshScriptButton.Parent = ScriptContent
+
+local RefreshScriptCorner = Instance.new("UICorner")
+RefreshScriptCorner.CornerRadius = UDim.new(0, 6)
+RefreshScriptCorner.Parent = RefreshScriptButton
+
+-- Status Script
+local ScriptStatusLabel = Instance.new("TextLabel")
+ScriptStatusLabel.Size = UDim2.new(0, 200, 0, 20)
+ScriptStatusLabel.Position = UDim2.new(0, 110, 0, 125)
+ScriptStatusLabel.BackgroundTransparency = 1
+ScriptStatusLabel.Text = "Total Script: 0"
+ScriptStatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+ScriptStatusLabel.Font = Enum.Font.Gotham
+ScriptStatusLabel.TextSize = 12
+ScriptStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+ScriptStatusLabel.Parent = ScriptContent
+
+-- Daftar Script
+local ScriptListFrame = Instance.new("Frame")
+ScriptListFrame.Size = UDim2.new(0, 260, 0, 230)
+ScriptListFrame.Position = UDim2.new(0, 20, 0, 160)
+ScriptListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ScriptListFrame.Parent = ScriptContent
+
+local ScriptListCorner = Instance.new("UICorner")
+ScriptListCorner.CornerRadius = UDim.new(0, 6)
+ScriptListCorner.Parent = ScriptListFrame
+
+local ScriptListLabel = Instance.new("TextLabel")
+ScriptListLabel.Size = UDim2.new(1, 0, 0, 20)
+ScriptListLabel.Position = UDim2.new(0, 0, 0, 0)
+ScriptListLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ScriptListLabel.Text = "Daftar Script untuk Game Ini"
+ScriptListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ScriptListLabel.Font = Enum.Font.Gotham
+ScriptListLabel.TextSize = 14
+ScriptListLabel.Parent = ScriptListFrame
+
+local ScriptListLabelCorner = Instance.new("UICorner")
+ScriptListLabelCorner.CornerRadius = UDim.new(0, 6)
+ScriptListLabelCorner.Parent = ScriptListLabel
+
+local ScriptListScroll = Instance.new("ScrollingFrame")
+ScriptListScroll.Size = UDim2.new(1, -10, 1, -30)
+ScriptListScroll.Position = UDim2.new(0, 5, 0, 25)
+ScriptListScroll.BackgroundTransparency = 1
+ScriptListScroll.ScrollBarThickness = 5
+ScriptListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScriptListScroll.Parent = ScriptListFrame
+
+local ScriptListLayout = Instance.new("UIListLayout")
+ScriptListLayout.Padding = UDim.new(0, 5)
+ScriptListLayout.Parent = ScriptListScroll
+
+-- Variabel untuk script functionality
+local allScripts = {}
+local filteredScripts = {}
+local scriptCache = {}
+
+-- ==================== FUNGSI SCRIPT ====================
+
+-- Fungsi untuk mengambil script dari API ScriptBlox
+local function fetchScriptsFromAPI()
+    local placeId = game.PlaceId
+    local apiUrl = "https://scriptblox.com/api/script/fetch?q=placeId:" .. placeId .. "&max=50"
+    
+    ScriptStatusLabel.Text = "Mengambil script..."
+    
+    local success, result = pcall(function()
+        return game:GetService("HttpService"):GetAsync(apiUrl)
+    end)
+    
+    if success then
+        local data = game:GetService("HttpService"):JSONDecode(result)
+        allScripts = {}
+        
+        if data and data.result and data.result.scripts then
+            for _, scriptData in ipairs(data.result.scripts) do
+                table.insert(allScripts, {
+                    title = scriptData.title or "No Title",
+                    script = scriptData.script or "",
+                    game = scriptData.game or {name = "Unknown"},
+                    views = scriptData.views or 0,
+                    likes = scriptData.likes or 0,
+                    verified = scriptData.verified or false,
+                    patched = scriptData.patched or false
+                })
+            end
+            
+            ScriptStatusLabel.Text = "Script ditemukan: " .. #allScripts
+        else
+            ScriptStatusLabel.Text = "Tidak ada script ditemukan"
+        end
+    else
+        ScriptStatusLabel.Text = "Error mengambil script"
+        -- Fallback: script contoh untuk demo
+        allScripts = {
+            {
+                title = "Auto Farm Example",
+                script = "print('Auto Farm Script Loaded')",
+                game = {name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name},
+                views = 1000,
+                likes = 50,
+                verified = true,
+                patched = false
+            },
+            {
+                title = "ESP Players",
+                script = "print('ESP Script Loaded')",
+                game = {name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name},
+                views = 500,
+                likes = 25,
+                verified = false,
+                patched = false
+            }
+        }
+        ScriptStatusLabel.Text = "Demo Script: " .. #allScripts
+    end
+    
+    -- Filter script berdasarkan pencarian
+    filterScripts(ScriptSearchBox.Text)
+    updateScriptList()
+end
+
+-- Fungsi untuk memfilter script berdasarkan pencarian
+local function filterScripts(searchText)
+    filteredScripts = {}
+    
+    if searchText == "" or searchText == nil then
+        for i, script in ipairs(allScripts) do
+            filteredScripts[i] = script
+        end
+    else
+        local searchLower = string.lower(searchText)
+        for _, script in ipairs(allScripts) do
+            if string.find(string.lower(script.title), searchLower) then
+                table.insert(filteredScripts, script)
+            end
+        end
+    end
+    
+    return #filteredScripts
+end
+
+-- Fungsi untuk mengeksekusi script
+local function executeScript(scriptContent, scriptTitle)
+    local success, errorMessage = pcall(function()
+        -- Coba load string sebagai script
+        local loadedFunction = loadstring(scriptContent)
+        if loadedFunction then
+            loadedFunction()
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Script Executed",
+                Text = scriptTitle .. " berhasil dijalankan!",
+                Duration = 3
+            })
+        else
+            error("Gagal memuat script")
+        end
+    end)
+    
+    if not success then
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Script Error",
+            Text = "Gagal menjalankan script: " .. errorMessage,
+            Duration = 5
+        })
+    end
+end
+
+-- Fungsi untuk memperbarui daftar script di GUI
+local function updateScriptList()
+    for _, child in ipairs(ScriptListScroll:GetChildren()) do
+        if child:IsA("Frame") then
+            child:Destroy()
+        end
+    end
+    
+    local contentHeight = 0
+    
+    for _, scriptData in ipairs(filteredScripts) do
+        local scriptItem = Instance.new("Frame")
+        scriptItem.Size = UDim2.new(1, 0, 0, 80)
+        scriptItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        scriptItem.Parent = ScriptListScroll
+        
+        local scriptItemCorner = Instance.new("UICorner")
+        scriptItemCorner.CornerRadius = UDim.new(0, 4)
+        scriptItemCorner.Parent = scriptItem
+        
+        -- Judul Script
+        local scriptTitle = Instance.new("TextLabel")
+        scriptTitle.Size = UDim2.new(0.9, 0, 0.3, 0)
+        scriptTitle.Position = UDim2.new(0, 5, 0, 0)
+        scriptTitle.BackgroundTransparency = 1
+        scriptTitle.Text = scriptData.title
+        scriptTitle.TextColor3 = scriptData.verified and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+        scriptTitle.Font = Enum.Font.GothamBold
+        scriptTitle.TextSize = 12
+        scriptTitle.TextXAlignment = Enum.TextXAlignment.Left
+        scriptTitle.TextTruncate = Enum.TextTruncate.AtEnd
+        scriptTitle.Parent = scriptItem
+        
+        -- Status Verified
+        if scriptData.verified then
+            local verifiedBadge = Instance.new("TextLabel")
+            verifiedBadge.Size = UDim2.new(0.1, 0, 0.3, 0)
+            verifiedBadge.Position = UDim2.new(0.9, 0, 0, 0)
+            verifiedBadge.BackgroundTransparency = 1
+            verifiedBadge.Text = "✓"
+            verifiedBadge.TextColor3 = Color3.fromRGB(0, 255, 0)
+            verifiedBadge.Font = Enum.Font.GothamBold
+            verifiedBadge.TextSize = 12
+            verifiedBadge.Parent = scriptItem
+        end
+        
+        -- Info Game
+        local gameInfo = Instance.new("TextLabel")
+        gameInfo.Size = UDim2.new(0.9, 0, 0.25, 0)
+        gameInfo.Position = UDim2.new(0, 5, 0.3, 0)
+        gameInfo.BackgroundTransparency = 1
+        gameInfo.Text = "Game: " .. scriptData.game.name
+        gameInfo.TextColor3 = Color3.fromRGB(200, 200, 200)
+        gameInfo.Font = Enum.Font.Gotham
+        gameInfo.TextSize = 10
+        gameInfo.TextXAlignment = Enum.TextXAlignment.Left
+        gameInfo.TextTruncate = Enum.TextTruncate.AtEnd
+        gameInfo.Parent = scriptItem
+        
+        -- Stats (Views & Likes)
+        local statsInfo = Instance.new("TextLabel")
+        statsInfo.Size = UDim2.new(0.9, 0, 0.25, 0)
+        statsInfo.Position = UDim2.new(0, 5, 0.55, 0)
+        statsInfo.BackgroundTransparency = 1
+        statsInfo.Text = "👁 " .. scriptData.views .. " | ❤ " .. scriptData.likes
+        statsInfo.TextColor3 = Color3.fromRGB(150, 150, 150)
+        statsInfo.Font = Enum.Font.Gotham
+        statsInfo.TextSize = 10
+        statsInfo.TextXAlignment = Enum.TextXAlignment.Left
+        statsInfo.Parent = scriptItem
+        
+        -- Status Patched
+        local statusInfo = Instance.new("TextLabel")
+        statusInfo.Size = UDim2.new(0.9, 0, 0.2, 0)
+        statusInfo.Position = UDim2.new(0, 5, 0.8, 0)
+        statusInfo.BackgroundTransparency = 1
+        statusInfo.Text = scriptData.patched and "⚠ PATCHED" or "✅ WORKING"
+        statusInfo.TextColor3 = scriptData.patched and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
+        statusInfo.Font = Enum.Font.GothamBold
+        statusInfo.TextSize = 10
+        statusInfo.TextXAlignment = Enum.TextXAlignment.Left
+        statusInfo.Parent = scriptItem
+        
+        -- Container untuk tombol
+        local buttonContainer = Instance.new("Frame")
+        buttonContainer.Size = UDim2.new(0.3, 0, 0.6, 0)
+        buttonContainer.Position = UDim2.new(0.7, 0, 0.2, 0)
+        buttonContainer.BackgroundTransparency = 1
+        buttonContainer.Parent = scriptItem
+
+        -- Tombol Play Script
+        local playButton = Instance.new("TextButton")
+        playButton.Size = UDim2.new(0.9, 0, 0.45, 0)
+        playButton.Position = UDim2.new(0.05, 0, 0, 0)
+        playButton.Text = "Play"
+        playButton.BackgroundColor3 = scriptData.patched and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 200, 0)
+        playButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playButton.Font = Enum.Font.GothamBold
+        playButton.TextSize = 12
+        playButton.AutoButtonColor = not scriptData.patched
+        playButton.Parent = buttonContainer
+        
+        local playButtonCorner = Instance.new("UICorner")
+        playButtonCorner.CornerRadius = UDim.new(0, 4)
+        playButtonCorner.Parent = playButton
+        
+        -- Tombol View Code
+        local viewButton = Instance.new("TextButton")
+        viewButton.Size = UDim2.new(0.9, 0, 0.45, 0)
+        viewButton.Position = UDim2.new(0.05, 0, 0.55, 0)
+        viewButton.Text = "View Code"
+        viewButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        viewButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        viewButton.Font = Enum.Font.Gotham
+        viewButton.TextSize = 10
+        viewButton.Parent = buttonContainer
+        
+        local viewButtonCorner = Instance.new("UICorner")
+        viewButtonCorner.CornerRadius = UDim.new(0, 4)
+        viewButtonCorner.Parent = viewButton
+        
+        -- Event handler untuk tombol play
+        playButton.MouseButton1Click:Connect(function()
+            if not scriptData.patched then
+                executeScript(scriptData.script, scriptData.title)
+                
+                -- Feedback visual
+                playButton.Text = "Executing..."
+                playButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+                
+                wait(1)
+                playButton.Text = "Play"
+                playButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+            else
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Script Patched",
+                    Text = "Script ini sudah tidak bekerja!",
+                    Duration = 3
+                })
+            end
+        end)
+        
+        -- Event handler untuk tombol view code (modal sederhana)
+        viewButton.MouseButton1Click:Connect(function()
+            -- Buat modal untuk menampilkan kode
+            local codeModal = Instance.new("Frame")
+            codeModal.Size = UDim2.new(0, 400, 0, 300)
+            codeModal.Position = UDim2.new(0.5, -200, 0.5, -150)
+            codeModal.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            codeModal.BorderSizePixel = 0
+            codeModal.ZIndex = 10
+            codeModal.Parent = ScriptContent
+            
+            local codeModalCorner = Instance.new("UICorner")
+            codeModalCorner.CornerRadius = UDim.new(0, 12)
+            codeModalCorner.Parent = codeModal
+            
+            local titleBar = Instance.new("Frame")
+            titleBar.Size = UDim2.new(1, 0, 0, 40)
+            titleBar.Position = UDim2.new(0, 0, 0, 0)
+            titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+            titleBar.Parent = codeModal
+            
+            local titleLabel = Instance.new("TextLabel")
+            titleLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            titleLabel.Position = UDim2.new(0, 10, 0, 0)
+            titleLabel.BackgroundTransparency = 1
+            titleLabel.Text = "Kode: " .. scriptData.title
+            titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            titleLabel.Font = Enum.Font.GothamBold
+            titleLabel.TextSize = 14
+            titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            titleLabel.Parent = titleBar
+            
+            local closeButton = Instance.new("TextButton")
+            closeButton.Size = UDim2.new(0, 30, 0, 30)
+            closeButton.Position = UDim2.new(1, -35, 0, 5)
+            closeButton.Text = "X"
+            closeButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+            closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            closeButton.Font = Enum.Font.GothamBold
+            closeButton.TextSize = 14
+            closeButton.Parent = titleBar
+            
+            local closeCorner = Instance.new("UICorner")
+            closeCorner.CornerRadius = UDim.new(1, 0)
+            closeCorner.Parent = closeButton
+            
+            local codeScroll = Instance.new("ScrollingFrame")
+            codeScroll.Size = UDim2.new(1, -20, 1, -60)
+            codeScroll.Position = UDim2.new(0, 10, 0, 50)
+            codeScroll.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            codeScroll.ScrollBarThickness = 8
+            codeScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+            codeScroll.Parent = codeModal
+            
+            local codeText = Instance.new("TextLabel")
+            codeText.Size = UDim2.new(1, -10, 1, -10)
+            codeText.Position = UDim2.new(0, 5, 0, 5)
+            codeText.BackgroundTransparency = 1
+            codeText.Text = scriptData.script
+            codeText.TextColor3 = Color3.fromRGB(200, 200, 200)
+            codeText.Font = Enum.Font.Code
+            codeText.TextSize = 10
+            codeText.TextXAlignment = Enum.TextXAlignment.Left
+            codeText.TextYAlignment = Enum.TextYAlignment.Top
+            codeText.TextWrapped = false
+            codeText.TextTruncate = Enum.TextTruncate.None
+            codeText.Parent = codeScroll
+            
+            -- Hitung tinggi teks untuk canvas size
+            local lineCount = select(2, string.gsub(scriptData.script, "\n", "")) + 1
+            codeScroll.CanvasSize = UDim2.new(0, 0, 0, lineCount * 15)
+            
+            -- Tombol copy
+            local copyButton = Instance.new("TextButton")
+            copyButton.Size = UDim2.new(0, 100, 0, 30)
+            copyButton.Position = UDim2.new(0.5, -50, 1, -40)
+            copyButton.Text = "Copy Code"
+            copyButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+            copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            copyButton.Font = Enum.Font.Gotham
+            copyButton.TextSize = 12
+            copyButton.Parent = codeModal
+            
+            local copyCorner = Instance.new("UICorner")
+            copyCorner.CornerRadius = UDim.new(0, 6)
+            copyCorner.Parent = copyButton
+            
+            -- Event handlers untuk modal
+            closeButton.MouseButton1Click:Connect(function()
+                codeModal:Destroy()
+            end)
+            
+            copyButton.MouseButton1Click:Connect(function()
+                -- Untuk copy text, kita bisa set ke clipboard (jika supported) atau beri notifikasi
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Copy Code",
+                    Text = "Kode telah disalin ke clipboard!",
+                    Duration = 3
+                })
+            end)
+        end)
+        
+        -- Efek hover pada tombol
+        if not scriptData.patched then
+            playButton.MouseEnter:Connect(function()
+                TweenService:Create(
+                    playButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(0, 180, 0)}
+                ):Play()
+            end)
+            
+            playButton.MouseLeave:Connect(function()
+                TweenService:Create(
+                    playButton,
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+                ):Play()
+            end)
+        end
+        
+        viewButton.MouseEnter:Connect(function()
+            TweenService:Create(
+                viewButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+            ):Play()
+        end)
+        
+        viewButton.MouseLeave:Connect(function()
+            TweenService:Create(
+                viewButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+            ):Play()
+        end)
+        
+        contentHeight = contentHeight + 85
+    end
+    
+    ScriptListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+end
+
+-- ==================== UPDATE FUNGSI SWITCH RIBBON ====================
+
+local function switchRibbon(ribbonName)
+    if ribbonName == "Utama" then
+        UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        PartsRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        PartsRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        ScriptRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        ScriptRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        UtamaContent.Visible = true
+        TweenContent.Visible = false
+        PartsContent.Visible = false
+        ScriptContent.Visible = false
+    elseif ribbonName == "Tween" then
+        UtamaRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        UtamaRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        TweenRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        TweenRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        PartsRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        PartsRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        ScriptRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        ScriptRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        UtamaContent.Visible = false
+        TweenContent.Visible = true
+        PartsContent.Visible = false
+        ScriptContent.Visible = false
+        
+        updateWaypointList()
+    elseif ribbonName == "Parts" then
+        UtamaRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        UtamaRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        PartsRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        PartsRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ScriptRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        ScriptRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        UtamaContent.Visible = false
+        TweenContent.Visible = false
+        PartsContent.Visible = true
+        ScriptContent.Visible = false
+        
+        if #allParts == 0 then
+            loadAndDisplayParts()
+        else
+            local displayedParts = filterParts(PartsSearchBox.Text)
+            PartsInfoLabel.Text = "Parts Interaktif: " .. #allParts .. " | Ditampilkan: " .. displayedParts
+            updatePartsList()
+        end
+    else -- Script
+        UtamaRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        UtamaRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        PartsRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        PartsRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
+        ScriptRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        ScriptRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
+        UtamaContent.Visible = false
+        TweenContent.Visible = false
+        PartsContent.Visible = false
+        ScriptContent.Visible = true
+        
+        if #allScripts == 0 then
+            fetchScriptsFromAPI()
+        else
+            local displayedScripts = filterScripts(ScriptSearchBox.Text)
+            ScriptStatusLabel.Text = "Total Script: " .. #allScripts .. " | Ditampilkan: " .. displayedScripts
+            updateScriptList()
+        end
+    end
+end
+
+-- ==================== EVENT HANDLERS SCRIPT ====================
+
+-- Event handler untuk ScriptRibbon
+ScriptRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Script")
+end)
+
+-- Event handler untuk pencarian script
+ScriptSearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local displayedScripts = filterScripts(ScriptSearchBox.Text)
+    ScriptStatusLabel.Text = "Total Script: " .. #allScripts .. " | Ditampilkan: " .. displayedScripts
+    updateScriptList()
+end)
+
+-- Event handler untuk tombol refresh script
+RefreshScriptButton.MouseButton1Click:Connect(function()
+    fetchScriptsFromAPI()
+    
+    TweenService:Create(
+        RefreshScriptButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 150, 0)}
+    ):Play()
+    wait(0.3)
+    TweenService:Create(
+        RefreshScriptButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
+-- Efek hover untuk ScriptRibbon
+ScriptRibbon.MouseEnter:Connect(function()
+    if ScriptContent.Visible == false then
+        TweenService:Create(
+            ScriptRibbon,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+        ):Play()
+    end
+end)
+
+ScriptRibbon.MouseLeave:Connect(function()
+    if ScriptContent.Visible == false then
+        TweenService:Create(
+            ScriptRibbon,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+        ):Play()
+    end
+end)
+
+-- Efek hover untuk tombol refresh script
+RefreshScriptButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        RefreshScriptButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+RefreshScriptButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        RefreshScriptButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
 -- Deteksi ketika pemain bergabung atau keluar
 local playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
 local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
