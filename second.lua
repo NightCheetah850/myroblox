@@ -960,32 +960,38 @@ local function updatePartsList()
         partInfo.TextXAlignment = Enum.TextXAlignment.Left
         partInfo.Parent = partItem
         
+        -- Container untuk tombol
+        local buttonContainer = Instance.new("Frame")
+        buttonContainer.Size = UDim2.new(0.3, 0, 1, 0)
+        buttonContainer.Position = UDim2.new(0.7, 0, 0, 0)
+        buttonContainer.BackgroundTransparency = 1
+        buttonContainer.Parent = partItem
+
         -- Tombol Tween ke Part
         local tweenButton = Instance.new("TextButton")
-        tweenButton.Size = UDim2.new(0.2, 0, 0.5, 0)
-        tweenButton.Position = UDim2.new(0.72, 0, 0.1, 0)
+        tweenButton.Size = UDim2.new(0.45, 0, 0.4, 0)
+        tweenButton.Position = UDim2.new(0.05, 0, 0.1, 0)
         tweenButton.Text = "Tween"
         tweenButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         tweenButton.Font = Enum.Font.Gotham
-        tweenButton.TextSize = 11
-        tweenButton.Parent = partItem
+        tweenButton.TextSize = 10
+        tweenButton.Parent = buttonContainer
         
         local tweenButtonCorner = Instance.new("UICorner")
         tweenButtonCorner.CornerRadius = UDim.new(0, 4)
         tweenButtonCorner.Parent = tweenButton
         
-        -- Tombol ESP/UnESP
+        -- Tombol ESP/UnESP - TOMBOL INI YANG DITAMBAHKAN
         local espButton = Instance.new("TextButton")
-        espButton.Size = UDim2.new(0.2, 0, 0.5, 0)
-        espButton.Position = UDim2.new(0.72, 0, 0.1, 0)
+        espButton.Size = UDim2.new(0.45, 0, 0.4, 0)
+        espButton.Position = UDim2.new(0.5, 0, 0.1, 0)
         espButton.Text = "ESP"
         espButton.BackgroundColor3 = Color3.fromRGB(200, 120, 0)
         espButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         espButton.Font = Enum.Font.Gotham
-        espButton.TextSize = 11
-        espButton.Visible = false
-        espButton.Parent = partItem
+        espButton.TextSize = 10
+        espButton.Parent = buttonContainer
         
         local espButtonCorner = Instance.new("UICorner")
         espButtonCorner.CornerRadius = UDim.new(0, 4)
@@ -993,13 +999,8 @@ local function updatePartsList()
         
         -- Cek apakah part ini sudah memiliki ESP aktif
         if espHighlights[partData.Object] then
-            tweenButton.Visible = false
-            espButton.Visible = true
             espButton.Text = "Un ESP"
             espButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-        else
-            tweenButton.Visible = true
-            espButton.Visible = false
         end
         
         -- Event handler untuk tombol tween part
@@ -1047,23 +1048,19 @@ local function updatePartsList()
             end
         end)
         
-        -- Event handler untuk tombol ESP
+        -- Event handler untuk tombol ESP - INI YANG DITAMBAHKAN
         espButton.MouseButton1Click:Connect(function()
             if espButton.Text == "ESP" then
                 -- Aktifkan ESP
                 if createESP(partData) then
                     espButton.Text = "Un ESP"
                     espButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-                    tweenButton.Visible = false
-                    espButton.Visible = true
                 end
             else
                 -- Nonaktifkan ESP
                 if removeESP(partData) then
                     espButton.Text = "ESP"
                     espButton.BackgroundColor3 = Color3.fromRGB(200, 120, 0)
-                    tweenButton.Visible = true
-                    espButton.Visible = false
                 end
             end
         end)
@@ -1085,7 +1082,7 @@ local function updatePartsList()
             ):Play()
         end)
         
-        -- Efek hover pada tombol ESP
+        -- Efek hover pada tombol ESP - INI YANG DITAMBAHKAN
         espButton.MouseEnter:Connect(function()
             if espButton.Text == "ESP" then
                 TweenService:Create(
