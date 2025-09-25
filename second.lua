@@ -982,7 +982,7 @@ local function updatePartsList()
         tweenButtonCorner.CornerRadius = UDim.new(0, 4)
         tweenButtonCorner.Parent = tweenButton
         
-        -- Tombol ESP/UnESP - TOMBOL INI YANG DITAMBAHKAN
+        -- Tombol ESP/UnESP
         local espButton = Instance.new("TextButton")
         espButton.Size = UDim2.new(0.45, 0, 0.4, 0)
         espButton.Position = UDim2.new(0.5, 0, 0.1, 0)
@@ -1048,7 +1048,7 @@ local function updatePartsList()
             end
         end)
         
-        -- Event handler untuk tombol ESP - INI YANG DITAMBAHKAN
+        -- Event handler untuk tombol ESP
         espButton.MouseButton1Click:Connect(function()
             if espButton.Text == "ESP" then
                 -- Aktifkan ESP
@@ -1082,7 +1082,7 @@ local function updatePartsList()
             ):Play()
         end)
         
-        -- Efek hover pada tombol ESP - INI YANG DITAMBAHKAN
+        -- Efek hover pada tombol ESP
         espButton.MouseEnter:Connect(function()
             if espButton.Text == "ESP" then
                 TweenService:Create(
