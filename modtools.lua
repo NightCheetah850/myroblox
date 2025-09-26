@@ -1,642 +1,44 @@
--- Floating Menu Currency Editor dengan GUI Milky Style
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
+-- LocalScript: Tempatkan di StarterPlayerScripts
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local HttpService = game:GetService("HttpService")
-local CoreGui = game:GetService("CoreGui")
+local player = Players.LocalPlayer
 
--- Main GUI dengan ZIndex tinggi agar tampil di atas UI lain
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "CurrencyEditor_" .. HttpService:GenerateGUID(false):sub(1, 8)
-ScreenGui.Parent = CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 9999
-
--- Floating Button (Lingkaran) dengan ZIndex tinggi
-local FloatingButton = Instance.new("TextButton")
-FloatingButton.Size = UDim2.new(0, 60, 0, 60)
-FloatingButton.Position = UDim2.new(0, 100, 0, 100)
-FloatingButton.Text = "💰"
-FloatingButton.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
-FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatingButton.Font = Enum.Font.GothamBold
-FloatingButton.TextSize = 20
-FloatingButton.AutoButtonColor = false
-FloatingButton.Active = true
-FloatingButton.Draggable = false
-FloatingButton.Selectable = false
-FloatingButton.ZIndex = 10000
-FloatingButton.Parent = ScreenGui
-
--- Membuat bentuk lingkaran
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(1, 0)
-UICorner.Parent = FloatingButton
-
--- ==================== POPUP KONFIRMASI ====================
-local ConfirmPopup = Instance.new("Frame")
-ConfirmPopup.Size = UDim2.new(0, 300, 0, 150)
-ConfirmPopup.Position = UDim2.new(0.5, -150, 0.5, -75)
-ConfirmPopup.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ConfirmPopup.BorderSizePixel = 0
-ConfirmPopup.Visible = false
-ConfirmPopup.ZIndex = 10010
-ConfirmPopup.Parent = ScreenGui
-
-local ConfirmCorner = Instance.new("UICorner")
-ConfirmCorner.CornerRadius = UDim.new(0, 12)
-ConfirmCorner.Parent = ConfirmPopup
-
-local ConfirmTitle = Instance.new("TextLabel")
-ConfirmTitle.Size = UDim2.new(1, 0, 0, 40)
-ConfirmTitle.Position = UDim2.new(0, 0, 0, 0)
-ConfirmTitle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-ConfirmTitle.Text = "Konfirmasi Penutupan"
-ConfirmTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-ConfirmTitle.Font = Enum.Font.GothamBold
-ConfirmTitle.TextSize = 16
-ConfirmTitle.ZIndex = 10011
-ConfirmTitle.Parent = ConfirmPopup
-
-local ConfirmTitleCorner = Instance.new("UICorner")
-ConfirmTitleCorner.CornerRadius = UDim.new(0, 12)
-ConfirmTitleCorner.Parent = ConfirmTitle
-
-local ConfirmMessage = Instance.new("TextLabel")
-ConfirmMessage.Size = UDim2.new(1, -20, 0, 50)
-ConfirmMessage.Position = UDim2.new(0, 10, 0, 45)
-ConfirmMessage.BackgroundTransparency = 1
-ConfirmMessage.Text = "Apakah Anda yakin ingin menutup menu?"
-ConfirmMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
-ConfirmMessage.Font = Enum.Font.Gotham
-ConfirmMessage.TextSize = 14
-ConfirmMessage.TextWrapped = true
-ConfirmMessage.ZIndex = 10011
-ConfirmMessage.Parent = ConfirmPopup
-
-local ConfirmYesButton = Instance.new("TextButton")
-ConfirmYesButton.Size = UDim2.new(0, 100, 0, 35)
-ConfirmYesButton.Position = UDim2.new(0, 40, 1, -50)
-ConfirmYesButton.Text = "Ya"
-ConfirmYesButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
-ConfirmYesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ConfirmYesButton.Font = Enum.Font.GothamBold
-ConfirmYesButton.TextSize = 14
-ConfirmYesButton.ZIndex = 10011
-ConfirmYesButton.Parent = ConfirmPopup
-
-local ConfirmYesCorner = Instance.new("UICorner")
-ConfirmYesCorner.CornerRadius = UDim.new(0, 6)
-ConfirmYesCorner.Parent = ConfirmYesButton
-
-local ConfirmNoButton = Instance.new("TextButton")
-ConfirmNoButton.Size = UDim2.new(0, 100, 0, 35)
-ConfirmNoButton.Position = UDim2.new(1, -140, 1, -50)
-ConfirmNoButton.Text = "Tidak"
-ConfirmNoButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-ConfirmNoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ConfirmNoButton.Font = Enum.Font.GothamBold
-ConfirmNoButton.TextSize = 14
-ConfirmNoButton.ZIndex = 10011
-ConfirmNoButton.Parent = ConfirmPopup
-
-local ConfirmNoCorner = Instance.new("UICorner")
-ConfirmNoCorner.CornerRadius = UDim.new(0, 6)
-ConfirmNoCorner.Parent = ConfirmNoButton
-
--- ==================== MAIN POPUP WINDOW ====================
-local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 350, 0, 500)
-PopupFrame.Position = UDim2.new(0.5, -175, 0.5, -250)
-PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-PopupFrame.BorderSizePixel = 0
-PopupFrame.Visible = false
-PopupFrame.ZIndex = 10000
-PopupFrame.Parent = ScreenGui
-
-local PopupCorner = Instance.new("UICorner")
-PopupCorner.CornerRadius = UDim.new(0, 12)
-PopupCorner.Parent = PopupFrame
-
--- Header
-local HeaderFrame = Instance.new("Frame")
-HeaderFrame.Size = UDim2.new(1, 0, 0, 40)
-HeaderFrame.Position = UDim2.new(0, 0, 0, 0)
-HeaderFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-HeaderFrame.BorderSizePixel = 0
-HeaderFrame.ZIndex = 10001
-HeaderFrame.Parent = PopupFrame
-
-local HeaderCorner = Instance.new("UICorner")
-HeaderCorner.CornerRadius = UDim.new(0, 12)
-HeaderCorner.Parent = HeaderFrame
-
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Size = UDim2.new(0.7, 0, 1, 0)
-TitleLabel.Position = UDim2.new(0, 10, 0, 0)
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "💰 Currency Editor"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.TextSize = 16
-TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-TitleLabel.ZIndex = 10002
-TitleLabel.Parent = HeaderFrame
-
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 25, 0, 25)
-CloseButton.Position = UDim2.new(1, -30, 0, 7)
-CloseButton.Text = "×"
-CloseButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextSize = 18
-CloseButton.ZIndex = 10003
-CloseButton.Parent = PopupFrame
-
-local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(1, 0)
-CloseCorner.Parent = CloseButton
-
--- Content Area
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Size = UDim2.new(1, 0, 1, -40)
-ContentFrame.Position = UDim2.new(0, 0, 0, 40)
-ContentFrame.BackgroundTransparency = 1
-ContentFrame.ZIndex = 10001
-ContentFrame.Parent = PopupFrame
-
--- ==================== CURRENCY DETECTION SECTION ====================
-local DetectionFrame = Instance.new("Frame")
-DetectionFrame.Size = UDim2.new(1, -20, 0, 120)
-DetectionFrame.Position = UDim2.new(0, 10, 0, 10)
-DetectionFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-DetectionFrame.ZIndex = 10002
-DetectionFrame.Parent = ContentFrame
-
-local DetectionCorner = Instance.new("UICorner")
-DetectionCorner.CornerRadius = UDim.new(0, 6)
-DetectionCorner.Parent = DetectionFrame
-
-local DetectionLabel = Instance.new("TextLabel")
-DetectionLabel.Size = UDim2.new(1, 0, 0, 25)
-DetectionLabel.Position = UDim2.new(0, 0, 0, 0)
-DetectionLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-DetectionLabel.Text = "Deteksi Currency Otomatis"
-DetectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-DetectionLabel.Font = Enum.Font.GothamBold
-DetectionLabel.TextSize = 14
-DetectionLabel.ZIndex = 10003
-DetectionLabel.Parent = DetectionFrame
-
-local DetectionLabelCorner = Instance.new("UICorner")
-DetectionLabelCorner.CornerRadius = UDim.new(0, 6)
-DetectionLabelCorner.Parent = DetectionLabel
-
-local AutoDetectButton = Instance.new("TextButton")
-AutoDetectButton.Size = UDim2.new(0, 120, 0, 30)
-AutoDetectButton.Position = UDim2.new(0.5, -60, 0, 35)
-AutoDetectButton.Text = "🔍 Deteksi Otomatis"
-AutoDetectButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-AutoDetectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-AutoDetectButton.Font = Enum.Font.Gotham
-AutoDetectButton.TextSize = 12
-AutoDetectButton.ZIndex = 10002
-AutoDetectButton.Parent = DetectionFrame
-
-local AutoDetectCorner = Instance.new("UICorner")
-AutoDetectCorner.CornerRadius = UDim.new(0, 6)
-AutoDetectCorner.Parent = AutoDetectButton
-
-local DetectionStatus = Instance.new("TextLabel")
-DetectionStatus.Size = UDim2.new(1, -10, 0, 40)
-DetectionStatus.Position = UDim2.new(0, 5, 0, 75)
-DetectionStatus.BackgroundTransparency = 1
-DetectionStatus.Text = "Tekan tombol untuk memindai currency"
-DetectionStatus.TextColor3 = Color3.fromRGB(200, 200, 200)
-DetectionStatus.Font = Enum.Font.Gotham
-DetectionStatus.TextSize = 11
-DetectionStatus.TextWrapped = true
-DetectionStatus.TextXAlignment = Enum.TextXAlignment.Left
-DetectionStatus.ZIndex = 10002
-DetectionStatus.Parent = DetectionFrame
-
--- ==================== MANUAL CURRENCY INPUT ====================
-local ManualFrame = Instance.new("Frame")
-ManualFrame.Size = UDim2.new(1, -20, 0, 150)
-ManualFrame.Position = UDim2.new(0, 10, 0, 140)
-ManualFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-ManualFrame.ZIndex = 10002
-ManualFrame.Parent = ContentFrame
-
-local ManualCorner = Instance.new("UICorner")
-ManualCorner.CornerRadius = UDim.new(0, 6)
-ManualCorner.Parent = ManualFrame
-
-local ManualLabel = Instance.new("TextLabel")
-ManualLabel.Size = UDim2.new(1, 0, 0, 25)
-ManualLabel.Position = UDim2.new(0, 0, 0, 0)
-ManualLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-ManualLabel.Text = "Input Manual Currency"
-ManualLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-ManualLabel.Font = Enum.Font.GothamBold
-ManualLabel.TextSize = 14
-ManualLabel.ZIndex = 10003
-ManualLabel.Parent = ManualFrame
-
-local ManualLabelCorner = Instance.new("UICorner")
-ManualLabelCorner.CornerRadius = UDim.new(0, 6)
-ManualLabelCorner.Parent = ManualLabel
-
--- Currency Name Input
-local CurrencyNameFrame = Instance.new("Frame")
-CurrencyNameFrame.Size = UDim2.new(1, -20, 0, 30)
-CurrencyNameFrame.Position = UDim2.new(0, 10, 0, 35)
-CurrencyNameFrame.BackgroundTransparency = 1
-CurrencyNameFrame.ZIndex = 10002
-CurrencyNameFrame.Parent = ManualFrame
-
-local CurrencyNameLabel = Instance.new("TextLabel")
-CurrencyNameLabel.Size = UDim2.new(0, 100, 1, 0)
-CurrencyNameLabel.Position = UDim2.new(0, 0, 0, 0)
-CurrencyNameLabel.BackgroundTransparency = 1
-CurrencyNameLabel.Text = "Nama Currency:"
-CurrencyNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CurrencyNameLabel.Font = Enum.Font.Gotham
-CurrencyNameLabel.TextSize = 12
-CurrencyNameLabel.TextXAlignment = Enum.TextXAlignment.Left
-CurrencyNameLabel.ZIndex = 10002
-CurrencyNameLabel.Parent = CurrencyNameFrame
-
-local CurrencyNameBox = Instance.new("TextBox")
-CurrencyNameBox.Size = UDim2.new(0, 200, 1, 0)
-CurrencyNameBox.Position = UDim2.new(0, 105, 0, 0)
-CurrencyNameBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-CurrencyNameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-CurrencyNameBox.Font = Enum.Font.Gotham
-CurrencyNameBox.TextSize = 12
-CurrencyNameBox.PlaceholderText = "Contoh: Coins, Gold, Money"
-CurrencyNameBox.ZIndex = 10002
-CurrencyNameBox.Parent = CurrencyNameFrame
-
-local CurrencyNameCorner = Instance.new("UICorner")
-CurrencyNameCorner.CornerRadius = UDim.new(0, 4)
-CurrencyNameCorner.Parent = CurrencyNameBox
-
--- Currency Value Input
-local CurrencyValueFrame = Instance.new("Frame")
-CurrencyValueFrame.Size = UDim2.new(1, -20, 0, 30)
-CurrencyValueFrame.Position = UDim2.new(0, 10, 0, 75)
-CurrencyValueFrame.BackgroundTransparency = 1
-CurrencyValueFrame.ZIndex = 10002
-CurrencyValueFrame.Parent = ManualFrame
-
-local CurrencyValueLabel = Instance.new("TextLabel")
-CurrencyValueLabel.Size = UDim2.new(0, 100, 1, 0)
-CurrencyValueLabel.Position = UDim2.new(0, 0, 0, 0)
-CurrencyValueLabel.BackgroundTransparency = 1
-CurrencyValueLabel.Text = "Nilai Baru:"
-CurrencyValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CurrencyValueLabel.Font = Enum.Font.Gotham
-CurrencyValueLabel.TextSize = 12
-CurrencyValueLabel.TextXAlignment = Enum.TextXAlignment.Left
-CurrencyValueLabel.ZIndex = 10002
-CurrencyValueLabel.Parent = CurrencyValueFrame
-
-local CurrencyValueBox = Instance.new("TextBox")
-CurrencyValueBox.Size = UDim2.new(0, 120, 1, 0)
-CurrencyValueBox.Position = UDim2.new(0, 105, 0, 0)
-CurrencyValueBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-CurrencyValueBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-CurrencyValueBox.Font = Enum.Font.Gotham
-CurrencyValueBox.TextSize = 12
-CurrencyValueBox.PlaceholderText = "999999"
-CurrencyValueBox.ZIndex = 10002
-CurrencyValueBox.Parent = CurrencyValueFrame
-
-local CurrencyValueCorner = Instance.new("UICorner")
-CurrencyValueCorner.CornerRadius = UDim.new(0, 4)
-CurrencyValueCorner.Parent = CurrencyValueBox
-
-local SetCurrencyButton = Instance.new("TextButton")
-SetCurrencyButton.Size = UDim2.new(0, 60, 1, 0)
-SetCurrencyButton.Position = UDim2.new(1, -60, 0, 0)
-SetCurrencyButton.Text = "Set"
-SetCurrencyButton.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
-SetCurrencyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-SetCurrencyButton.Font = Enum.Font.GothamBold
-SetCurrencyButton.TextSize = 12
-SetCurrencyButton.ZIndex = 10002
-SetCurrencyButton.Parent = CurrencyValueFrame
-
-local SetCurrencyCorner = Instance.new("UICorner")
-SetCurrencyCorner.CornerRadius = UDim.new(0, 4)
-SetCurrencyCorner.Parent = SetCurrencyButton
-
--- ==================== QUICK PRESETS ====================
-local PresetsFrame = Instance.new("Frame")
-PresetsFrame.Size = UDim2.new(1, -20, 0, 80)
-PresetsFrame.Position = UDim2.new(0, 10, 0, 300)
-PresetsFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-PresetsFrame.ZIndex = 10002
-PresetsFrame.Parent = ContentFrame
-
-local PresetsCorner = Instance.new("UICorner")
-PresetsCorner.CornerRadius = UDim.new(0, 6)
-PresetsCorner.Parent = PresetsFrame
-
-local PresetsLabel = Instance.new("TextLabel")
-PresetsLabel.Size = UDim2.new(1, 0, 0, 25)
-PresetsLabel.Position = UDim2.new(0, 0, 0, 0)
-PresetsLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-PresetsLabel.Text = "Preset Cepat"
-PresetsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-PresetsLabel.Font = Enum.Font.GothamBold
-PresetsLabel.TextSize = 14
-PresetsLabel.ZIndex = 10003
-PresetsLabel.Parent = PresetsFrame
-
-local PresetsLabelCorner = Instance.new("UICorner")
-PresetsLabelCorner.CornerRadius = UDim.new(0, 6)
-PresetsLabelCorner.Parent = PresetsLabel
-
-local PresetButtonsFrame = Instance.new("Frame")
-PresetButtonsFrame.Size = UDim2.new(1, -10, 0, 40)
-PresetButtonsFrame.Position = UDim2.new(0, 5, 0, 35)
-PresetButtonsFrame.BackgroundTransparency = 1
-PresetButtonsFrame.ZIndex = 10002
-PresetButtonsFrame.Parent = PresetsFrame
-
-local Preset1k = Instance.new("TextButton")
-Preset1k.Size = UDim2.new(0, 60, 0, 30)
-Preset1k.Position = UDim2.new(0, 0, 0, 0)
-Preset1k.Text = "1K"
-Preset1k.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-Preset1k.TextColor3 = Color3.fromRGB(255, 255, 255)
-Preset1k.Font = Enum.Font.Gotham
-Preset1k.TextSize = 12
-Preset1k.ZIndex = 10002
-Preset1k.Parent = PresetButtonsFrame
-
-local Preset1kCorner = Instance.new("UICorner")
-Preset1kCorner.CornerRadius = UDim.new(0, 4)
-Preset1kCorner.Parent = Preset1k
-
-local Preset10k = Instance.new("TextButton")
-Preset10k.Size = UDim2.new(0, 60, 0, 30)
-Preset10k.Position = UDim2.new(0, 65, 0, 0)
-Preset10k.Text = "10K"
-Preset10k.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-Preset10k.TextColor3 = Color3.fromRGB(255, 255, 255)
-Preset10k.Font = Enum.Font.Gotham
-Preset10k.TextSize = 12
-Preset10k.ZIndex = 10002
-Preset10k.Parent = PresetButtonsFrame
-
-local Preset10kCorner = Instance.new("UICorner")
-Preset10kCorner.CornerRadius = UDim.new(0, 4)
-Preset10kCorner.Parent = Preset10k
-
-local Preset100k = Instance.new("TextButton")
-Preset100k.Size = UDim2.new(0, 60, 0, 30)
-Preset100k.Position = UDim2.new(0, 130, 0, 0)
-Preset100k.Text = "100K"
-Preset100k.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-Preset100k.TextColor3 = Color3.fromRGB(255, 255, 255)
-Preset100k.Font = Enum.Font.Gotham
-Preset100k.TextSize = 12
-Preset100k.ZIndex = 10002
-Preset100k.Parent = PresetButtonsFrame
-
-local Preset100kCorner = Instance.new("UICorner")
-Preset100kCorner.CornerRadius = UDim.new(0, 4)
-Preset100kCorner.Parent = Preset100k
-
-local Preset1m = Instance.new("TextButton")
-Preset1m.Size = UDim2.new(0, 60, 0, 30)
-Preset1m.Position = UDim2.new(0, 195, 0, 0)
-Preset1m.Text = "1M"
-Preset1m.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-Preset1m.TextColor3 = Color3.fromRGB(255, 255, 255)
-Preset1m.Font = Enum.Font.Gotham
-Preset1m.TextSize = 12
-Preset1m.ZIndex = 10002
-Preset1m.Parent = PresetButtonsFrame
-
-local Preset1mCorner = Instance.new("UICorner")
-Preset1mCorner.CornerRadius = UDim.new(0, 4)
-Preset1mCorner.Parent = Preset1m
-
--- ==================== STATUS LOG ====================
-local LogFrame = Instance.new("Frame")
-LogFrame.Size = UDim2.new(1, -20, 0, 80)
-LogFrame.Position = UDim2.new(0, 10, 0, 390)
-LogFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-LogFrame.ZIndex = 10002
-LogFrame.Parent = ContentFrame
-
-local LogCorner = Instance.new("UICorner")
-LogCorner.CornerRadius = UDim.new(0, 6)
-LogCorner.Parent = LogFrame
-
-local LogLabel = Instance.new("TextLabel")
-LogLabel.Size = UDim2.new(1, 0, 0, 25)
-LogLabel.Position = UDim2.new(0, 0, 0, 0)
-LogLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-LogLabel.Text = "Log Status"
-LogLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-LogLabel.Font = Enum.Font.GothamBold
-LogLabel.TextSize = 14
-LogLabel.ZIndex = 10003
-LogLabel.Parent = LogFrame
-
-local LogLabelCorner = Instance.new("UICorner")
-LogLabelCorner.CornerRadius = UDim.new(0, 6)
-LogLabelCorner.Parent = LogLabel
-
-local LogText = Instance.new("TextLabel")
-LogText.Size = UDim2.new(1, -10, 1, -30)
-LogText.Position = UDim2.new(0, 5, 0, 30)
-LogText.BackgroundTransparency = 1
-LogText.Text = "Selamat datang! Gunakan deteksi otomatis atau input manual."
-LogText.TextColor3 = Color3.fromRGB(200, 200, 200)
-LogText.Font = Enum.Font.Gotham
-LogText.TextSize = 11
-LogText.TextWrapped = true
-LogText.TextXAlignment = Enum.TextXAlignment.Left
-LogText.TextYAlignment = Enum.TextYAlignment.Top
-LogText.ZIndex = 10002
-LogText.Parent = LogFrame
-
--- ==================== VARIABEL ====================
-local dragging = false
-local dragInput, dragStart, startPos
-local detectedCurrencies = {}
-
--- ==================== FUNGSI POPUP KONFIRMASI ====================
-local function showConfirmPopup()
-    ConfirmPopup.Visible = true
-    ConfirmPopup.Size = UDim2.new(0, 0, 0, 0)
-    ConfirmPopup.Position = UDim2.new(0.5, 0, 0.5, 0)
+-- Deteksi sistem currency
+local function detectCurrencySystem()
+    local currencyData = {
+        currencies = {},
+        earningMethods = {},
+        remoteEvents = {}
+    }
     
-    TweenService:Create(
-        ConfirmPopup,
-        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 150), Position = UDim2.new(0.5, -150, 0.5, -75)}
-    ):Play()
-end
-
-local function hideConfirmPopup()
-    TweenService:Create(
-        ConfirmPopup,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-        {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
-    ):Play()
+    print("🔍 Memindai sistem currency...")
     
-    wait(0.2)
-    ConfirmPopup.Visible = false
-end
-
--- ==================== FUNGSI UTAMA ====================
-local function update(input)
-    local delta = input.Position - dragStart
-    FloatingButton.Position = UDim2.new(
-        startPos.X.Scale, 
-        startPos.X.Offset + delta.X, 
-        startPos.Y.Scale, 
-        startPos.Y.Offset + delta.Y
-    )
-end
-
-local function addLog(message, color)
-    if not color then color = Color3.fromRGB(200, 200, 200) end
-    LogText.Text = "[" .. os.date("%H:%M:%S") .. "] " .. message .. "\n" .. LogText.Text
-end
-
-local function detectCurrencies()
-    detectedCurrencies = {}
-    addLog("Memindai currency...", Color3.fromRGB(255, 255, 0))
-    
-    -- Cari di leaderstats (tempat paling umum)
-    local player = Players.LocalPlayer
-    if player:FindFirstChild("leaderstats") then
-        local leaderstats = player.leaderstats
-        for _, child in pairs(leaderstats:GetChildren()) do
-            if child:IsA("IntValue") or child:IsA("NumberValue") or child:IsA("StringValue") then
-                table.insert(detectedCurrencies, {
-                    Name = child.Name,
-                    Value = child.Value,
-                    Object = child,
-                    Type = "leaderstats"
-                })
-            end
-        end
-    end
-    
-    -- Cari di folder lain yang mungkin
-    local commonFolders = {"Stats", "Currency", "Money", "Data", "PlayerData"}
-    for _, folderName in pairs(commonFolders) do
-        if player:FindFirstChild(folderName) then
-            local folder = player[folderName]
-            for _, child in pairs(folder:GetChildren()) do
-                if child:IsA("IntValue") or child:IsA("NumberValue") or child:IsA("StringValue") then
-                    table.insert(detectedCurrencies, {
-                        Name = child.Name,
-                        Value = child.Value,
-                        Object = child,
-                        Type = folderName
-                    })
-                end
-            end
-        end
-    end
-    
-    -- Cari di ReplicatedStorage (beberapa game menyimpan data di sini)
-    if game:GetService("ReplicatedStorage"):FindFirstChild("PlayerData") then
-        local playerData = game:GetService("ReplicatedStorage").PlayerData
-        if playerData:FindFirstChild(player.Name) then
-            local playerFolder = playerData[player.Name]
-            for _, child in pairs(playerFolder:GetChildren()) do
-                if child:IsA("IntValue") or child:IsA("NumberValue") or child:IsA("StringValue") then
-                    table.insert(detectedCurrencies, {
-                        Name = child.Name,
-                        Value = child.Value,
-                        Object = child,
-                        Type = "ReplicatedStorage"
-                    })
-                end
-            end
-        end
-    end
-    
-    if #detectedCurrencies > 0 then
-        local message = "Ditemukan " .. #detectedCurrencies .. " currency:\n"
-        for i, currency in ipairs(detectedCurrencies) do
-            message = message .. "- " .. currency.Name .. " (" .. currency.Type .. "): " .. tostring(currency.Value) .. "\n"
-        end
-        addLog(message, Color3.fromRGB(0, 255, 0))
+    -- 1. Deteksi Currency Values di Player
+    local function findCurrencies()
+        local locations = {
+            player,
+            player:WaitForChild("leaderstats"),
+            player:FindFirstChild("Data"),
+            player:FindFirstChild("Stats"),
+            player:FindFirstChild("Currency"),
+            player:FindFirstChild("PlayerData")
+        }
         
-        -- Auto-fill yang pertama ke input box
-        if detectedCurrencies[1] then
-            CurrencyNameBox.Text = detectedCurrencies[1].Name
-            CurrencyValueBox.Text = tostring(detectedCurrencies[1].Value)
-        end
-    else
-        addLog("Tidak ditemukan currency. Gunakan input manual.", Color3.fromRGB(255, 100, 100))
-    end
-end
-
-local function setCurrencyValue(currencyName, newValue)
-    local success = false
-    local valueType = typeof(newValue)
-    
-    -- Coba ubah di semua lokasi yang terdeteksi
-    for _, currency in pairs(detectedCurrencies) do
-        if currency.Name:lower() == currencyName:lower() then
-            if currency.Object and currency.Object.Parent then
-                if valueType == "number" then
-                    currency.Object.Value = newValue
-                    success = true
-                    addLog("Berhasil mengubah " .. currencyName .. " menjadi " .. newValue, Color3.fromRGB(0, 255, 0))
-                    break
-                end
-            end
-        end
-    end
-    
-    -- Jika tidak ditemukan di detected, coba cari manual
-    if not success then
-        local player = Players.LocalPlayer
-        
-        -- Cari di leaderstats
-        if player:FindFirstChild("leaderstats") then
-            local leaderstats = player.leaderstats
-            if leaderstats:FindFirstChild(currencyName) then
-                local currencyObj = leaderstats[currencyName]
-                if valueType == "number" then
-                    currencyObj.Value = newValue
-                    success = true
-                    addLog("Berhasil mengubah " .. currencyName .. " menjadi " .. newValue, Color3.fromRGB(0, 255, 0))
-                end
-            end
-        end
-        
-        -- Cari di folder umum lainnya
-        if not success then
-            local commonFolders = {"Stats", "Currency", "Money", "Data", "PlayerData"}
-            for _, folderName in pairs(commonFolders) do
-                if player:FindFirstChild(folderName) then
-                    local folder = player[folderName]
-                    if folder:FindFirstChild(currencyName) then
-                        local currencyObj = folder[currencyName]
-                        if valueType == "number" then
-                            currencyObj.Value = newValue
-                            success = true
-                            addLog("Berhasil mengubah " .. currencyName .. " menjadi " .. newValue, Color3.fromRGB(0, 255, 0))
-                            break
+        for _, location in pairs(locations) do
+            if location then
+                for _, child in pairs(location:GetChildren()) do
+                    if child:IsA("IntValue") or child:IsA("NumberValue") or child:IsA("StringValue") then
+                        if not string.find(child.Name:lower(), "level") and 
+                           not string.find(child.Name:lower(), "exp") then
+                            
+                            table.insert(currencyData.currencies, {
+                                name = child.Name,
+                                value = child.Value,
+                                object = child,
+                                location = location.Name
+                            })
+                            print("✅ Currency ditemukan: " .. child.Name .. " di " .. location.Name)
                         end
                     end
                 end
@@ -644,288 +46,439 @@ local function setCurrencyValue(currencyName, newValue)
         end
     end
     
-    if not success then
-        addLog("Gagal mengubah " .. currencyName .. ". Currency tidak ditemukan.", Color3.fromRGB(255, 100, 100))
+    -- 2. Deteksi RemoteEvents untuk earning currency
+    local function findEarningRemotes()
+        local remoteFolders = {
+            ReplicatedStorage,
+            ReplicatedStorage:FindFirstChild("Remotes"),
+            ReplicatedStorage:FindFirstChild("Events"),
+            ReplicatedStorage:FindFirstChild("RemoteEvents")
+        }
+        
+        for _, folder in pairs(remoteFolders) do
+            if folder then
+                for _, item in pairs(folder:GetChildren()) do
+                    if item:IsA("RemoteEvent") or item:IsA("RemoteFunction") then
+                        local nameLower = item.Name:lower()
+                        
+                        -- Deteksi berdasarkan nama event
+                        if string.find(nameLower, "coin") or 
+                           string.find(nameLower, "money") or 
+                           string.find(nameLower, "currency") or
+                           string.find(nameLower, "reward") or
+                           string.find(nameLower, "collect") or
+                           string.find(nameLower, "earn") or
+                           string.find(nameLower, "claim") then
+                            
+                            table.insert(currencyData.remoteEvents, {
+                                name = item.Name,
+                                object = item,
+                                type = item.ClassName
+                            })
+                            print("✅ RemoteEvent earning: " .. item.Name)
+                        end
+                    end
+                end
+            end
+        end
     end
     
-    return success
-end
-
-local function applyPresetValue(value)
-    local currencyName = CurrencyNameBox.Text
-    if currencyName and currencyName ~= "" then
-        CurrencyValueBox.Text = tostring(value)
-        setCurrencyValue(currencyName, value)
-    else
-        addLog("Masukkan nama currency terlebih dahulu!", Color3.fromRGB(255, 100, 100))
+    -- 3. Deteksi Interaksi yang menghasilkan currency
+    local function findEarningInteractions()
+        -- Deteksi ClickDetectors di workspace
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("ClickDetector") then
+                local parentName = obj.Parent.Name:lower()
+                if string.find(parentName, "coin") or 
+                   string.find(parentName, "money") or 
+                   string.find(parentName, "chest") or
+                   string.find(parentName, "reward") then
+                    
+                    table.insert(currencyData.earningMethods, {
+                        type = "ClickDetector",
+                        name = obj.Parent.Name,
+                        object = obj,
+                        description = "Klik objek " .. obj.Parent.Name
+                    })
+                    print("✅ Earning method: ClickDetector - " .. obj.Parent.Name)
+                end
+            end
+            
+            -- Deteksi ProximityPrompts
+            if obj:IsA("ProximityPrompt") then
+                local parentName = obj.Parent.Name:lower()
+                if string.find(parentName, "coin") or 
+                   string.find(parentName, "money") or 
+                   string.find(parentName, "quest") or
+                   string.find(parentName, "reward") then
+                    
+                    table.insert(currencyData.earningMethods, {
+                        type = "ProximityPrompt",
+                        name = obj.Parent.Name,
+                        object = obj,
+                        description = "Interaksi dengan " .. obj.Parent.Name
+                    })
+                    print("✅ Earning method: ProximityPrompt - " .. obj.Parent.Name)
+                end
+            end
+        end
     end
-end
-
--- ==================== FUNGSI DESTROY ====================
-local function destroyScript()
-    if ScreenGui then
-        ScreenGui:Destroy()
+    
+    -- 4. Deteksi GUI Buttons untuk claiming rewards
+    local function findGUIEarningMethods()
+        local gui = player:WaitForChild("PlayerGui")
+        for _, screenGui in pairs(gui:GetChildren()) do
+            if screenGui:IsA("ScreenGui") then
+                local function scanGUI(guiObject)
+                    for _, child in pairs(guiObject:GetChildren()) do
+                        if child:IsA("TextButton") or child:IsA("ImageButton") then
+                            local textLower = (child.Text or ""):lower()
+                            local nameLower = child.Name:lower()
+                            
+                            if string.find(textLower, "claim") or 
+                               string.find(textLower, "collect") or 
+                               string.find(textLower, "reward") or
+                               string.find(textLower, "earn") or
+                               string.find(nameLower, "claim") or
+                               string.find(nameLower, "collect") then
+                                
+                                table.insert(currencyData.earningMethods, {
+                                    type = "GUIButton",
+                                    name = child.Name,
+                                    object = child,
+                                    description = "Klik button: " .. (child.Text or child.Name)
+                                })
+                                print("✅ Earning method: GUI Button - " .. child.Name)
+                            end
+                        end
+                        scanGUI(child) -- Recursive scan
+                    end
+                end
+                scanGUI(screenGui)
+            end
+        end
     end
-    error("Script destroyed by user")
+    
+    -- Jalankan semua deteksi
+    findCurrencies()
+    findEarningRemotes()
+    findEarningInteractions()
+    findGUIEarningMethods()
+    
+    return currencyData
 end
 
--- ==================== EVENT HANDLERS ====================
--- Drag functionality
-FloatingButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = FloatingButton.Position
-        
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
+-- Fungsi untuk membuat GUI automation
+local function createAutomationGUI(currencyData)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "CurrencyAutomation"
+    screenGui.Parent = player.PlayerGui
+    
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 450, 0, 600)
+    mainFrame.Position = UDim2.new(0.5, -225, 0.5, -300)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    mainFrame.Parent = screenGui
+    
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 12)
+    UICorner.Parent = mainFrame
+    
+    -- Header
+    local header = Instance.new("Frame")
+    header.Size = UDim2.new(1, 0, 0, 60)
+    header.Position = UDim2.new(0, 0, 0, 0)
+    header.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    header.Parent = mainFrame
+    
+    local headerCorner = Instance.new("UICorner")
+    headerCorner.CornerRadius = UDim.new(0, 12)
+    headerCorner.Parent = header
+    
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 1, 0)
+    title.BackgroundTransparency = 1
+    title.Text = "🤖 CURRENCY AUTOMATION"
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 18
+    title.Parent = header
+    
+    -- Currency Display
+    local currencyFrame = Instance.new("Frame")
+    currencyFrame.Size = UDim2.new(1, -20, 0, 80)
+    currencyFrame.Position = UDim2.new(0, 10, 0, 70)
+    currencyFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    currencyFrame.Parent = mainFrame
+    
+    local currencyCorner = Instance.new("UICorner")
+    currencyCorner.CornerRadius = UDim.new(0, 8)
+    currencyCorner.Parent = currencyFrame
+    
+    local currencyTitle = Instance.new("TextLabel")
+    currencyTitle.Size = UDim2.new(1, 0, 0, 25)
+    currencyTitle.Position = UDim2.new(0, 10, 0, 5)
+    currencyTitle.BackgroundTransparency = 1
+    currencyTitle.Text = "💰 Currency Terdeteksi:"
+    currencyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    currencyTitle.Font = Enum.Font.GothamBold
+    currencyTitle.TextSize = 14
+    currencyTitle.TextXAlignment = Enum.TextXAlignment.Left
+    currencyTitle.Parent = currencyFrame
+    
+    local currencyList = Instance.new("TextLabel")
+    currencyList.Size = UDim2.new(1, -20, 0, 50)
+    currencyList.Position = UDim2.new(0, 10, 0, 30)
+    currencyList.BackgroundTransparency = 1
+    currencyList.Text = "Loading..."
+    currencyList.TextColor3 = Color3.fromRGB(200, 200, 200)
+    currencyList.Font = Enum.Font.Gotham
+    currencyList.TextSize = 12
+    currencyList.TextXAlignment = Enum.TextXAlignment.Left
+    currencyList.TextYAlignment = Enum.TextYAlignment.Top
+    currencyList.TextWrapped = true
+    currencyList.Parent = currencyFrame
+    
+    -- Update currency list
+    local currencyText = ""
+    for i, currency in ipairs(currencyData.currencies) do
+        if i <= 3 then -- Tampilkan maksimal 3
+            currencyText = currencyText .. "• " .. currency.name .. ": " .. tostring(currency.value) .. "\n"
+        end
+    end
+    if #currencyData.currencies > 3 then
+        currencyText = currencyText .. "... dan " .. (#currencyData.currencies - 3) .. " lainnya"
+    end
+    currencyList.Text = currencyText
+    
+    -- Earning Methods
+    local methodsFrame = Instance.new("Frame")
+    methodsFrame.Size = UDim2.new(1, -20, 0, 400)
+    methodsFrame.Position = UDim2.new(0, 10, 0, 160)
+    methodsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    methodsFrame.Parent = mainFrame
+    
+    local methodsCorner = Instance.new("UICorner")
+    methodsCorner.CornerRadius = UDim.new(0, 8)
+    methodsCorner.Parent = methodsFrame
+    
+    local methodsTitle = Instance.new("TextLabel")
+    methodsTitle.Size = UDim2.new(1, 0, 0, 30)
+    methodsTitle.Position = UDim2.new(0, 10, 0, 5)
+    methodsTitle.BackgroundTransparency = 1
+    methodsTitle.Text = "🎯 Metode Earning Terdeteksi:"
+    methodsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    methodsTitle.Font = Enum.Font.GothamBold
+    methodsTitle.TextSize = 14
+    methodsTitle.TextXAlignment = Enum.TextXAlignment.Left
+    methodsTitle.Parent = methodsFrame
+    
+    local scrollFrame = Instance.new("ScrollingFrame")
+    scrollFrame.Size = UDim2.new(1, -10, 0, 360)
+    scrollFrame.Position = UDim2.new(0, 5, 0, 40)
+    scrollFrame.BackgroundTransparency = 1
+    scrollFrame.ScrollBarThickness = 6
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scrollFrame.Parent = methodsFrame
+    
+    local listLayout = Instance.new("UIListLayout")
+    listLayout.Padding = UDim.new(0, 8)
+    listLayout.Parent = scrollFrame
+    
+    -- Auto-execute section
+    local autoFrame = Instance.new("Frame")
+    autoFrame.Size = UDim2.new(1, -20, 0, 80)
+    autoFrame.Position = UDim2.new(0, 10, 0, 570)
+    autoFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    autoFrame.Parent = mainFrame
+    
+    local autoCorner = Instance.new("UICorner")
+    autoCorner.CornerRadius = UDim.new(0, 8)
+    autoCorner.Parent = autoFrame
+    
+    local autoTitle = Instance.new("TextLabel")
+    autoTitle.Size = UDim2.new(1, 0, 0, 25)
+    autoTitle.Position = UDim2.new(0, 10, 0, 5)
+    autoTitle.BackgroundTransparency = 1
+    autoTitle.Text = "⚡ Auto-Execute:"
+    autoTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    autoTitle.Font = Enum.Font.GothamBold
+    autoTitle.TextSize = 14
+    autoTitle.TextXAlignment = Enum.TextXAlignment.Left
+    autoTitle.Parent = autoFrame
+    
+    local autoAllButton = Instance.new("TextButton")
+    autoAllButton.Size = UDim2.new(0.8, 0, 0, 35)
+    autoAllButton.Position = UDim2.new(0.1, 0, 0, 35)
+    autoAllButton.Text = "🚀 EXECUTE ALL METHODS"
+    autoAllButton.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
+    autoAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    autoAllButton.Font = Enum.Font.GothamBold
+    autoAllButton.TextSize = 12
+    autoAllButton.Parent = autoFrame
+    
+    local autoCornerBtn = Instance.new("UICorner")
+    autoCornerBtn.CornerRadius = UDim.new(0, 6)
+    autoCornerBtn.Parent = autoAllButton
+    
+    -- Fungsi untuk mengeksekusi metode earning
+    local function executeEarningMethod(method)
+        local success, message = pcall(function()
+            if method.type == "RemoteEvent" then
+                -- Fire RemoteEvent ke server
+                method.object:FireServer()
+                return "RemoteEvent fired: " .. method.name
+                
+            elseif method.type == "RemoteFunction" then
+                -- Invoke RemoteFunction
+                method.object:InvokeServer()
+                return "RemoteFunction invoked: " .. method.name
+                
+            elseif method.type == "ClickDetector" then
+                -- Simulate click
+                method.object:FireServer()
+                return "ClickDetector activated: " .. method.name
+                
+            elseif method.type == "ProximityPrompt" then
+                -- Trigger proximity prompt
+                method.object:InputHoldBegin()
+                task.wait(0.5)
+                method.object:InputHoldEnd()
+                return "ProximityPrompt triggered: " .. method.name
+                
+            elseif method.type == "GUIButton" then
+                -- Simulate button click
+                if method.object:IsA("TextButton") or method.object:IsA("ImageButton") then
+                    method.object:Fire("MouseButton1Click")
+                end
+                return "GUI Button clicked: " .. method.name
             end
         end)
-    end
-end)
-
-FloatingButton.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
-end)
-
--- Popup controls
-local function togglePopup()
-    if PopupFrame.Visible then
-        TweenService:Create(
-            PopupFrame,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-            {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
-        ):Play()
         
-        wait(0.2)
-        PopupFrame.Visible = false
-    else
-        PopupFrame.Visible = true
-        PopupFrame.Size = UDim2.new(0, 0, 0, 0)
-        PopupFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-        
-        TweenService:Create(
-            PopupFrame,
-            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-            {Size = UDim2.new(0, 350, 0, 500), Position = UDim2.new(0.5, -175, 0.5, -250)}
-        ):Play()
-    end
-end
-
--- Button events
-FloatingButton.MouseButton1Click:Connect(togglePopup)
-
-CloseButton.MouseButton1Click:Connect(showConfirmPopup)
-
-AutoDetectButton.MouseButton1Click:Connect(function()
-    detectCurrencies()
-    
-    TweenService:Create(
-        AutoDetectButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 150, 0)}
-    ):Play()
-    wait(0.3)
-    TweenService:Create(
-        AutoDetectButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-    ):Play()
-end)
-
-SetCurrencyButton.MouseButton1Click:Connect(function()
-    local currencyName = CurrencyNameBox.Text
-    local currencyValue = tonumber(CurrencyValueBox.Text)
-    
-    if currencyName and currencyName ~= "" and currencyValue then
-        setCurrencyValue(currencyName, currencyValue)
-        
-        TweenService:Create(
-            SetCurrencyButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-        ):Play()
-    else
-        addLog("Nama currency atau nilai tidak valid!", Color3.fromRGB(255, 100, 100))
-        TweenService:Create(
-            SetCurrencyButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(200, 0, 0)}
-        ):Play()
+        return success, success and message or "Error: " .. tostring(message)
     end
     
-    wait(0.3)
-    TweenService:Create(
-        SetCurrencyButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 180, 120)}
-    ):Play()
-end)
-
--- Preset buttons
-Preset1k.MouseButton1Click:Connect(function()
-    applyPresetValue(1000)
-end)
-
-Preset10k.MouseButton1Click:Connect(function()
-    applyPresetValue(10000)
-end)
-
-Preset100k.MouseButton1Click:Connect(function()
-    applyPresetValue(100000)
-end)
-
-Preset1m.MouseButton1Click:Connect(function()
-    applyPresetValue(1000000)
-end)
-
--- Confirm popup events
-ConfirmYesButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-    destroyScript()
-end)
-
-ConfirmNoButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-end)
-
--- Hover effects
-local function setupHoverEffects()
-    -- Floating button
-    FloatingButton.MouseEnter:Connect(function()
-        TweenService:Create(
-            FloatingButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 160, 100)}
-        ):Play()
-    end)
-    
-    FloatingButton.MouseLeave:Connect(function()
-        TweenService:Create(
-            FloatingButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 180, 120)}
-        ):Play()
-    end)
-    
-    -- Close button
-    CloseButton.MouseEnter:Connect(function()
-        TweenService:Create(
-            CloseButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
-        ):Play()
-    end)
-    
-    CloseButton.MouseLeave:Connect(function()
-        TweenService:Create(
-            CloseButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
-        ):Play()
-    end)
-    
-    -- Auto detect button
-    AutoDetectButton.MouseEnter:Connect(function()
-        TweenService:Create(
-            AutoDetectButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-        ):Play()
-    end)
-    
-    AutoDetectButton.MouseLeave:Connect(function()
-        TweenService:Create(
-            AutoDetectButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-        ):Play()
-    end)
-    
-    -- Set currency button
-    SetCurrencyButton.MouseEnter:Connect(function()
-        TweenService:Create(
-            SetCurrencyButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 200, 140)}
-        ):Play()
-    end)
-    
-    SetCurrencyButton.MouseLeave:Connect(function()
-        TweenService:Create(
-            SetCurrencyButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 180, 120)}
-        ):Play()
-    end)
-    
-    -- Preset buttons
-    local presetButtons = {Preset1k, Preset10k, Preset100k, Preset1m}
-    for _, button in ipairs(presetButtons) do
-        button.MouseEnter:Connect(function()
-            TweenService:Create(
-                button,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-            ):Play()
-        end)
+    -- Tambahkan methods ke scroll frame
+    for _, method in ipairs(currencyData.earningMethods) do
+        local methodFrame = Instance.new("Frame")
+        methodFrame.Size = UDim2.new(1, 0, 0, 60)
+        methodFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+        methodFrame.Parent = scrollFrame
         
-        button.MouseLeave:Connect(function()
-            TweenService:Create(
-                button,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-            ):Play()
+        local methodCorner = Instance.new("UICorner")
+        methodCorner.CornerRadius = UDim.new(0, 6)
+        methodCorner.Parent = methodFrame
+        
+        local methodDesc = Instance.new("TextLabel")
+        methodDesc.Size = UDim2.new(0.7, 0, 0.5, 0)
+        methodDesc.Position = UDim2.new(0, 10, 0, 5)
+        methodDesc.BackgroundTransparency = 1
+        methodDesc.Text = method.description
+        methodDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
+        methodDesc.Font = Enum.Font.Gotham
+        methodDesc.TextSize = 11
+        methodDesc.TextXAlignment = Enum.TextXAlignment.Left
+        methodDesc.Parent = methodFrame
+        
+        local methodType = Instance.new("TextLabel")
+        methodType.Size = UDim2.new(0.7, 0, 0.5, 0)
+        methodType.Position = UDim2.new(0, 10, 0.5, 0)
+        methodType.BackgroundTransparency = 1
+        methodType.Text = "Type: " .. method.type
+        methodType.TextColor3 = Color3.fromRGB(200, 200, 200)
+        methodType.Font = Enum.Font.Gotham
+        methodType.TextSize = 10
+        methodType.TextXAlignment = Enum.TextXAlignment.Left
+        methodType.Parent = methodFrame
+        
+        local executeBtn = Instance.new("TextButton")
+        executeBtn.Size = UDim2.new(0.25, 0, 0.6, 0)
+        executeBtn.Position = UDim2.new(0.73, 0, 0.2, 0)
+        executeBtn.Text = "EXECUTE"
+        executeBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        executeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        executeBtn.Font = Enum.Font.GothamBold
+        executeBtn.TextSize = 10
+        executeBtn.Parent = methodFrame
+        
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 4)
+        btnCorner.Parent = executeBtn
+        
+        executeBtn.MouseButton1Click:Connect(function()
+            executeBtn.Text = "⏳..."
+            executeBtn.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+            
+            local success, result = executeEarningMethod(method)
+            
+            if success then
+                executeBtn.Text = "✅ DONE"
+                executeBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+                print("✅ " .. result)
+            else
+                executeBtn.Text = "❌ ERROR"
+                executeBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+                warn("❌ " .. result)
+            end
+            
+            task.wait(1.5)
+            executeBtn.Text = "EXECUTE"
+            executeBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         end)
     end
     
-    -- Confirm buttons
-    ConfirmYesButton.MouseEnter:Connect(function()
-        TweenService:Create(
-            ConfirmYesButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
-        ):Play()
+    -- Auto-execute all function
+    autoAllButton.MouseButton1Click:Connect(function()
+        autoAllButton.Text = "⏳ EXECUTING..."
+        autoAllButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+        
+        local executed = 0
+        local errors = 0
+        
+        for _, method in ipairs(currencyData.earningMethods) do
+            local success, result = executeEarningMethod(method)
+            if success then
+                executed = executed + 1
+                print("✅ (" .. executed .. ") " .. result)
+            else
+                errors = errors + 1
+                warn("❌ (" .. errors .. ") " .. result)
+            end
+            task.wait(0.5) -- Delay antara eksekusi
+        end
+        
+        autoAllButton.Text = "✅ DONE: " .. executed .. " success, " .. errors .. " errors"
+        autoAllButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+        
+        task.wait(3)
+        autoAllButton.Text = "🚀 EXECUTE ALL METHODS"
+        autoAllButton.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
     end)
     
-    ConfirmYesButton.MouseLeave:Connect(function()
-        TweenService:Create(
-            ConfirmYesButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
-        ):Play()
-    end)
+    -- Update scroll frame size
+    local function updateScrollSize()
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
+    end
+    listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollSize)
+    updateScrollSize()
     
-    ConfirmNoButton.MouseEnter:Connect(function()
-        TweenService:Create(
-            ConfirmNoButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    end)
-    
-    ConfirmNoButton.MouseLeave:Connect(function()
-        TweenService:Create(
-            ConfirmNoButton,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-        ):Play()
-    end)
+    return screenGui
 end
 
-setupHoverEffects()
+-- Main execution
+task.wait(3) -- Tunggu game loading
 
--- Notifikasi awal
-addLog("Currency Editor berhasil dimuat!", Color3.fromRGB(0, 255, 0))
-addLog("Gunakan deteksi otomatis atau input manual nama currency.")
+local currencyData = detectCurrencySystem()
 
-print("Currency Editor by Milky - Loaded Successfully!")
+if #currencyData.earningMethods > 0 then
+    createAutomationGUI(currencyData)
+    print("✅ Currency Automation GUI loaded with " .. #currencyData.earningMethods .. " methods!")
+else
+    warn("❌ No earning methods detected!")
+    
+    -- Fallback: Basic currency editor
+    local function createFallbackGUI()
+        -- ... (kode fallback GUI)
+    end
+    createFallbackGUI()
+end
