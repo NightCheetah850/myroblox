@@ -36,10 +36,87 @@ local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = FloatingButton
 
--- Popup Window dengan ZIndex tinggi
+-- ==================== POPUP KONFIRMASI ====================
+-- Popup Konfirmasi Penutupan
+local ConfirmPopup = Instance.new("Frame")
+ConfirmPopup.Size = UDim2.new(0, 300, 0, 150)
+ConfirmPopup.Position = UDim2.new(0.5, -150, 0.5, -75)
+ConfirmPopup.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ConfirmPopup.BorderSizePixel = 0
+ConfirmPopup.Visible = false
+ConfirmPopup.ZIndex = 10010 -- Lebih tinggi dari semua UI
+ConfirmPopup.Parent = ScreenGui
+
+local ConfirmCorner = Instance.new("UICorner")
+ConfirmCorner.CornerRadius = UDim.new(0, 12)
+ConfirmCorner.Parent = ConfirmPopup
+
+-- Judul Konfirmasi
+local ConfirmTitle = Instance.new("TextLabel")
+ConfirmTitle.Size = UDim2.new(1, 0, 0, 40)
+ConfirmTitle.Position = UDim2.new(0, 0, 0, 0)
+ConfirmTitle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ConfirmTitle.Text = "Konfirmasi Penutupan"
+ConfirmTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+ConfirmTitle.Font = Enum.Font.GothamBold
+ConfirmTitle.TextSize = 16
+ConfirmTitle.ZIndex = 10011
+ConfirmTitle.Parent = ConfirmPopup
+
+local ConfirmTitleCorner = Instance.new("UICorner")
+ConfirmTitleCorner.CornerRadius = UDim.new(0, 12)
+ConfirmTitleCorner.Parent = ConfirmTitle
+
+-- Pesan Konfirmasi
+local ConfirmMessage = Instance.new("TextLabel")
+ConfirmMessage.Size = UDim2.new(1, -20, 0, 50)
+ConfirmMessage.Position = UDim2.new(0, 10, 0, 45)
+ConfirmMessage.BackgroundTransparency = 1
+ConfirmMessage.Text = "Apakah Anda yakin ingin menutup menu?"
+ConfirmMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
+ConfirmMessage.Font = Enum.Font.Gotham
+ConfirmMessage.TextSize = 14
+ConfirmMessage.TextWrapped = true
+ConfirmMessage.ZIndex = 10011
+ConfirmMessage.Parent = ConfirmPopup
+
+-- Tombol Ya
+local ConfirmYesButton = Instance.new("TextButton")
+ConfirmYesButton.Size = UDim2.new(0, 100, 0, 35)
+ConfirmYesButton.Position = UDim2.new(0, 40, 1, -50)
+ConfirmYesButton.Text = "Ya"
+ConfirmYesButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+ConfirmYesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ConfirmYesButton.Font = Enum.Font.GothamBold
+ConfirmYesButton.TextSize = 14
+ConfirmYesButton.ZIndex = 10011
+ConfirmYesButton.Parent = ConfirmPopup
+
+local ConfirmYesCorner = Instance.new("UICorner")
+ConfirmYesCorner.CornerRadius = UDim.new(0, 6)
+ConfirmYesCorner.Parent = ConfirmYesButton
+
+-- Tombol Tidak
+local ConfirmNoButton = Instance.new("TextButton")
+ConfirmNoButton.Size = UDim2.new(0, 100, 0, 35)
+ConfirmNoButton.Position = UDim2.new(1, -140, 1, -50)
+ConfirmNoButton.Text = "Tidak"
+ConfirmNoButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ConfirmNoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ConfirmNoButton.Font = Enum.Font.GothamBold
+ConfirmNoButton.TextSize = 14
+ConfirmNoButton.ZIndex = 10011
+ConfirmNoButton.Parent = ConfirmPopup
+
+local ConfirmNoCorner = Instance.new("UICorner")
+ConfirmNoCorner.CornerRadius = UDim.new(0, 6)
+ConfirmNoCorner.Parent = ConfirmNoButton
+
+-- ==================== MAIN POPUP WINDOW (DIPERLEBAR) ====================
+-- Popup Window dengan ZIndex tinggi (diperlebar dari 300 menjadi 350)
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 300, 0, 400)
-PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+PopupFrame.Size = UDim2.new(0, 350, 0, 450) -- Diperlebar dan dipertinggi
+PopupFrame.Position = UDim2.new(0.5, -175, 0.5, -225) -- Disesuaikan dengan ukuran baru
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
@@ -133,7 +210,7 @@ ContentFrame.BackgroundTransparency = 1
 ContentFrame.ZIndex = 10001
 ContentFrame.Parent = PopupFrame
 
--- Utama Content
+-- Utama Content (DIPERLEBAR)
 local UtamaContent = Instance.new("Frame")
 UtamaContent.Size = UDim2.new(1, 0, 1, 0)
 UtamaContent.Position = UDim2.new(0, 0, 0, 0)
@@ -153,9 +230,9 @@ Message.TextSize = 16
 Message.ZIndex = 10002
 Message.Parent = UtamaContent
 
--- Fly Switch
+-- Fly Switch (DIPERLEBAR)
 local FlyFrame = Instance.new("Frame")
-FlyFrame.Size = UDim2.new(0, 260, 0, 30)
+FlyFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
 FlyFrame.Position = UDim2.new(0, 20, 0, 60)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.ZIndex = 10002
@@ -196,9 +273,9 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Float Switch
+-- Float Switch (DIPERLEBAR)
 local FloatFrame = Instance.new("Frame")
-FloatFrame.Size = UDim2.new(0, 260, 0, 30)
+FloatFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
 FloatFrame.Position = UDim2.new(0, 20, 0, 100)
 FloatFrame.BackgroundTransparency = 1
 FloatFrame.ZIndex = 10002
@@ -239,9 +316,9 @@ local FloatToggleCorner = Instance.new("UICorner")
 FloatToggleCorner.CornerRadius = UDim.new(0, 10)
 FloatToggleCorner.Parent = FloatToggle
 
--- WalkSpeed Input
+-- WalkSpeed Input (DIPERLEBAR)
 local WalkSpeedFrame = Instance.new("Frame")
-WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
+WalkSpeedFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
 WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.ZIndex = 10002
@@ -290,9 +367,9 @@ local SetWalkSpeedCorner = Instance.new("UICorner")
 SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
--- Daftar Pemain
+-- Daftar Pemain (DIPERLEBAR)
 local PlayerListFrame = Instance.new("Frame")
-PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
+PlayerListFrame.Size = UDim2.new(0, 310, 0, 120) -- Diperlebar dari 260 menjadi 310
 PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.ZIndex = 10002
@@ -330,7 +407,7 @@ local PlayerListLayout = Instance.new("UIListLayout")
 PlayerListLayout.Padding = UDim.new(0, 5)
 PlayerListLayout.Parent = PlayerListScroll
 
--- Tween Content
+-- Tween Content (DIPERLEBAR)
 local TweenContent = Instance.new("Frame")
 TweenContent.Size = UDim2.new(1, 0, 1, 0)
 TweenContent.Position = UDim2.new(0, 0, 0, 0)
@@ -339,9 +416,9 @@ TweenContent.Visible = false
 TweenContent.ZIndex = 10001
 TweenContent.Parent = ContentFrame
 
--- Waypoint Input Form
+-- Waypoint Input Form (DIPERLEBAR)
 local WaypointFrame = Instance.new("Frame")
-WaypointFrame.Size = UDim2.new(0, 260, 0, 30)
+WaypointFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
 WaypointFrame.Position = UDim2.new(0, 20, 0, 10)
 WaypointFrame.BackgroundTransparency = 1
 WaypointFrame.ZIndex = 10002
@@ -390,9 +467,9 @@ local SetWaypointCorner = Instance.new("UICorner")
 SetWaypointCorner.CornerRadius = UDim.new(0, 6)
 SetWaypointCorner.Parent = SetWaypointButton
 
--- Daftar Waypoint
+-- Daftar Waypoint (DIPERLEBAR)
 local WaypointListFrame = Instance.new("Frame")
-WaypointListFrame.Size = UDim2.new(0, 260, 0, 280)
+WaypointListFrame.Size = UDim2.new(0, 310, 0, 330) -- Diperlebar dari 260 menjadi 310, dipertinggi
 WaypointListFrame.Position = UDim2.new(0, 20, 0, 50)
 WaypointListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 WaypointListFrame.ZIndex = 10002
@@ -430,7 +507,7 @@ local WaypointListLayout = Instance.new("UIListLayout")
 WaypointListLayout.Padding = UDim.new(0, 5)
 WaypointListLayout.Parent = WaypointListScroll
 
--- Parts Content
+-- Parts Content (DIPERLEBAR)
 local PartsContent = Instance.new("Frame")
 PartsContent.Size = UDim2.new(1, 0, 1, 0)
 PartsContent.Position = UDim2.new(0, 0, 0, 0)
@@ -439,9 +516,9 @@ PartsContent.Visible = false
 PartsContent.ZIndex = 10001
 PartsContent.Parent = ContentFrame
 
--- Pencarian Parts
+-- Pencarian Parts (DIPERLEBAR)
 local PartsSearchFrame = Instance.new("Frame")
-PartsSearchFrame.Size = UDim2.new(0, 260, 0, 30)
+PartsSearchFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
 PartsSearchFrame.Position = UDim2.new(0, 20, 0, 10)
 PartsSearchFrame.BackgroundTransparency = 1
 PartsSearchFrame.ZIndex = 10002
@@ -493,7 +570,7 @@ RefreshPartsCorner.Parent = RefreshPartsButton
 
 -- Info Parts
 local PartsInfoLabel = Instance.new("TextLabel")
-PartsInfoLabel.Size = UDim2.new(0, 200, 0, 20)
+PartsInfoLabel.Size = UDim2.new(0, 240, 0, 20) -- Diperlebar
 PartsInfoLabel.Position = UDim2.new(0, 20, 0, 45)
 PartsInfoLabel.BackgroundTransparency = 1
 PartsInfoLabel.Text = "Total Parts: 0"
@@ -504,9 +581,9 @@ PartsInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
 PartsInfoLabel.ZIndex = 10002
 PartsInfoLabel.Parent = PartsContent
 
--- Daftar Parts
+-- Daftar Parts (DIPERLEBAR)
 local PartsListFrame = Instance.new("Frame")
-PartsListFrame.Size = UDim2.new(0, 260, 0, 300)
+PartsListFrame.Size = UDim2.new(0, 310, 0, 350) -- Diperlebar dari 260 menjadi 310, dipertinggi
 PartsListFrame.Position = UDim2.new(0, 20, 0, 80)
 PartsListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PartsListFrame.ZIndex = 10002
@@ -544,7 +621,7 @@ local PartsListLayout = Instance.new("UIListLayout")
 PartsListLayout.Padding = UDim.new(0, 5)
 PartsListLayout.Parent = PartsListScroll
 
--- Script Content
+-- Script Content (DIPERLEBAR)
 local ScriptContent = Instance.new("Frame")
 ScriptContent.Size = UDim2.new(1, 0, 1, 0)
 ScriptContent.Position = UDim2.new(0, 0, 0, 0)
@@ -553,9 +630,9 @@ ScriptContent.Visible = false
 ScriptContent.ZIndex = 10001
 ScriptContent.Parent = ContentFrame
 
--- Info Game
+-- Info Game (DIPERLEBAR)
 local GameInfoFrame = Instance.new("Frame")
-GameInfoFrame.Size = UDim2.new(0, 260, 0, 60)
+GameInfoFrame.Size = UDim2.new(0, 310, 0, 60) -- Diperlebar dari 260 menjadi 310
 GameInfoFrame.Position = UDim2.new(0, 20, 0, 10)
 GameInfoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 GameInfoFrame.ZIndex = 10002
@@ -605,9 +682,9 @@ PlaceIdLabel.TextXAlignment = Enum.TextXAlignment.Left
 PlaceIdLabel.ZIndex = 10002
 PlaceIdLabel.Parent = GameInfoFrame
 
--- Pencarian Script
+-- Pencarian Script (DIPERLEBAR)
 local ScriptSearchFrame = Instance.new("Frame")
-ScriptSearchFrame.Size = UDim2.new(0, 260, 0, 30)
+ScriptSearchFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
 ScriptSearchFrame.Position = UDim2.new(0, 20, 0, 80)
 ScriptSearchFrame.BackgroundTransparency = 1
 ScriptSearchFrame.ZIndex = 10002
@@ -657,9 +734,9 @@ local SearchScriptCorner = Instance.new("UICorner")
 SearchScriptCorner.CornerRadius = UDim.new(0, 6)
 SearchScriptCorner.Parent = SearchScriptButton
 
--- Filter Script
+-- Filter Script (DIPERLEBAR)
 local FilterFrame = Instance.new("Frame")
-FilterFrame.Size = UDim2.new(0, 260, 0, 25)
+FilterFrame.Size = UDim2.new(0, 310, 0, 25) -- Diperlebar dari 260 menjadi 310
 FilterFrame.Position = UDim2.new(0, 20, 0, 120)
 FilterFrame.BackgroundTransparency = 1
 FilterFrame.ZIndex = 10002
@@ -712,7 +789,7 @@ UniversalFilterCorner.Parent = UniversalFilter
 
 -- Status Pencarian
 local SearchStatusLabel = Instance.new("TextLabel")
-SearchStatusLabel.Size = UDim2.new(0, 260, 0, 20)
+SearchStatusLabel.Size = UDim2.new(0, 310, 0, 20) -- Diperlebar
 SearchStatusLabel.Position = UDim2.new(0, 20, 0, 150)
 SearchStatusLabel.BackgroundTransparency = 1
 SearchStatusLabel.Text = "Tekan 'Cari' untuk memuat script"
@@ -723,9 +800,9 @@ SearchStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
 SearchStatusLabel.ZIndex = 10002
 SearchStatusLabel.Parent = ScriptContent
 
--- Daftar Script
+-- Daftar Script (DIPERLEBAR)
 local ScriptListFrame = Instance.new("Frame")
-ScriptListFrame.Size = UDim2.new(0, 260, 0, 200)
+ScriptListFrame.Size = UDim2.new(0, 310, 0, 230) -- Diperlebar dari 260 menjadi 310, dipertinggi
 ScriptListFrame.Position = UDim2.new(0, 20, 0, 175)
 ScriptListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 ScriptListFrame.ZIndex = 10002
@@ -798,6 +875,109 @@ local DownButtonCorner = Instance.new("UICorner")
 DownButtonCorner.CornerRadius = UDim.new(1, 0)
 DownButtonCorner.Parent = DownButton
 
+-- ==================== FUNGSI POPUP KONFIRMASI ====================
+local function showConfirmPopup()
+    ConfirmPopup.Visible = true
+    ConfirmPopup.Size = UDim2.new(0, 0, 0, 0)
+    ConfirmPopup.Position = UDim2.new(0.5, 0, 0.5, 0)
+    
+    TweenService:Create(
+        ConfirmPopup,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Size = UDim2.new(0, 300, 0, 150), Position = UDim2.new(0.5, -150, 0.5, -75)}
+    ):Play()
+end
+
+local function hideConfirmPopup()
+    TweenService:Create(
+        ConfirmPopup,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
+    ):Play()
+    
+    wait(0.2)
+    ConfirmPopup.Visible = false
+end
+
+-- Event handlers untuk tombol konfirmasi
+ConfirmYesButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+    
+    -- Hancurkan script
+    local function destroyScript()
+        -- Bersihkan semua fungsi aktif
+        cleanUpFly()
+        cleanUpFloat()
+        cleanUpHead()
+        cleanUpAllESP()
+        
+        -- Hapus semua koneksi event
+        if playerAddedConn then
+            playerAddedConn:Disconnect()
+        end
+        
+        if playerRemovingConn then
+            playerRemovingConn:Disconnect()
+        end
+        
+        if characterAddedConn then
+            characterAddedConn:Disconnect()
+        end
+        
+        -- Hancurkan GUI
+        if ScreenGui then
+            ScreenGui:Destroy()
+        end
+        
+        -- Notifikasi
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Milky Menu",
+            Text = "Script telah dihancurkan",
+            Duration = 3
+        })
+    end
+    
+    destroyScript()
+end)
+
+ConfirmNoButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+end)
+
+-- Efek hover pada tombol konfirmasi
+ConfirmYesButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        ConfirmYesButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
+    ):Play()
+end)
+
+ConfirmYesButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        ConfirmYesButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
+    ):Play()
+end)
+
+ConfirmNoButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        ConfirmNoButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end)
+
+ConfirmNoButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        ConfirmNoButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+    ):Play()
+end)
+
+-- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
 -- Variabel untuk drag functionality
 local dragging = false
 local dragInput, dragStart, startPos
@@ -1707,7 +1887,6 @@ local function updatePlayerList()
             playerName.TextColor3 = Color3.fromRGB(255, 255, 255)
             playerName.Font = Enum.Font.Gotham
             playerName.TextSize = 14
-            playerName.TextXAlignment = Enum.TextXAlignment.Left
             playerName.ZIndex = 10002
             playerName.Parent = playerItem
             
@@ -2006,7 +2185,7 @@ local function switchRibbon(ribbonName)
         if #currentScripts == 0 then
             local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
             ScriptSearchBox.Text = gameName
-            -- Pencarian dilakukan secara asynchronous untuk tidak membekankan GUI
+            -- Pencarian dilakukan secara asynchronous untuk tidak membebankan GUI
             spawn(function()
                 if searchScripts(gameName, activeFilters) then
                     updateScriptList()
@@ -2590,7 +2769,7 @@ local function togglePopup()
         TweenService:Create(
             PopupFrame,
             TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-            {Size = UDim2.new(0, 300, 0, 400), Position = UDim2.new(0.5, -150, 0.5, -200)}
+            {Size = UDim2.new(0, 350, 0, 450), Position = UDim2.new(0.5, -175, 0.5, -225)}
         ):Play()
     end
 end
@@ -2598,8 +2777,8 @@ end
 -- Event handler untuk floating button (toggle popup)
 FloatingButton.MouseButton1Click:Connect(togglePopup)
 
--- Event handler untuk close button (destroy script)
-CloseButton.MouseButton1Click:Connect(destroyScript)
+-- Event handler untuk close button (show konfirmasi)
+CloseButton.MouseButton1Click:Connect(showConfirmPopup)
 
 -- Efek hover pada tombol close
 CloseButton.MouseEnter:Connect(function()
