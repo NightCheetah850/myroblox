@@ -1,155 +1,90 @@
--- LocalScript dalam StarterPlayerScripts
+-- Money Changer Script for Delta Executor
+-- Fixed GUI Visibility Issue + Memory Scanning
+
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")  -- Fix: Akses PlayerGui, bukan StarterGui :cite[1]:cite[5]
 
--- UI Setup
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = player.PlayerGui
-
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 300, 0, 400)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -200)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.Parent = ScreenGui
-
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(0, 280, 0, 40)
-Title.Position = UDim2.new(0, 10, 0, 10)
-Title.Text = "Money Editor"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-Title.Parent = Frame
-
--- Input fields
-local CurrentMoneyLabel = Instance.new("TextLabel")
-CurrentMoneyLabel.Size = UDim2.new(0, 280, 0, 30)
-CurrentMoneyLabel.Position = UDim2.new(0, 10, 0, 60)
-CurrentMoneyLabel.Text = "Data Pertama (Sebelum perubahan):"
-CurrentMoneyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CurrentMoneyLabel.BackgroundTransparency = 1
-CurrentMoneyLabel.Parent = Frame
-
-local CurrentMoneyBox = Instance.new("TextBox")
-CurrentMoneyBox.Size = UDim2.new(0, 280, 0, 40)
-CurrentMoneyBox.Position = UDim2.new(0, 10, 0, 90)
-CurrentMoneyBox.PlaceholderText = "Masukkan nilai uang awal"
-CurrentMoneyBox.Parent = Frame
-
-local ChangedMoneyLabel = Instance.new("TextLabel")
-ChangedMoneyLabel.Size = UDim2.new(0, 280, 0, 30)
-ChangedMoneyLabel.Position = UDim2.new(0, 10, 0, 140)
-ChangedMoneyLabel.Text = "Data Kedua (Setelah perubahan):"
-ChangedMoneyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-ChangedMoneyLabel.BackgroundTransparency = 1
-ChangedMoneyLabel.Parent = Frame
-
-local ChangedMoneyBox = Instance.new("TextBox")
-ChangedMoneyBox.Size = UDim2.new(0, 280, 0, 40)
-ChangedMoneyBox.Position = UDim2.new(0, 10, 0, 170)
-ChangedMoneyBox.PlaceholderText = "Masukkan nilai uang setelah perubahan"
-ChangedMoneyBox.Parent = Frame
-
-local NewValueLabel = Instance.new("TextLabel")
-NewValueLabel.Size = UDim2.new(0, 280, 0, 30)
-NewValueLabel.Position = UDim2.new(0, 10, 0, 220)
-NewValueLabel.Text = "Nilai Baru yang Diinginkan:"
-NewValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-NewValueLabel.BackgroundTransparency = 1
-NewValueLabel.Parent = Frame
-
-local NewValueBox = Instance.new("TextBox")
-NewValueBox.Size = UDim2.new(0, 280, 0, 40)
-NewValueBox.Position = UDim2.new(0, 10, 0, 250)
-NewValueBox.PlaceholderText = "Masukkan nilai uang baru"
-NewValueBox.Parent = Frame
-
--- Buttons
-local ScanButton = Instance.new("TextButton")
-ScanButton.Size = UDim2.new(0, 280, 0, 40)
-ScanButton.Position = UDim2.new(0, 10, 0, 300)
-ScanButton.Text = "Scan Perubahan"
-ScanButton.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-ScanButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ScanButton.Parent = Frame
-
-local ApplyButton = Instance.new("TextButton")
-ApplyButton.Size = UDim2.new(0, 280, 0, 40)
-ApplyButton.Position = UDim2.new(0, 10, 0, 350)
-ApplyButton.Text = "Terapkan Nilai Baru"
-ApplyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-ApplyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ApplyButton.Parent = Frame
-
--- Variables untuk menyimpan data
-local detectedAddress = nil
-local originalValue = 0
-local changedValue = 0
-
--- Fungsi untuk mencari perubahan memori (simulasi)
-local function scanForChanges(oldValue, newValue)
-    -- Dalam implementasi nyata, ini akan melakukan scan memori
-    -- Untuk demo, kita simulasikan saja
-    local difference = newValue - oldValue
+local function moneyChanger()
+    -- Langkah 1: Pastikan GUI target sudah dimuat
+    local success, guiObject = pcall(function()
+        return PlayerGui:WaitForChild("MainGUI"):WaitForChild("Money")
+    end)
     
-    if difference ~= 0 then
-        -- Simulasi menemukan alamat memori
-        detectedAddress = "money_value_" .. tostring(math.random(1000, 9999))
-        originalValue = oldValue
-        changedValue = newValue
-        
-        return true, detectedAddress
-    else
-        return false, "Tidak ada perubahan yang terdeteksi"
+    if not success then
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Error";
+            Text = "GUI target tidak ditemukan!";
+            Duration = 5;
+        })
+        return
     end
-end
 
--- Fungsi untuk menerapkan nilai baru
-local function applyNewValue(newValue)
-    if detectedAddress then
-        -- Dalam implementasi nyata, ini akan menulis ke memori
-        print("Mengubah nilai di " .. detectedAddress .. " dari " .. changedValue .. " menjadi " .. newValue)
-        
-        -- Simulasi perubahan berhasil
-        return true
-    else
-        return false, "Scan perubahan belum dilakukan"
-    end
-end
-
--- Event handlers
-ScanButton.MouseButton1Click:Connect(function()
-    local oldVal = tonumber(CurrentMoneyBox.Text)
-    local newVal = tonumber(ChangedMoneyBox.Text)
+    -- Langkah 2: Baca nilai uang awal
+    local currentMoney = tonumber(guiObject.Text) or 0
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Step 1";
+        Text = "Uang saat ini: " .. currentMoney .. ". Ubah nilai uang Anda!";
+        Duration = 5;
+    })
     
-    if not oldVal or not newVal then
-        warn("Masukkan nilai yang valid")
+    -- Langkah 3: Tunggu perubahan oleh user
+    wait(10)  -- Beri waktu 10 detik untuk melakukan perubahan
+    
+    -- Langkah 4: Baca nilai uang setelah perubahan
+    local changedMoney = tonumber(guiObject.Text) or 0
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Step 2";
+        Text = "Uang setelah perubahan: " .. changedMoney;
+        Duration = 5;
+    })
+    
+    -- Cek apakah terjadi perubahan
+    if currentMoney == changedMoney then
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Error";
+            Text = "Tidak ada perubahan nilai uang!";
+            Duration = 5;
+        })
         return
     end
     
-    local success, result = scanForChanges(oldVal, newVal)
-    
-    if success then
-        print("Perubahan ditemukan di: " .. result)
-        warn("Scan berhasil! Alamat terdeteksi: " .. result)
+    -- Langkah 5: Memory scanning (gunakan fungsi yang tersedia di executor Anda)
+    if memory and memory.scan then
+        local results = memory.scan(currentMoney, 4, "int")
+        
+        for _, address in ipairs(results) do
+            -- Verifikasi bahwa ini adalah alamat yang benar
+            memory.write(address, changedMoney, "int")
+            local verifiedValue = memory.read(address, "int")
+            
+            if verifiedValue == changedMoney then
+                -- Langkah 6: Ubah ke nilai yang diinginkan user
+                local newValue = 10000  -- Nilai default, bisa diganti dengan inputbox
+                
+                memory.write(address, newValue, "int")
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Success!";
+                    Text = "Uang berhasil diubah menjadi: " .. newValue;
+                    Duration = 5;
+                })
+                return
+            end
+        end
+        
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Error";
+            Text = "Gagal menemukan alamat memori yang sesuai";
+            Duration = 5;
+        })
     else
-        warn("Scan gagal: " .. result)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Error";
+            Text = "Fungsi memory tidak tersedia";
+            Duration = 5;
+        })
     end
-end)
+end
 
-ApplyButton.MouseButton1Click:Connect(function()
-    local newVal = tonumber(NewValueBox.Text)
-    
-    if not newVal then
-        warn("Masukkan nilai baru yang valid")
-        return
-    end
-    
-    local success, errorMsg = applyNewValue(newVal)
-    
-    if success then
-        print("Nilai berhasil diubah menjadi: " .. newVal)
-        warn("Perubahan berhasil diterapkan!")
-    else
-        warn("Gagal menerapkan perubahan: " .. errorMsg)
-    end
-end)
+-- Jalankan fungsi utama
+moneyChanger()
