@@ -834,7 +834,7 @@ ScriptListScroll.BackgroundTransparency = 1
 ScriptListScroll.ScrollBarThickness = 5
 ScriptListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 ScriptListScroll.ZIndex = 10002
-ScriptListScroll.Parent = ScriptListFrame
+ScriptListScroll.Parent = ScriptListScroll
 
 local ScriptListLayout = Instance.new("UIListLayout")
 ScriptListLayout.Padding = UDim.new(0, 5)
@@ -899,85 +899,7 @@ local function hideConfirmPopup()
     ConfirmPopup.Visible = false
 end
 
--- Event handlers untuk tombol konfirmasi
-ConfirmYesButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-    
-    -- Hancurkan script
-    local function destroyScript()
-        -- Bersihkan semua fungsi aktif
-        cleanUpFly()
-        cleanUpFloat()
-        cleanUpHead()
-        cleanUpAllESP()
-        
-        -- Hapus semua koneksi event
-        if playerAddedConn then
-            playerAddedConn:Disconnect()
-        end
-        
-        if playerRemovingConn then
-            playerRemovingConn:Disconnect()
-        end
-        
-        if characterAddedConn then
-            characterAddedConn:Disconnect()
-        end
-        
-        -- Hancurkan GUI
-        if ScreenGui then
-            ScreenGui:Destroy()
-        end
-        
-        -- Notifikasi
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Milky Menu",
-            Text = "Script telah dihancurkan",
-            Duration = 3
-        })
-    end
-    
-    destroyScript()
-end)
-
-ConfirmNoButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-end)
-
--- Efek hover pada tombol konfirmasi
-ConfirmYesButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        ConfirmYesButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
-    ):Play()
-end)
-
-ConfirmYesButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        ConfirmYesButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
-    ):Play()
-end)
-
-ConfirmNoButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        ConfirmNoButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-end)
-
-ConfirmNoButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        ConfirmNoButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-    ):Play()
-end)
-
--- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
+-- ==================== VARIABEL GLOBAL ====================
 -- Variabel untuk drag functionality
 local dragging = false
 local dragInput, dragStart, startPos
@@ -1020,6 +942,114 @@ local activeFilters = {
     free = false,
     universal = false
 }
+
+-- Koneksi event yang perlu di-disconnect
+local playerAddedConn = nil
+local playerRemovingConn = nil
+local characterAddedConn = nil
+
+-- ==================== FUNGSI DESTROY YANG DIPERBAIKI ====================
+local function destroyScript()
+    print("Memulai proses penghancuran script...")
+    
+    -- Bersihkan semua fungsi aktif
+    if isFlying then
+        cleanUpFly()
+    end
+    
+    if isFloating then
+        cleanUpFloat()
+    end
+    
+    if headingPlayer then
+        cleanUpHead()
+    end
+    
+    -- Bersihkan semua ESP
+    cleanUpAllESP()
+    
+    -- Hapus semua koneksi event
+    if playerAddedConn then
+        playerAddedConn:Disconnect()
+        playerAddedConn = nil
+        print("Koneksi playerAdded diputus")
+    end
+    
+    if playerRemovingConn then
+        playerRemovingConn:Disconnect()
+        playerRemovingConn = nil
+        print("Koneksi playerRemoving diputus")
+    end
+    
+    if characterAddedConn then
+        characterAddedConn:Disconnect()
+        characterAddedConn = nil
+        print("Koneksi characterAdded diputus")
+    end
+    
+    if flyConnection then
+        flyConnection:Disconnect()
+        flyConnection = nil
+        print("Koneksi flyConnection diputus")
+    end
+    
+    if headConnection then
+        headConnection:Disconnect()
+        headConnection = nil
+        print("Koneksi headConnection diputus")
+    end
+    
+    -- Hancurkan semua ESP connections
+    for part, connection in pairs(espConnections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    espConnections = {}
+    
+    -- Hancurkan semua ESP highlights
+    for part, highlight in pairs(espHighlights) do
+        if highlight and highlight.Parent then
+            highlight:Destroy()
+        end
+    end
+    espHighlights = {}
+    
+    -- Hancurkan GUI
+    if ScreenGui and ScreenGui.Parent then
+        ScreenGui:Destroy()
+        print("ScreenGui dihancurkan")
+    end
+    
+    -- Hentikan semua script yang sedang berjalan
+    for _, connection in pairs(getconnections or {}) do
+        if typeof(connection) == "RBXScriptConnection" then
+            connection:Disconnect()
+        end
+    end
+    
+    -- Clear semua variabel
+    isFlying = false
+    isFloating = false
+    headingPlayer = nil
+    waypoints = {}
+    allParts = {}
+    filteredParts = {}
+    currentScripts = {}
+    filteredScripts = {}
+    
+    -- Notifikasi
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Milky Menu",
+        Text = "Script telah dihancurkan",
+        Duration = 3
+    })
+    
+    print("Script berhasil dihancurkan")
+    
+    -- Hentikan eksekusi script lebih lanjut
+    return
+end
 
 -- ==================== FUNGSI UTAMA YANG DIPERBAIKI ====================
 
@@ -2195,39 +2225,49 @@ local function switchRibbon(ribbonName)
     end
 end
 
--- ==================== FUNGSI DESTROY SCRIPT ====================
-local function destroyScript()
-    -- Bersihkan semua fungsi aktif
-    cleanUpFly()
-    cleanUpFloat()
-    cleanUpHead()
-    cleanUpAllESP()
-    
-    -- Hapus semua koneksi event
-    if playerAddedConn then
-        playerAddedConn:Disconnect()
-    end
-    
-    if playerRemovingConn then
-        playerRemovingConn:Disconnect()
-    end
-    
-    if characterAddedConn then
-        characterAddedConn:Disconnect()
-    end
-    
-    -- Hancurkan GUI
-    if ScreenGui then
-        ScreenGui:Destroy()
-    end
-    
-    -- Notifikasi
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Milky Menu",
-        Text = "Script telah dihancurkan",
-        Duration = 3
-    })
-end
+-- ==================== EVENT HANDLERS POPUP KONFIRMASI ====================
+-- Event handlers untuk tombol konfirmasi
+ConfirmYesButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+    destroyScript()
+end)
+
+ConfirmNoButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+end)
+
+-- Efek hover pada tombol konfirmasi
+ConfirmYesButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        ConfirmYesButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
+    ):Play()
+end)
+
+ConfirmYesButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        ConfirmYesButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
+    ):Play()
+end)
+
+ConfirmNoButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        ConfirmNoButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end)
+
+ConfirmNoButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        ConfirmNoButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+    ):Play()
+end)
 
 -- ==================== EVENT HANDLERS ====================
 -- Event handling untuk drag
@@ -2904,8 +2944,8 @@ RefreshPartsButton.MouseLeave:Connect(function()
 end)
 
 -- Deteksi ketika pemain bergabung atau keluar
-local playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
-local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
+playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
+playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
 -- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
@@ -2919,7 +2959,6 @@ local function onCharacterAdded(character)
 end
 
 -- Event untuk karakter yang baru ditambahkan
-local characterAddedConn
 if LocalPlayer.Character then
     onCharacterAdded(LocalPlayer.Character)
 end
