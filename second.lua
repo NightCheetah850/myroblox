@@ -5,15 +5,17 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
 
--- Main GUI
+-- Main GUI dengan ZIndex tinggi agar tampil di atas UI lain
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "MilkyFloatingMenu_" .. HttpService:GenerateGUID(false):sub(1, 8)
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.ResetOnSpawn = false -- Penting: Mencegah GUI hilang saat respawn
+ScreenGui.Parent = CoreGui -- Parent ke CoreGui agar selalu tampil di atas
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- Global untuk ZIndex tertinggi
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 9999 -- Nilai sangat tinggi untuk tampil di atas semua UI
 
--- Floating Button (Lingkaran)
+-- Floating Button (Lingkaran) dengan ZIndex tinggi
 local FloatingButton = Instance.new("TextButton")
 FloatingButton.Size = UDim2.new(0, 60, 0, 60)
 FloatingButton.Position = UDim2.new(0, 100, 0, 100)
@@ -26,6 +28,7 @@ FloatingButton.AutoButtonColor = false
 FloatingButton.Active = true
 FloatingButton.Draggable = false
 FloatingButton.Selectable = false
+FloatingButton.ZIndex = 10000 -- ZIndex sangat tinggi
 FloatingButton.Parent = ScreenGui
 
 -- Membuat bentuk lingkaran
@@ -33,13 +36,14 @@ local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = FloatingButton
 
--- Popup Window (diperbesar untuk menampung ribbon dan konten)
+-- Popup Window dengan ZIndex tinggi
 local PopupFrame = Instance.new("Frame")
 PopupFrame.Size = UDim2.new(0, 300, 0, 400)
 PopupFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
+PopupFrame.ZIndex = 10000 -- ZIndex sangat tinggi
 PopupFrame.Parent = ScreenGui
 
 local PopupCorner = Instance.new("UICorner")
@@ -52,6 +56,7 @@ RibbonFrame.Size = UDim2.new(1, 0, 0, 40)
 RibbonFrame.Position = UDim2.new(0, 0, 0, 0)
 RibbonFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 RibbonFrame.BorderSizePixel = 0
+RibbonFrame.ZIndex = 10001 -- Lebih tinggi dari PopupFrame
 RibbonFrame.Parent = PopupFrame
 
 local RibbonCorner = Instance.new("UICorner")
@@ -67,6 +72,7 @@ UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
 UtamaRibbon.Font = Enum.Font.GothamBold
 UtamaRibbon.TextSize = 12
+UtamaRibbon.ZIndex = 10002 -- Lebih tinggi dari RibbonFrame
 UtamaRibbon.Parent = RibbonFrame
 
 local TweenRibbon = Instance.new("TextButton")
@@ -77,6 +83,7 @@ TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 TweenRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
 TweenRibbon.Font = Enum.Font.GothamBold
 TweenRibbon.TextSize = 12
+TweenRibbon.ZIndex = 10002
 TweenRibbon.Parent = RibbonFrame
 
 local PartsRibbon = Instance.new("TextButton")
@@ -87,6 +94,7 @@ PartsRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 PartsRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
 PartsRibbon.Font = Enum.Font.GothamBold
 PartsRibbon.TextSize = 12
+PartsRibbon.ZIndex = 10002
 PartsRibbon.Parent = RibbonFrame
 
 -- Tambahkan ScriptRibbon sebagai ribbon ke-4
@@ -98,13 +106,31 @@ ScriptRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 ScriptRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
 ScriptRibbon.Font = Enum.Font.GothamBold
 ScriptRibbon.TextSize = 12
+ScriptRibbon.ZIndex = 10002
 ScriptRibbon.Parent = RibbonFrame
+
+-- Close Button dipindahkan ke kanan ribbon (di samping ribbon)
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 25, 0, 25) -- Diperkecil sedikit
+CloseButton.Position = UDim2.new(1, -30, 0, 7) -- Posisi di kanan atas, sejajar dengan ribbon
+CloseButton.Text = "×" -- Gunakan karakter × yang lebih elegan
+CloseButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 18
+CloseButton.ZIndex = 10003 -- ZIndex tertinggi agar selalu tampil di atas
+CloseButton.Parent = PopupFrame
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(1, 0)
+CloseCorner.Parent = CloseButton
 
 -- Content Frames
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Size = UDim2.new(1, 0, 1, -40)
 ContentFrame.Position = UDim2.new(0, 0, 0, 40)
 ContentFrame.BackgroundTransparency = 1
+ContentFrame.ZIndex = 10001
 ContentFrame.Parent = PopupFrame
 
 -- Utama Content
@@ -113,6 +139,7 @@ UtamaContent.Size = UDim2.new(1, 0, 1, 0)
 UtamaContent.Position = UDim2.new(0, 0, 0, 0)
 UtamaContent.BackgroundTransparency = 1
 UtamaContent.Visible = true
+UtamaContent.ZIndex = 10001
 UtamaContent.Parent = ContentFrame
 
 local Message = Instance.new("TextLabel")
@@ -123,6 +150,7 @@ Message.Text = "halo saya milky"
 Message.TextColor3 = Color3.fromRGB(255, 255, 255)
 Message.Font = Enum.Font.Gotham
 Message.TextSize = 16
+Message.ZIndex = 10002
 Message.Parent = UtamaContent
 
 -- Fly Switch
@@ -130,6 +158,7 @@ local FlyFrame = Instance.new("Frame")
 FlyFrame.Size = UDim2.new(0, 260, 0, 30)
 FlyFrame.Position = UDim2.new(0, 20, 0, 60)
 FlyFrame.BackgroundTransparency = 1
+FlyFrame.ZIndex = 10002
 FlyFrame.Parent = UtamaContent
 
 local FlyLabel = Instance.new("TextLabel")
@@ -141,6 +170,7 @@ FlyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FlyLabel.Font = Enum.Font.Gotham
 FlyLabel.TextSize = 14
 FlyLabel.TextXAlignment = Enum.TextXAlignment.Left
+FlyLabel.ZIndex = 10002
 FlyLabel.Parent = FlyFrame
 
 local FlySwitch = Instance.new("TextButton")
@@ -148,6 +178,7 @@ FlySwitch.Size = UDim2.new(0, 50, 0, 25)
 FlySwitch.Position = UDim2.new(1, -50, 0, 2)
 FlySwitch.Text = ""
 FlySwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+FlySwitch.ZIndex = 10002
 FlySwitch.Parent = FlyFrame
 
 local FlySwitchCorner = Instance.new("UICorner")
@@ -158,6 +189,7 @@ local FlyToggle = Instance.new("Frame")
 FlyToggle.Size = UDim2.new(0, 21, 0, 21)
 FlyToggle.Position = UDim2.new(0, 2, 0, 2)
 FlyToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+FlyToggle.ZIndex = 10003
 FlyToggle.Parent = FlySwitch
 
 local FlyToggleCorner = Instance.new("UICorner")
@@ -169,6 +201,7 @@ local FloatFrame = Instance.new("Frame")
 FloatFrame.Size = UDim2.new(0, 260, 0, 30)
 FloatFrame.Position = UDim2.new(0, 20, 0, 100)
 FloatFrame.BackgroundTransparency = 1
+FloatFrame.ZIndex = 10002
 FloatFrame.Parent = UtamaContent
 
 local FloatLabel = Instance.new("TextLabel")
@@ -180,6 +213,7 @@ FloatLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FloatLabel.Font = Enum.Font.Gotham
 FloatLabel.TextSize = 14
 FloatLabel.TextXAlignment = Enum.TextXAlignment.Left
+FloatLabel.ZIndex = 10002
 FloatLabel.Parent = FloatFrame
 
 local FloatSwitch = Instance.new("TextButton")
@@ -187,6 +221,7 @@ FloatSwitch.Size = UDim2.new(0, 50, 0, 25)
 FloatSwitch.Position = UDim2.new(1, -50, 0, 2)
 FloatSwitch.Text = ""
 FloatSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+FloatSwitch.ZIndex = 10002
 FloatSwitch.Parent = FloatFrame
 
 local FloatSwitchCorner = Instance.new("UICorner")
@@ -197,6 +232,7 @@ local FloatToggle = Instance.new("Frame")
 FloatToggle.Size = UDim2.new(0, 21, 0, 21)
 FloatToggle.Position = UDim2.new(0, 2, 0, 2)
 FloatToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+FloatToggle.ZIndex = 10003
 FloatToggle.Parent = FloatSwitch
 
 local FloatToggleCorner = Instance.new("UICorner")
@@ -208,6 +244,7 @@ local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 260, 0, 30)
 WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
 WalkSpeedFrame.BackgroundTransparency = 1
+WalkSpeedFrame.ZIndex = 10002
 WalkSpeedFrame.Parent = UtamaContent
 
 local WalkSpeedLabel = Instance.new("TextLabel")
@@ -219,6 +256,7 @@ WalkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 WalkSpeedLabel.Font = Enum.Font.Gotham
 WalkSpeedLabel.TextSize = 14
 WalkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+WalkSpeedLabel.ZIndex = 10002
 WalkSpeedLabel.Parent = WalkSpeedFrame
 
 local WalkSpeedBox = Instance.new("TextBox")
@@ -230,6 +268,7 @@ WalkSpeedBox.Font = Enum.Font.Gotham
 WalkSpeedBox.TextSize = 14
 WalkSpeedBox.Text = "16"
 WalkSpeedBox.PlaceholderText = "Speed"
+WalkSpeedBox.ZIndex = 10002
 WalkSpeedBox.Parent = WalkSpeedFrame
 
 local WalkSpeedCorner = Instance.new("UICorner")
@@ -244,6 +283,7 @@ SetWalkSpeedButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 SetWalkSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SetWalkSpeedButton.Font = Enum.Font.Gotham
 SetWalkSpeedButton.TextSize = 14
+SetWalkSpeedButton.ZIndex = 10002
 SetWalkSpeedButton.Parent = WalkSpeedFrame
 
 local SetWalkSpeedCorner = Instance.new("UICorner")
@@ -255,6 +295,7 @@ local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 260, 0, 120)
 PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+PlayerListFrame.ZIndex = 10002
 PlayerListFrame.Parent = UtamaContent
 
 local PlayerListCorner = Instance.new("UICorner")
@@ -269,6 +310,7 @@ PlayerListLabel.Text = "Daftar Pemain"
 PlayerListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlayerListLabel.Font = Enum.Font.Gotham
 PlayerListLabel.TextSize = 14
+PlayerListLabel.ZIndex = 10003
 PlayerListLabel.Parent = PlayerListFrame
 
 local PlayerListLabelCorner = Instance.new("UICorner")
@@ -281,6 +323,7 @@ PlayerListScroll.Position = UDim2.new(0, 5, 0, 25)
 PlayerListScroll.BackgroundTransparency = 1
 PlayerListScroll.ScrollBarThickness = 5
 PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerListScroll.ZIndex = 10002
 PlayerListScroll.Parent = PlayerListFrame
 
 local PlayerListLayout = Instance.new("UIListLayout")
@@ -293,6 +336,7 @@ TweenContent.Size = UDim2.new(1, 0, 1, 0)
 TweenContent.Position = UDim2.new(0, 0, 0, 0)
 TweenContent.BackgroundTransparency = 1
 TweenContent.Visible = false
+TweenContent.ZIndex = 10001
 TweenContent.Parent = ContentFrame
 
 -- Waypoint Input Form
@@ -300,6 +344,7 @@ local WaypointFrame = Instance.new("Frame")
 WaypointFrame.Size = UDim2.new(0, 260, 0, 30)
 WaypointFrame.Position = UDim2.new(0, 20, 0, 10)
 WaypointFrame.BackgroundTransparency = 1
+WaypointFrame.ZIndex = 10002
 WaypointFrame.Parent = TweenContent
 
 local WaypointLabel = Instance.new("TextLabel")
@@ -311,6 +356,7 @@ WaypointLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 WaypointLabel.Font = Enum.Font.Gotham
 WaypointLabel.TextSize = 14
 WaypointLabel.TextXAlignment = Enum.TextXAlignment.Left
+WaypointLabel.ZIndex = 10002
 WaypointLabel.Parent = WaypointFrame
 
 local WaypointBox = Instance.new("TextBox")
@@ -322,6 +368,7 @@ WaypointBox.Font = Enum.Font.Gotham
 WaypointBox.TextSize = 14
 WaypointBox.Text = ""
 WaypointBox.PlaceholderText = "Nama Waypoint"
+WaypointBox.ZIndex = 10002
 WaypointBox.Parent = WaypointFrame
 
 local WaypointCorner = Instance.new("UICorner")
@@ -336,6 +383,7 @@ SetWaypointButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 SetWaypointButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SetWaypointButton.Font = Enum.Font.Gotham
 SetWaypointButton.TextSize = 14
+SetWaypointButton.ZIndex = 10002
 SetWaypointButton.Parent = WaypointFrame
 
 local SetWaypointCorner = Instance.new("UICorner")
@@ -347,6 +395,7 @@ local WaypointListFrame = Instance.new("Frame")
 WaypointListFrame.Size = UDim2.new(0, 260, 0, 280)
 WaypointListFrame.Position = UDim2.new(0, 20, 0, 50)
 WaypointListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+WaypointListFrame.ZIndex = 10002
 WaypointListFrame.Parent = TweenContent
 
 local WaypointListCorner = Instance.new("UICorner")
@@ -361,6 +410,7 @@ WaypointListLabel.Text = "Daftar Waypoint"
 WaypointListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 WaypointListLabel.Font = Enum.Font.Gotham
 WaypointListLabel.TextSize = 14
+WaypointListLabel.ZIndex = 10003
 WaypointListLabel.Parent = WaypointListFrame
 
 local WaypointListLabelCorner = Instance.new("UICorner")
@@ -373,6 +423,7 @@ WaypointListScroll.Position = UDim2.new(0, 5, 0, 25)
 WaypointListScroll.BackgroundTransparency = 1
 WaypointListScroll.ScrollBarThickness = 5
 WaypointListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+WaypointListScroll.ZIndex = 10002
 WaypointListScroll.Parent = WaypointListFrame
 
 local WaypointListLayout = Instance.new("UIListLayout")
@@ -385,6 +436,7 @@ PartsContent.Size = UDim2.new(1, 0, 1, 0)
 PartsContent.Position = UDim2.new(0, 0, 0, 0)
 PartsContent.BackgroundTransparency = 1
 PartsContent.Visible = false
+PartsContent.ZIndex = 10001
 PartsContent.Parent = ContentFrame
 
 -- Pencarian Parts
@@ -392,6 +444,7 @@ local PartsSearchFrame = Instance.new("Frame")
 PartsSearchFrame.Size = UDim2.new(0, 260, 0, 30)
 PartsSearchFrame.Position = UDim2.new(0, 20, 0, 10)
 PartsSearchFrame.BackgroundTransparency = 1
+PartsSearchFrame.ZIndex = 10002
 PartsSearchFrame.Parent = PartsContent
 
 local PartsSearchLabel = Instance.new("TextLabel")
@@ -403,6 +456,7 @@ PartsSearchLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 PartsSearchLabel.Font = Enum.Font.Gotham
 PartsSearchLabel.TextSize = 14
 PartsSearchLabel.TextXAlignment = Enum.TextXAlignment.Left
+PartsSearchLabel.ZIndex = 10002
 PartsSearchLabel.Parent = PartsSearchFrame
 
 local PartsSearchBox = Instance.new("TextBox")
@@ -414,6 +468,7 @@ PartsSearchBox.Font = Enum.Font.Gotham
 PartsSearchBox.TextSize = 14
 PartsSearchBox.Text = ""
 PartsSearchBox.PlaceholderText = "Nama Part (kosongkan untuk semua)"
+PartsSearchBox.ZIndex = 10002
 PartsSearchBox.Parent = PartsSearchFrame
 
 local PartsSearchCorner = Instance.new("UICorner")
@@ -429,6 +484,7 @@ RefreshPartsButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 RefreshPartsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 RefreshPartsButton.Font = Enum.Font.GothamBold
 RefreshPartsButton.TextSize = 16
+RefreshPartsButton.ZIndex = 10002
 RefreshPartsButton.Parent = PartsContent
 
 local RefreshPartsCorner = Instance.new("UICorner")
@@ -445,6 +501,7 @@ PartsInfoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 PartsInfoLabel.Font = Enum.Font.Gotham
 PartsInfoLabel.TextSize = 12
 PartsInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+PartsInfoLabel.ZIndex = 10002
 PartsInfoLabel.Parent = PartsContent
 
 -- Daftar Parts
@@ -452,6 +509,7 @@ local PartsListFrame = Instance.new("Frame")
 PartsListFrame.Size = UDim2.new(0, 260, 0, 300)
 PartsListFrame.Position = UDim2.new(0, 20, 0, 80)
 PartsListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+PartsListFrame.ZIndex = 10002
 PartsListFrame.Parent = PartsContent
 
 local PartsListCorner = Instance.new("UICorner")
@@ -466,6 +524,7 @@ PartsListLabel.Text = "Daftar Parts Interaktif"
 PartsListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 PartsListLabel.Font = Enum.Font.Gotham
 PartsListLabel.TextSize = 14
+PartsListLabel.ZIndex = 10003
 PartsListLabel.Parent = PartsListFrame
 
 local PartsListLabelCorner = Instance.new("UICorner")
@@ -478,6 +537,7 @@ PartsListScroll.Position = UDim2.new(0, 5, 0, 25)
 PartsListScroll.BackgroundTransparency = 1
 PartsListScroll.ScrollBarThickness = 5
 PartsListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+PartsListScroll.ZIndex = 10002
 PartsListScroll.Parent = PartsListFrame
 
 local PartsListLayout = Instance.new("UIListLayout")
@@ -490,6 +550,7 @@ ScriptContent.Size = UDim2.new(1, 0, 1, 0)
 ScriptContent.Position = UDim2.new(0, 0, 0, 0)
 ScriptContent.BackgroundTransparency = 1
 ScriptContent.Visible = false
+ScriptContent.ZIndex = 10001
 ScriptContent.Parent = ContentFrame
 
 -- Info Game
@@ -497,6 +558,7 @@ local GameInfoFrame = Instance.new("Frame")
 GameInfoFrame.Size = UDim2.new(0, 260, 0, 60)
 GameInfoFrame.Position = UDim2.new(0, 20, 0, 10)
 GameInfoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+GameInfoFrame.ZIndex = 10002
 GameInfoFrame.Parent = ScriptContent
 
 local GameInfoCorner = Instance.new("UICorner")
@@ -511,6 +573,7 @@ GameInfoLabel.Text = "Info Game"
 GameInfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 GameInfoLabel.Font = Enum.Font.Gotham
 GameInfoLabel.TextSize = 14
+GameInfoLabel.ZIndex = 10003
 GameInfoLabel.Parent = GameInfoFrame
 
 local GameInfoLabelCorner = Instance.new("UICorner")
@@ -527,6 +590,7 @@ GameNameLabel.Font = Enum.Font.Gotham
 GameNameLabel.TextSize = 12
 GameNameLabel.TextXAlignment = Enum.TextXAlignment.Left
 GameNameLabel.TextTruncate = Enum.TextTruncate.AtEnd
+GameNameLabel.ZIndex = 10002
 GameNameLabel.Parent = GameInfoFrame
 
 local PlaceIdLabel = Instance.new("TextLabel")
@@ -538,6 +602,7 @@ PlaceIdLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 PlaceIdLabel.Font = Enum.Font.Gotham
 PlaceIdLabel.TextSize = 11
 PlaceIdLabel.TextXAlignment = Enum.TextXAlignment.Left
+PlaceIdLabel.ZIndex = 10002
 PlaceIdLabel.Parent = GameInfoFrame
 
 -- Pencarian Script
@@ -545,6 +610,7 @@ local ScriptSearchFrame = Instance.new("Frame")
 ScriptSearchFrame.Size = UDim2.new(0, 260, 0, 30)
 ScriptSearchFrame.Position = UDim2.new(0, 20, 0, 80)
 ScriptSearchFrame.BackgroundTransparency = 1
+ScriptSearchFrame.ZIndex = 10002
 ScriptSearchFrame.Parent = ScriptContent
 
 local ScriptSearchLabel = Instance.new("TextLabel")
@@ -556,6 +622,7 @@ ScriptSearchLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 ScriptSearchLabel.Font = Enum.Font.Gotham
 ScriptSearchLabel.TextSize = 14
 ScriptSearchLabel.TextXAlignment = Enum.TextXAlignment.Left
+ScriptSearchLabel.ZIndex = 10002
 ScriptSearchLabel.Parent = ScriptSearchFrame
 
 local ScriptSearchBox = Instance.new("TextBox")
@@ -567,6 +634,7 @@ ScriptSearchBox.Font = Enum.Font.Gotham
 ScriptSearchBox.TextSize = 14
 ScriptSearchBox.Text = ""
 ScriptSearchBox.PlaceholderText = "Kata kunci script"
+ScriptSearchBox.ZIndex = 10002
 ScriptSearchBox.Parent = ScriptSearchFrame
 
 local ScriptSearchCorner = Instance.new("UICorner")
@@ -582,6 +650,7 @@ SearchScriptButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 SearchScriptButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SearchScriptButton.Font = Enum.Font.Gotham
 SearchScriptButton.TextSize = 14
+SearchScriptButton.ZIndex = 10002
 SearchScriptButton.Parent = ScriptSearchFrame
 
 local SearchScriptCorner = Instance.new("UICorner")
@@ -593,6 +662,7 @@ local FilterFrame = Instance.new("Frame")
 FilterFrame.Size = UDim2.new(0, 260, 0, 25)
 FilterFrame.Position = UDim2.new(0, 20, 0, 120)
 FilterFrame.BackgroundTransparency = 1
+FilterFrame.ZIndex = 10002
 FilterFrame.Parent = ScriptContent
 
 local VerifiedFilter = Instance.new("TextButton")
@@ -603,6 +673,7 @@ VerifiedFilter.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
 VerifiedFilter.TextColor3 = Color3.fromRGB(255, 255, 255)
 VerifiedFilter.Font = Enum.Font.Gotham
 VerifiedFilter.TextSize = 12
+VerifiedFilter.ZIndex = 10002
 VerifiedFilter.Parent = FilterFrame
 
 local VerifiedFilterCorner = Instance.new("UICorner")
@@ -617,6 +688,7 @@ FreeFilter.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 FreeFilter.TextColor3 = Color3.fromRGB(255, 255, 255)
 FreeFilter.Font = Enum.Font.Gotham
 FreeFilter.TextSize = 12
+FreeFilter.ZIndex = 10002
 FreeFilter.Parent = FilterFrame
 
 local FreeFilterCorner = Instance.new("UICorner")
@@ -631,6 +703,7 @@ UniversalFilter.BackgroundColor3 = Color3.fromRGB(120, 0, 215)
 UniversalFilter.TextColor3 = Color3.fromRGB(255, 255, 255)
 UniversalFilter.Font = Enum.Font.Gotham
 UniversalFilter.TextSize = 12
+UniversalFilter.ZIndex = 10002
 UniversalFilter.Parent = FilterFrame
 
 local UniversalFilterCorner = Instance.new("UICorner")
@@ -647,6 +720,7 @@ SearchStatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 SearchStatusLabel.Font = Enum.Font.Gotham
 SearchStatusLabel.TextSize = 12
 SearchStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+SearchStatusLabel.ZIndex = 10002
 SearchStatusLabel.Parent = ScriptContent
 
 -- Daftar Script
@@ -654,6 +728,7 @@ local ScriptListFrame = Instance.new("Frame")
 ScriptListFrame.Size = UDim2.new(0, 260, 0, 200)
 ScriptListFrame.Position = UDim2.new(0, 20, 0, 175)
 ScriptListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ScriptListFrame.ZIndex = 10002
 ScriptListFrame.Parent = ScriptContent
 
 local ScriptListCorner = Instance.new("UICorner")
@@ -668,6 +743,7 @@ ScriptListLabel.Text = "Daftar Script (" .. game.PlaceId .. ")"
 ScriptListLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 ScriptListLabel.Font = Enum.Font.Gotham
 ScriptListLabel.TextSize = 14
+ScriptListLabel.ZIndex = 10003
 ScriptListLabel.Parent = ScriptListFrame
 
 local ScriptListLabelCorner = Instance.new("UICorner")
@@ -680,26 +756,12 @@ ScriptListScroll.Position = UDim2.new(0, 5, 0, 25)
 ScriptListScroll.BackgroundTransparency = 1
 ScriptListScroll.ScrollBarThickness = 5
 ScriptListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScriptListScroll.ZIndex = 10002
 ScriptListScroll.Parent = ScriptListFrame
 
 local ScriptListLayout = Instance.new("UIListLayout")
 ScriptListLayout.Padding = UDim.new(0, 5)
 ScriptListLayout.Parent = ScriptListScroll
-
--- Close Button (diubah menjadi Destroy Button)
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.Text = "X"
-CloseButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextSize = 16
-CloseButton.Parent = PopupFrame
-
-local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(1, 0)
-CloseCorner.Parent = CloseButton
 
 -- Tombol untuk naik/turun (mobile)
 local UpButton = Instance.new("TextButton")
@@ -712,6 +774,7 @@ UpButton.TextSize = 24
 UpButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 UpButton.BackgroundTransparency = 0.5
 UpButton.Visible = false
+UpButton.ZIndex = 10001
 UpButton.Parent = ScreenGui
 
 local UpButtonCorner = Instance.new("UICorner")
@@ -728,6 +791,7 @@ DownButton.TextSize = 24
 DownButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 DownButton.BackgroundTransparency = 0.5
 DownButton.Visible = false
+DownButton.ZIndex = 10001
 DownButton.Parent = ScreenGui
 
 local DownButtonCorner = Instance.new("UICorner")
@@ -1103,6 +1167,7 @@ local function updateScriptList()
         local scriptItem = Instance.new("Frame")
         scriptItem.Size = UDim2.new(1, 0, 0, 80)
         scriptItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        scriptItem.ZIndex = 10002
         scriptItem.Parent = ScriptListScroll
         
         local scriptItemCorner = Instance.new("UICorner")
@@ -1120,6 +1185,7 @@ local function updateScriptList()
         scriptTitle.TextSize = 12
         scriptTitle.TextXAlignment = Enum.TextXAlignment.Left
         scriptTitle.TextTruncate = Enum.TextTruncate.AtEnd
+        scriptTitle.ZIndex = 10002
         scriptTitle.Parent = scriptItem
         
         -- Info Script
@@ -1133,6 +1199,7 @@ local function updateScriptList()
         scriptInfo.TextSize = 10
         scriptInfo.TextXAlignment = Enum.TextXAlignment.Left
         scriptInfo.TextTruncate = Enum.TextTruncate.AtEnd
+        scriptInfo.ZIndex = 10002
         scriptInfo.Parent = scriptItem
         
         -- Status Script (Verified, Free, etc.)
@@ -1160,6 +1227,7 @@ local function updateScriptList()
         scriptStatus.Font = Enum.Font.Gotham
         scriptStatus.TextSize = 10
         scriptStatus.TextXAlignment = Enum.TextXAlignment.Left
+        scriptStatus.ZIndex = 10002
         scriptStatus.Parent = scriptItem
         
         -- Stats (Likes/Views)
@@ -1172,6 +1240,7 @@ local function updateScriptList()
         scriptStats.Font = Enum.Font.Gotham
         scriptStats.TextSize = 10
         scriptStats.TextXAlignment = Enum.TextXAlignment.Left
+        scriptStats.ZIndex = 10002
         scriptStats.Parent = scriptItem
         
         -- Tombol Execute
@@ -1183,6 +1252,7 @@ local function updateScriptList()
         executeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         executeButton.Font = Enum.Font.Gotham
         executeButton.TextSize = 11
+        executeButton.ZIndex = 10002
         executeButton.Parent = scriptItem
         
         local executeButtonCorner = Instance.new("UICorner")
@@ -1384,6 +1454,7 @@ local function updatePartsList()
         local partItem = Instance.new("Frame")
         partItem.Size = UDim2.new(1, 0, 0, 60)
         partItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        partItem.ZIndex = 10002
         partItem.Parent = PartsListScroll
         
         local partItemCorner = Instance.new("UICorner")
@@ -1401,6 +1472,7 @@ local function updatePartsList()
         partName.TextSize = 12
         partName.TextXAlignment = Enum.TextXAlignment.Left
         partName.TextTruncate = Enum.TextTruncate.AtEnd
+        partName.ZIndex = 10002
         partName.Parent = partItem
         
         -- Parent Part
@@ -1414,6 +1486,7 @@ local function updatePartsList()
         partParent.TextSize = 10
         partParent.TextXAlignment = Enum.TextXAlignment.Left
         partParent.TextTruncate = Enum.TextTruncate.AtEnd
+        partParent.ZIndex = 10002
         partParent.Parent = partItem
         
         -- Info Material/Collision
@@ -1426,6 +1499,7 @@ local function updatePartsList()
         partInfo.Font = Enum.Font.Gotham
         partInfo.TextSize = 9
         partInfo.TextXAlignment = Enum.TextXAlignment.Left
+        partInfo.ZIndex = 10002
         partInfo.Parent = partItem
         
         -- Container untuk tombol
@@ -1433,6 +1507,7 @@ local function updatePartsList()
         buttonContainer.Size = UDim2.new(0.3, 0, 1, 0)
         buttonContainer.Position = UDim2.new(0.7, 0, 0, 0)
         buttonContainer.BackgroundTransparency = 1
+        buttonContainer.ZIndex = 10002
         buttonContainer.Parent = partItem
 
         -- Tombol Tween ke Part
@@ -1444,6 +1519,7 @@ local function updatePartsList()
         tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         tweenButton.Font = Enum.Font.Gotham
         tweenButton.TextSize = 10
+        tweenButton.ZIndex = 10002
         tweenButton.Parent = buttonContainer
         
         local tweenButtonCorner = Instance.new("UICorner")
@@ -1459,6 +1535,7 @@ local function updatePartsList()
         espButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         espButton.Font = Enum.Font.Gotham
         espButton.TextSize = 10
+        espButton.ZIndex = 10002
         espButton.Parent = buttonContainer
         
         local espButtonCorner = Instance.new("UICorner")
@@ -1615,6 +1692,7 @@ local function updatePlayerList()
             local playerItem = Instance.new("Frame")
             playerItem.Size = UDim2.new(1, 0, 0, 30)
             playerItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            playerItem.ZIndex = 10002
             playerItem.Parent = PlayerListScroll
             
             local playerItemCorner = Instance.new("UICorner")
@@ -1630,6 +1708,7 @@ local function updatePlayerList()
             playerName.Font = Enum.Font.Gotham
             playerName.TextSize = 14
             playerName.TextXAlignment = Enum.TextXAlignment.Left
+            playerName.ZIndex = 10002
             playerName.Parent = playerItem
             
             local headButton = Instance.new("TextButton")
@@ -1640,6 +1719,7 @@ local function updatePlayerList()
             headButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             headButton.Font = Enum.Font.Gotham
             headButton.TextSize = 12
+            headButton.ZIndex = 10002
             headButton.Parent = playerItem
             
             local headButtonCorner = Instance.new("UICorner")
@@ -1654,6 +1734,7 @@ local function updatePlayerList()
             tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             tweenButton.Font = Enum.Font.Gotham
             tweenButton.TextSize = 12
+            tweenButton.ZIndex = 10002
             tweenButton.Parent = playerItem
             
             local tweenButtonCorner = Instance.new("UICorner")
@@ -1765,6 +1846,7 @@ local function updateWaypointList()
         local waypointItem = Instance.new("Frame")
         waypointItem.Size = UDim2.new(1, 0, 0, 30)
         waypointItem.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        waypointItem.ZIndex = 10002
         waypointItem.Parent = WaypointListScroll
         
         local waypointItemCorner = Instance.new("UICorner")
@@ -1780,6 +1862,7 @@ local function updateWaypointList()
         waypointName.Font = Enum.Font.Gotham
         waypointName.TextSize = 14
         waypointName.TextXAlignment = Enum.TextXAlignment.Left
+        waypointName.ZIndex = 10002
         waypointName.Parent = waypointItem
         
         local tweenButton = Instance.new("TextButton")
@@ -1790,6 +1873,7 @@ local function updateWaypointList()
         tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         tweenButton.Font = Enum.Font.Gotham
         tweenButton.TextSize = 12
+        tweenButton.ZIndex = 10002
         tweenButton.Parent = waypointItem
         
         local tweenButtonCorner = Instance.new("UICorner")
@@ -2516,6 +2600,23 @@ FloatingButton.MouseButton1Click:Connect(togglePopup)
 
 -- Event handler untuk close button (destroy script)
 CloseButton.MouseButton1Click:Connect(destroyScript)
+
+-- Efek hover pada tombol close
+CloseButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        CloseButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
+    ):Play()
+end)
+
+CloseButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        CloseButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
+    ):Play()
+end)
 
 -- Efek hover pada floating button
 FloatingButton.MouseEnter:Connect(function()
