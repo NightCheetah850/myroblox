@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
+local Lighting = game:GetService("Lighting")
 
 -- Main GUI dengan ZIndex tinggi agar tampil di atas UI lain
 local ScreenGui = Instance.new("ScreenGui")
@@ -316,10 +317,53 @@ local FloatToggleCorner = Instance.new("UICorner")
 FloatToggleCorner.CornerRadius = UDim.new(0, 10)
 FloatToggleCorner.Parent = FloatToggle
 
+-- Brightness Switch (DITAMBAHKAN)
+local BrightnessFrame = Instance.new("Frame")
+BrightnessFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+BrightnessFrame.Position = UDim2.new(0, 20, 0, 140)
+BrightnessFrame.BackgroundTransparency = 1
+BrightnessFrame.ZIndex = 10002
+BrightnessFrame.Parent = UtamaContent
+
+local BrightnessLabel = Instance.new("TextLabel")
+BrightnessLabel.Size = UDim2.new(0, 100, 1, 0)
+BrightnessLabel.Position = UDim2.new(0, 0, 0, 0)
+BrightnessLabel.BackgroundTransparency = 1
+BrightnessLabel.Text = "Brightness:"
+BrightnessLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+BrightnessLabel.Font = Enum.Font.Gotham
+BrightnessLabel.TextSize = 14
+BrightnessLabel.TextXAlignment = Enum.TextXAlignment.Left
+BrightnessLabel.ZIndex = 10002
+BrightnessLabel.Parent = BrightnessFrame
+
+local BrightnessSwitch = Instance.new("TextButton")
+BrightnessSwitch.Size = UDim2.new(0, 50, 0, 25)
+BrightnessSwitch.Position = UDim2.new(1, -50, 0, 2)
+BrightnessSwitch.Text = ""
+BrightnessSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+BrightnessSwitch.ZIndex = 10002
+BrightnessSwitch.Parent = BrightnessFrame
+
+local BrightnessSwitchCorner = Instance.new("UICorner")
+BrightnessSwitchCorner.CornerRadius = UDim.new(0, 12)
+BrightnessSwitchCorner.Parent = BrightnessSwitch
+
+local BrightnessToggle = Instance.new("Frame")
+BrightnessToggle.Size = UDim2.new(0, 21, 0, 21)
+BrightnessToggle.Position = UDim2.new(0, 2, 0, 2)
+BrightnessToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+BrightnessToggle.ZIndex = 10003
+BrightnessToggle.Parent = BrightnessSwitch
+
+local BrightnessToggleCorner = Instance.new("UICorner")
+BrightnessToggleCorner.CornerRadius = UDim.new(0, 10)
+BrightnessToggleCorner.Parent = BrightnessToggle
+
 -- WalkSpeed Input (DIPERLEBAR)
 local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
-WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 140)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.ZIndex = 10002
 WalkSpeedFrame.Parent = UtamaContent
@@ -367,10 +411,10 @@ local SetWalkSpeedCorner = Instance.new("UICorner")
 SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
--- Daftar Pemain (DIPERLEBAR)
+-- Daftar Pemain (DIPERLEBAR) - DIPINDAHKAN KE BAWAH
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 310, 0, 120) -- Diperlebar dari 260 menjadi 310
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 180)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 220) -- Dipindahkan ke bawah
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.ZIndex = 10002
 PlayerListFrame.Parent = UtamaContent
@@ -407,6 +451,7 @@ local PlayerListLayout = Instance.new("UIListLayout")
 PlayerListLayout.Padding = UDim.new(0, 5)
 PlayerListLayout.Parent = PlayerListScroll
 
+-- ... (Kode Tween Content, Parts Content, Script Content, dan lainnya tetap sama)
 -- Tween Content (DIPERLEBAR)
 local TweenContent = Instance.new("Frame")
 TweenContent.Size = UDim2.new(1, 0, 1, 0)
@@ -899,6 +944,13 @@ local function hideConfirmPopup()
     ConfirmPopup.Visible = false
 end
 
+-- ==================== VARIABEL BARU UNTUK BRIGHTNESS ====================
+local isBrightnessEnabled = false
+local originalBrightness = Lighting.Brightness
+local originalAmbient = Lighting.Ambient
+local originalOutdoorAmbient = Lighting.OutdoorAmbient
+local originalFogEnd = Lighting.FogEnd
+
 -- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
 -- Variabel untuk drag functionality
 local dragging = false
@@ -945,6 +997,54 @@ local activeFilters = {
 
 -- Variabel untuk koneksi event (DITAMBAHKAN UNTUK PERBAIKAN)
 local playerAddedConn, playerRemovingConn, characterAddedConn
+
+-- ==================== FUNGSI BRIGHTNESS YANG DITAMBAHKAN ====================
+local function toggleBrightness()
+    if isBrightnessEnabled then
+        -- Nonaktifkan brightness (kembalikan ke nilai asli)
+        Lighting.Brightness = originalBrightness
+        Lighting.Ambient = originalAmbient
+        Lighting.OutdoorAmbient = originalOutdoorAmbient
+        Lighting.FogEnd = originalFogEnd
+        
+        isBrightnessEnabled = false
+        
+        TweenService:Create(
+            BrightnessToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            BrightnessSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    else
+        -- Aktifkan brightness (terangkan ruangan)
+        originalBrightness = Lighting.Brightness
+        originalAmbient = Lighting.Ambient
+        originalOutdoorAmbient = Lighting.OutdoorAmbient
+        originalFogEnd = Lighting.FogEnd
+        
+        Lighting.Brightness = 2  -- Tingkatkan brightness
+        Lighting.Ambient = Color3.fromRGB(200, 200, 200)  -- Ambient light terang
+        Lighting.OutdoorAmbient = Color3.fromRGB(200, 200, 200)  -- Outdoor ambient terang
+        Lighting.FogEnd = 100000  -- Hilangkan fog dengan men-set nilai sangat besar
+        
+        isBrightnessEnabled = true
+        
+        TweenService:Create(
+            BrightnessToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+        ):Play()
+        TweenService:Create(
+            BrightnessSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+        ):Play()
+    end
+end
 
 -- ==================== FUNGSI UTAMA YANG DIPERBAIKI ====================
 
@@ -1029,6 +1129,13 @@ local function cleanUpHead()
         headConnection = nil
     end
     headingPlayer = nil
+end
+
+-- Fungsi untuk membersihkan brightness
+local function cleanUpBrightness()
+    if isBrightnessEnabled then
+        toggleBrightness() -- Nonaktifkan brightness
+    end
 end
 
 -- ==================== FUNGSI ESP ====================
@@ -1230,6 +1337,7 @@ local function executeScript(scriptCode, scriptTitle)
         cleanUpFloat()
         cleanUpHead()
         cleanUpAllESP()
+        cleanUpBrightness()
         
         -- Eksekusi script menggunakan loadstring
         local success, errorMessage = pcall(function()
@@ -2127,6 +2235,7 @@ local function destroyScript()
     cleanUpFloat()
     cleanUpHead()
     cleanUpAllESP()
+    cleanUpBrightness()
     
     -- Hapus semua koneksi event yang sudah dideklarasikan
     if playerAddedConn then
@@ -2385,6 +2494,7 @@ end)
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 FloatSwitch.MouseButton1Click:Connect(toggleFloat)
+BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness) -- DITAMBAHKAN
 
 -- Event handler untuk WalkSpeed
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -2781,7 +2891,7 @@ FloatingButton.MouseLeave:Connect(function()
     ):Play()
 end)
 
--- Efek hover pada tombol switch
+-- Efek hover pada tombol switch (termasuk brightness)
 local function setupSwitchHover(switch, toggle)
     switch.MouseEnter:Connect(function()
         if toggle.Position == UDim2.new(0, 27, 0, 2) then
@@ -2818,6 +2928,7 @@ end
 
 setupSwitchHover(FlySwitch, FlyToggle)
 setupSwitchHover(FloatSwitch, FloatToggle)
+setupSwitchHover(BrightnessSwitch, BrightnessToggle) -- DITAMBAHKAN
 
 -- Efek hover pada tombol Set WalkSpeed
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -2870,7 +2981,7 @@ RefreshPartsButton.MouseLeave:Connect(function()
     ):Play()
 end)
 
--- Deteksi ketika pemain berganjung atau keluar
+-- Deteksi ketika pemain bergabung atau keluar
 playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
 playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
@@ -2895,7 +3006,7 @@ characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Menu dengan ESP dan fitur lengkap telah dimuat!",
+    Text = "Menu dengan ESP, Brightness, dan fitur lengkap telah dimuat!",
     Duration = 5
 })
 
