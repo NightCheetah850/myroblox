@@ -875,7 +875,7 @@ local DownButtonCorner = Instance.new("UICorner")
 DownButtonCorner.CornerRadius = UDim.new(1, 0)
 DownButtonCorner.Parent = DownButton
 
--- ==================== FUNGSI POPUP KONFIRMASI ====================
+-- ==================== FUNGSI POPUP KONFIRMASI YANG DIPERBAIKI ====================
 local function showConfirmPopup()
     ConfirmPopup.Visible = true
     ConfirmPopup.Size = UDim2.new(0, 0, 0, 0)
@@ -898,83 +898,6 @@ local function hideConfirmPopup()
     wait(0.2)
     ConfirmPopup.Visible = false
 end
-
-ConfirmYesButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-    
-    -- Hancurkan script
-    local function destroyScript()
-        -- Bersihkan semua fungsi aktif
-        cleanUpFly()
-        cleanUpFloat()
-        cleanUpHead()
-        cleanUpAllESP()
-        
-        -- Hapus semua koneksi event
-        if playerAddedConn then
-            playerAddedConn:Disconnect()
-        end
-        
-        if playerRemovingConn then
-            playerRemovingConn:Disconnect()
-        end
-        
-        if characterAddedConn then
-            characterAddedConn:Disconnect()
-        end
-        
-        -- Hancurkan GUI
-        if ScreenGui then
-            ScreenGui:Destroy()
-        end
-        
-        -- Notifikasi
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Milky Menu",
-            Text = "Script telah dihancurkan",
-            Duration = 3
-        })
-    end
-    
-    destroyScript()
-end)
-
-ConfirmNoButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-end)
-
--- Efek hover pada tombol konfirmasi
-ConfirmYesButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        ConfirmYesButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
-    ):Play()
-end)
-
-ConfirmYesButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        ConfirmYesButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
-    ):Play()
-end)
-
-ConfirmNoButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        ConfirmNoButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-end)
-
-ConfirmNoButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        ConfirmNoButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-    ):Play()
-end)
 
 -- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
 -- Variabel untuk drag functionality
@@ -1019,6 +942,9 @@ local activeFilters = {
     free = false,
     universal = false
 }
+
+-- Variabel untuk koneksi event (DITAMBAHKAN UNTUK PERBAIKAN)
+local playerAddedConn, playerRemovingConn, characterAddedConn
 
 -- ==================== FUNGSI UTAMA YANG DIPERBAIKI ====================
 
@@ -2194,7 +2120,7 @@ local function switchRibbon(ribbonName)
     end
 end
 
--- ==================== FUNGSI DESTROY SCRIPT ====================
+-- ==================== FUNGSI DESTROY SCRIPT YANG DIPERBAIKI ====================
 local function destroyScript()
     -- Bersihkan semua fungsi aktif
     cleanUpFly()
@@ -2202,7 +2128,7 @@ local function destroyScript()
     cleanUpHead()
     cleanUpAllESP()
     
-    -- Hapus semua koneksi event
+    -- Hapus semua koneksi event yang sudah dideklarasikan
     if playerAddedConn then
         playerAddedConn:Disconnect()
     end
@@ -2220,12 +2146,9 @@ local function destroyScript()
         ScreenGui:Destroy()
     end
     
-    -- Notifikasi
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Milky Menu",
-        Text = "Script telah dihancurkan",
-        Duration = 3
-    })
+    -- Hentikan eksekusi script lebih lanjut
+    -- Dengan menggunakan error untuk menghentikan eksekusi
+    error("Script destroyed by user")
 end
 
 -- ==================== EVENT HANDLERS ====================
@@ -2773,6 +2696,51 @@ local function togglePopup()
     end
 end
 
+-- ==================== EVENT HANDLERS POPUP KONFIRMASI YANG DIPERBAIKI ====================
+ConfirmYesButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+    
+    -- Panggil fungsi destroyScript yang sudah diperbaiki
+    destroyScript()
+end)
+
+ConfirmNoButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+end)
+
+-- Efek hover pada tombol konfirmasi
+ConfirmYesButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        ConfirmYesButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
+    ):Play()
+end)
+
+ConfirmYesButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        ConfirmYesButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
+    ):Play()
+end)
+
+ConfirmNoButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        ConfirmNoButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end)
+
+ConfirmNoButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        ConfirmNoButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+    ):Play()
+end)
+
 -- Event handler untuk floating button (toggle popup)
 FloatingButton.MouseButton1Click:Connect(togglePopup)
 
@@ -2902,9 +2870,9 @@ RefreshPartsButton.MouseLeave:Connect(function()
     ):Play()
 end)
 
--- Deteksi ketika pemain bergabung atau keluar
-local playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
-local playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
+-- Deteksi ketika pemain berganjung atau keluar
+playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
+playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
 
 -- Fungsi untuk menangani perubahan karakter
 local function onCharacterAdded(character)
@@ -2918,7 +2886,6 @@ local function onCharacterAdded(character)
 end
 
 -- Event untuk karakter yang baru ditambahkan
-local characterAddedConn
 if LocalPlayer.Character then
     onCharacterAdded(LocalPlayer.Character)
 end
