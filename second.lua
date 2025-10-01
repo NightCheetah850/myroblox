@@ -1,40 +1,43 @@
--- Floating Menu Milky dengan Kontrol Tombol untuk Mobile dan Daftar Pemain
+-- Service
 local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-local HttpService = game:GetService("HttpService")
-local CoreGui = game:GetService("CoreGui")
-local Lighting = game:GetService("Lighting")
 
--- Main GUI dengan ZIndex tinggi agar tampil di atas UI lain
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MilkyFloatingMenu_" .. HttpService:GenerateGUID(false):sub(1, 8)
-ScreenGui.Parent = CoreGui -- Parent ke CoreGui agar selalu tampil di atas
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- Global untuk ZIndex tertinggi
-ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 9999 -- Nilai sangat tinggi untuk tampil di atas semua UI
+-- Inisialisasi karakter
+local character = nil
+local humanoid = nil
 
--- Floating Button (Lingkaran) dengan ZIndex tinggi
-local FloatingButton = Instance.new("TextButton")
-FloatingButton.Size = UDim2.new(0, 60, 0, 60)
-FloatingButton.Position = UDim2.new(0, 100, 0, 100)
-FloatingButton.Text = "☰"
-FloatingButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatingButton.Font = Enum.Font.GothamBold
-FloatingButton.TextSize = 18
-FloatingButton.AutoButtonColor = false
-FloatingButton.Active = true
-FloatingButton.Draggable = false
-FloatingButton.Selectable = false
-FloatingButton.ZIndex = 10000 -- ZIndex sangat tinggi
-FloatingButton.Parent = ScreenGui
+-- Fungsi untuk mengatur karakter saat dimuat
+local function setupCharacter(newCharacter)
+    character = newCharacter
+    -- Tunggu hingga Humanoid tersedia
+    while not character:FindFirstChildOfClass("Humanoid") do
+        character.ChildAdded:Wait()
+    end
+    humanoid = character:FindFirstChildOfClass("Humanoid")
+end
 
--- Membuat bentuk lingkaran
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(1, 0)
+-- Hubungkan event CharacterAdded
+if LocalPlayer.Character then
+    setupCharacter(LocalPlayer.Character)
+end
+LocalPlayer.CharacterAdded:Connect(setupCharacter)
+
+-- Tangani input pengguna
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    -- Abaikan jika input berasal dari chat (game processed)
+    if gameProcessed then
+        return
+    end
+
+    -- Contoh: Tombol M untuk membuka menu
+    if input.KeyCode == Enum.KeyCode.M then
+        if character and humanoid then
+            -- Jalankan logika Anda di sini
+            print("Tombol M ditekan!")
+        end
+    end
+end)UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = FloatingButton
 
 -- ==================== MAIN MENU POPUP ====================
