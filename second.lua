@@ -1183,25 +1183,71 @@ local function toggleXRay()
     end
 end
 
+-- ==================== INISIALISASI COLLISION GROUP ====================
+local PhysicsService = game:GetService("PhysicsService")
+
+-- Buat collision group untuk noclip
+local function initializeNoclipGroup()
+    local success, error = pcall(function()
+        -- Coba buat collision group
+        PhysicsService:CreateCollisionGroup("Noclip")
+    end)
+    
+    -- Jika group sudah ada, tangani error dengan graceful
+    if not success and not string.find(error, "already exists") then
+        warn("Error creating collision group: " .. error)
+        return false
+    end
+    
+    -- Set collision group agar tidak bertabrakan dengan default dan lainnya
+    pcall(function()
+        PhysicsService:CollisionGroupSetCollidable("Noclip", "Default", false)
+        PhysicsService:CollisionGroupSetCollidable("Noclip", "Noclip", false)
+        
+        -- Nonaktifkan tabrakan dengan semua group yang umum
+        for _, groupName in pairs(PhysicsService:GetCollisionGroups()) do
+            if groupName ~= "Noclip" then
+                PhysicsService:CollisionGroupSetCollidable("Noclip", groupName, false)
+            end
+        end
+    end)
+    
+    return true
+end
+
+-- Panggil inisialisasi di awal
+initializeNoclipGroup()
+
 -- ==================== FUNGSI NOCLIP YANG DITAMBAHKAN ====================
 local function enableNoclip()
     if isNoclipEnabled then return end
     
     local character = LocalPlayer.Character
-    if not character then return end
+    if not character then 
+        warn("No character found for noclip")
+        return 
+    end
+    
+    -- Pastikan collision group sudah diinisialisasi
+    if not initializeNoclipGroup() then
+        warn("Failed to initialize noclip collision group")
+        return
+    end
     
     -- Nonaktifkan collision untuk semua parts karakter
     for _, part in pairs(character:GetDescendants()) do
         if part:IsA("BasePart") then
             originalCollisionGroups[part] = part.CollisionGroup
+            part.CanCollide = false  -- Tambahkan ini sebagai backup
             part.CollisionGroup = "Noclip"
         end
     end
     
-    -- Connection untuk parts baru di karakter
+    -- Connection untuk parts baru di karakter dengan error handling
     local function onCharacterDescendantAdded(descendant)
         if descendant:IsA("BasePart") then
             originalCollisionGroups[descendant] = descendant.CollisionGroup
+            descendant.CanCollide = false
             descendant.CollisionGroup = "Noclip"
         end
     end
@@ -1220,38 +1266,8 @@ local function enableNoclip()
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
     ):Play()
-end
-
-local function disableNoclip()
-    if not isNoclipEnabled then return end
     
-    -- Kembalikan collision group asli
-    for part, originalGroup in pairs(originalCollisionGroups) do
-        if part and part.Parent then
-            part.CollisionGroup = originalGroup
-        end
-    end
-    
-    -- Hapus connection
-    if noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
-    end
-    
-    originalCollisionGroups = {}
-    isNoclipEnabled = false
-    
-    -- Update UI
-    TweenService:Create(
-        NoclipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-    ):Play()
-    TweenService:Create(
-        NoclipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
+    print("Noclip enabled successfully")
 end
 
 local function toggleNoclip()
