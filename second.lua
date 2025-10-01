@@ -1,66 +1,65 @@
--- Service
+-- Floating Menu Milky dengan Kontrol Tombol untuk Mobile dan Daftar Pemain
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+local Lighting = game:GetService("Lighting")
 
--- Inisialisasi karakter
-local character = nil
-local humanoid = nil
+-- Main GUI dengan ZIndex tinggi agar tampil di atas UI lain
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MilkyFloatingMenu_" .. HttpService:GenerateGUID(false):sub(1, 8)
+ScreenGui.Parent = CoreGui -- Parent ke CoreGui agar selalu tampil di atas
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- Global untuk ZIndex tertinggi
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 9999 -- Nilai sangat tinggi untuk tampil di atas semua UI
 
--- Fungsi untuk mengatur karakter saat dimuat
-local function setupCharacter(newCharacter)
-    character = newCharacter
-    -- Tunggu hingga Humanoid tersedia
-    while not character:FindFirstChildOfClass("Humanoid") do
-        character.ChildAdded:Wait()
-    end
-    humanoid = character:FindFirstChildOfClass("Humanoid")
-end
+-- Floating Button (Lingkaran) dengan ZIndex tinggi
+local FloatingButton = Instance.new("TextButton")
+FloatingButton.Size = UDim2.new(0, 60, 0, 60)
+FloatingButton.Position = UDim2.new(0, 100, 0, 100)
+FloatingButton.Text = "Milky"
+FloatingButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatingButton.Font = Enum.Font.GothamBold
+FloatingButton.TextSize = 14
+FloatingButton.AutoButtonColor = false
+FloatingButton.Active = true
+FloatingButton.Draggable = false
+FloatingButton.Selectable = false
+FloatingButton.ZIndex = 10000 -- ZIndex sangat tinggi
+FloatingButton.Parent = ScreenGui
 
--- Hubungkan event CharacterAdded
-if LocalPlayer.Character then
-    setupCharacter(LocalPlayer.Character)
-end
-LocalPlayer.CharacterAdded:Connect(setupCharacter)
-
--- Tangani input pengguna
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    -- Abaikan jika input berasal dari chat (game processed)
-    if gameProcessed then
-        return
-    end
-
-    -- Contoh: Tombol M untuk membuka menu
-    if input.KeyCode == Enum.KeyCode.M then
-        if character and humanoid then
-            -- Jalankan logika Anda di sini
-            print("Tombol M ditekan!")
-        end
-    end
-end)UICorner.CornerRadius = UDim.new(1, 0)
+-- Membuat bentuk lingkaran
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(1, 0)
 UICorner.Parent = FloatingButton
 
--- ==================== MAIN MENU POPUP ====================
-local MainPopup = Instance.new("Frame")
-MainPopup.Size = UDim2.new(0, 300, 0, 400)
-MainPopup.Position = UDim2.new(0.5, -150, 0.5, -200)
-MainPopup.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-MainPopup.BorderSizePixel = 0
-MainPopup.Visible = false
-MainPopup.ZIndex = 10005
-MainPopup.Parent = ScreenGui
+-- ==================== POPUP KONFIRMASI ====================
+-- Popup Konfirmasi Penutupan
+local ConfirmPopup = Instance.new("Frame")
+ConfirmPopup.Size = UDim2.new(0, 300, 0, 150)
+ConfirmPopup.Position = UDim2.new(0.5, -150, 0.5, -75)
+ConfirmPopup.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ConfirmPopup.BorderSizePixel = 0
+ConfirmPopup.Visible = false
+ConfirmPopup.ZIndex = 10010 -- Lebih tinggi dari semua UI
+ConfirmPopup.Parent = ScreenGui
 
-local MainPopupCorner = Instance.new("UICorner")
-MainPopupCorner.CornerRadius = UDim.new(0, 12)
-MainPopupCorner.Parent = MainPopup
+local ConfirmCorner = Instance.new("UICorner")
+ConfirmCorner.CornerRadius = UDim.new(0, 12)
+ConfirmCorner.Parent = ConfirmPopup
 
--- Header Menu
-local Header = Instance.new("Frame")
-Header.Size = UDim2.new(1, 0, 0, 40)
-Header.Position = UDim2.new(0, 0, 0, 0)
-Header.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Header.BorderSizePixel = 0
-Header.ZIndex = 10006
+-- Judul Konfirmasi
+local ConfirmTitle = Instance.new("TextLabel")
+ConfirmTitle.Size = UDim2.new(1, 0, 0, 40)
+ConfirmTitle.Position = UDim2.new(0, 0, 0, 0)
+ConfirmTitle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ConfirmTitle.Text = "Konfirmasi Penutupan"
+ConfirmTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+ubah tombol mengambang pada ribbon utama menjadi tombol xray seperti pada infinite yield, dan tambahkan tombol noclip juga, dan tambahkan juga garis scroll disamping popup agar pengguna dapat mengscroll dari atas ke bawah dengan mudahHeader.ZIndex = 10006
 Header.Parent = MainPopup
 
 local HeaderCorner = Instance.new("UICorner")
