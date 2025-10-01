@@ -1,4 +1,4 @@
--- Floating Menu Milky dengan Kontrol Tombol untuk Mobile dan Daftar Pemain
+-- Floating Menu Milky dengan Kontrol Tombol untuk Mobile, Daftar Pemain, X-Ray, dan Noclip
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
@@ -116,8 +116,8 @@ ConfirmNoCorner.Parent = ConfirmNoButton
 -- ==================== MAIN POPUP WINDOW (DIPERLEBAR) ====================
 -- Popup Window dengan ZIndex tinggi (diperlebar dari 300 menjadi 350)
 local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 350, 0, 450) -- Diperlebar dan dipertinggi
-PopupFrame.Position = UDim2.new(0.5, -175, 0.5, -225) -- Disesuaikan dengan ukuran baru
+PopupFrame.Size = UDim2.new(0, 350, 0, 500) -- Dipertinggi untuk menampung lebih banyak fitur
+PopupFrame.Position = UDim2.new(0.5, -175, 0.5, -250) -- Disesuaikan dengan ukuran baru
 PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 PopupFrame.BorderSizePixel = 0
 PopupFrame.Visible = false
@@ -274,53 +274,96 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Float Switch (DIPERLEBAR)
-local FloatFrame = Instance.new("Frame")
-FloatFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
-FloatFrame.Position = UDim2.new(0, 20, 0, 100)
-FloatFrame.BackgroundTransparency = 1
-FloatFrame.ZIndex = 10002
-FloatFrame.Parent = UtamaContent
+-- ==================== X-RAY SWITCH (Menggantikan Float) ====================
+local XRayFrame = Instance.new("Frame")
+XRayFrame.Size = UDim2.new(0, 310, 0, 30)
+XRayFrame.Position = UDim2.new(0, 20, 0, 100)
+XRayFrame.BackgroundTransparency = 1
+XRayFrame.ZIndex = 10002
+XRayFrame.Parent = UtamaContent
 
-local FloatLabel = Instance.new("TextLabel")
-FloatLabel.Size = UDim2.new(0, 100, 1, 0)
-FloatLabel.Position = UDim2.new(0, 0, 0, 0)
-FloatLabel.BackgroundTransparency = 1
-FloatLabel.Text = "Mengambang:"
-FloatLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatLabel.Font = Enum.Font.Gotham
-FloatLabel.TextSize = 14
-FloatLabel.TextXAlignment = Enum.TextXAlignment.Left
-FloatLabel.ZIndex = 10002
-FloatLabel.Parent = FloatFrame
+local XRayLabel = Instance.new("TextLabel")
+XRayLabel.Size = UDim2.new(0, 100, 1, 0)
+XRayLabel.Position = UDim2.new(0, 0, 0, 0)
+XRayLabel.BackgroundTransparency = 1
+XRayLabel.Text = "X-Ray:"
+XRayLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+XRayLabel.Font = Enum.Font.Gotham
+XRayLabel.TextSize = 14
+XRayLabel.TextXAlignment = Enum.TextXAlignment.Left
+XRayLabel.ZIndex = 10002
+XRayLabel.Parent = XRayFrame
 
-local FloatSwitch = Instance.new("TextButton")
-FloatSwitch.Size = UDim2.new(0, 50, 0, 25)
-FloatSwitch.Position = UDim2.new(1, -50, 0, 2)
-FloatSwitch.Text = ""
-FloatSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-FloatSwitch.ZIndex = 10002
-FloatSwitch.Parent = FloatFrame
+local XRaySwitch = Instance.new("TextButton")
+XRaySwitch.Size = UDim2.new(0, 50, 0, 25)
+XRaySwitch.Position = UDim2.new(1, -50, 0, 2)
+XRaySwitch.Text = ""
+XRaySwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+XRaySwitch.ZIndex = 10002
+XRaySwitch.Parent = XRayFrame
 
-local FloatSwitchCorner = Instance.new("UICorner")
-FloatSwitchCorner.CornerRadius = UDim.new(0, 12)
-FloatSwitchCorner.Parent = FloatSwitch
+local XRaySwitchCorner = Instance.new("UICorner")
+XRaySwitchCorner.CornerRadius = UDim.new(0, 12)
+XRaySwitchCorner.Parent = XRaySwitch
 
-local FloatToggle = Instance.new("Frame")
-FloatToggle.Size = UDim2.new(0, 21, 0, 21)
-FloatToggle.Position = UDim2.new(0, 2, 0, 2)
-FloatToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-FloatToggle.ZIndex = 10003
-FloatToggle.Parent = FloatSwitch
+local XRayToggle = Instance.new("Frame")
+XRayToggle.Size = UDim2.new(0, 21, 0, 21)
+XRayToggle.Position = UDim2.new(0, 2, 0, 2)
+XRayToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+XRayToggle.ZIndex = 10003
+XRayToggle.Parent = XRaySwitch
 
-local FloatToggleCorner = Instance.new("UICorner")
-FloatToggleCorner.CornerRadius = UDim.new(0, 10)
-FloatToggleCorner.Parent = FloatToggle
+local XRayToggleCorner = Instance.new("UICorner")
+XRayToggleCorner.CornerRadius = UDim.new(0, 10)
+XRayToggleCorner.Parent = XRayToggle
+
+-- ==================== NOCLIP SWITCH ====================
+local NoclipFrame = Instance.new("Frame")
+NoclipFrame.Size = UDim2.new(0, 310, 0, 30)
+NoclipFrame.Position = UDim2.new(0, 20, 0, 140)
+NoclipFrame.BackgroundTransparency = 1
+NoclipFrame.ZIndex = 10002
+NoclipFrame.Parent = UtamaContent
+
+local NoclipLabel = Instance.new("TextLabel")
+NoclipLabel.Size = UDim2.new(0, 100, 1, 0)
+NoclipLabel.Position = UDim2.new(0, 0, 0, 0)
+NoclipLabel.BackgroundTransparency = 1
+NoclipLabel.Text = "Noclip:"
+NoclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+NoclipLabel.Font = Enum.Font.Gotham
+NoclipLabel.TextSize = 14
+NoclipLabel.TextXAlignment = Enum.TextXAlignment.Left
+NoclipLabel.ZIndex = 10002
+NoclipLabel.Parent = NoclipFrame
+
+local NoclipSwitch = Instance.new("TextButton")
+NoclipSwitch.Size = UDim2.new(0, 50, 0, 25)
+NoclipSwitch.Position = UDim2.new(1, -50, 0, 2)
+NoclipSwitch.Text = ""
+NoclipSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+NoclipSwitch.ZIndex = 10002
+NoclipSwitch.Parent = NoclipFrame
+
+local NoclipSwitchCorner = Instance.new("UICorner")
+NoclipSwitchCorner.CornerRadius = UDim.new(0, 12)
+NoclipSwitchCorner.Parent = NoclipSwitch
+
+local NoclipToggle = Instance.new("Frame")
+NoclipToggle.Size = UDim2.new(0, 21, 0, 21)
+NoclipToggle.Position = UDim2.new(0, 2, 0, 2)
+NoclipToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+NoclipToggle.ZIndex = 10003
+NoclipToggle.Parent = NoclipSwitch
+
+local NoclipToggleCorner = Instance.new("UICorner")
+NoclipToggleCorner.CornerRadius = UDim.new(0, 10)
+NoclipToggleCorner.Parent = NoclipToggle
 
 -- Brightness Switch (DITAMBAHKAN)
 local BrightnessFrame = Instance.new("Frame")
 BrightnessFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
-BrightnessFrame.Position = UDim2.new(0, 20, 0, 140)
+BrightnessFrame.Position = UDim2.new(0, 20, 0, 180)
 BrightnessFrame.BackgroundTransparency = 1
 BrightnessFrame.ZIndex = 10002
 BrightnessFrame.Parent = UtamaContent
@@ -363,7 +406,7 @@ BrightnessToggleCorner.Parent = BrightnessToggle
 -- WalkSpeed Input (DIPERLEBAR)
 local WalkSpeedFrame = Instance.new("Frame")
 WalkSpeedFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
-WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
+WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 220)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.ZIndex = 10002
 WalkSpeedFrame.Parent = UtamaContent
@@ -414,7 +457,7 @@ SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 -- Daftar Pemain (DIPERLEBAR) - DIPINDAHKAN KE BAWAH
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 310, 0, 120) -- Diperlebar dari 260 menjadi 310
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 220) -- Dipindahkan ke bawah
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 260) -- Dipindahkan ke bawah
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.ZIndex = 10002
 PlayerListFrame.Parent = UtamaContent
@@ -514,7 +557,7 @@ SetWaypointCorner.Parent = SetWaypointButton
 
 -- Daftar Waypoint (DIPERLEBAR)
 local WaypointListFrame = Instance.new("Frame")
-WaypointListFrame.Size = UDim2.new(0, 310, 0, 330) -- Diperlebar dari 260 menjadi 310, dipertinggi
+WaypointListFrame.Size = UDim2.new(0, 310, 0, 380) -- Diperlebar dari 260 menjadi 310, dipertinggi
 WaypointListFrame.Position = UDim2.new(0, 20, 0, 50)
 WaypointListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 WaypointListFrame.ZIndex = 10002
@@ -628,7 +671,7 @@ PartsInfoLabel.Parent = PartsContent
 
 -- Daftar Parts (DIPERLEBAR)
 local PartsListFrame = Instance.new("Frame")
-PartsListFrame.Size = UDim2.new(0, 310, 0, 350) -- Diperlebar dari 260 menjadi 310, dipertinggi
+PartsListFrame.Size = UDim2.new(0, 310, 0, 380) -- Diperlebar dari 260 menjadi 310, dipertinggi
 PartsListFrame.Position = UDim2.new(0, 20, 0, 80)
 PartsListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PartsListFrame.ZIndex = 10002
@@ -847,7 +890,7 @@ SearchStatusLabel.Parent = ScriptContent
 
 -- Daftar Script (DIPERLEBAR)
 local ScriptListFrame = Instance.new("Frame")
-ScriptListFrame.Size = UDim2.new(0, 310, 0, 230) -- Diperlebar dari 260 menjadi 310, dipertinggi
+ScriptListFrame.Size = UDim2.new(0, 310, 0, 280) -- Diperlebar dari 260 menjadi 310, dipertinggi
 ScriptListFrame.Position = UDim2.new(0, 20, 0, 175)
 ScriptListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 ScriptListFrame.ZIndex = 10002
@@ -951,6 +994,16 @@ local originalAmbient = Lighting.Ambient
 local originalOutdoorAmbient = Lighting.OutdoorAmbient
 local originalFogEnd = Lighting.FogEnd
 
+-- ==================== VARIABEL X-RAY ====================
+local isXRayEnabled = false
+local originalTransparencies = {}
+local xRayConnections = {}
+
+-- ==================== VARIABEL NOCLIP ====================
+local isNoclipEnabled = false
+local noclipConnection = nil
+local originalCollisionGroups = {}
+
 -- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
 -- Variabel untuk drag functionality
 local dragging = false
@@ -961,14 +1014,6 @@ local isFlying = false
 local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
 local flyConnection
-
--- Variabel untuk float
-local isFloating = false
-local floatBodyForce
-
--- Variabel untuk kontrol tombol
-local upButtonPressed = false
-local downButtonPressed = false
 
 -- Variabel untuk waypoints
 local waypoints = {}
@@ -1046,6 +1091,177 @@ local function toggleBrightness()
     end
 end
 
+-- ==================== FUNGSI X-RAY YANG DITAMBAHKAN ====================
+local function enableXRay()
+    if isXRayEnabled then return end
+    
+    local function makeXRayPart(part)
+        if part:IsA("BasePart") and not part:IsDescendantOf(LocalPlayer.Character) then
+            originalTransparencies[part] = part.Transparency
+            part.LocalTransparencyModifier = 0.7 -- Atur transparansi untuk efek X-ray
+        end
+    end
+
+    -- Fungsi rekursif untuk mencari semua parts
+    local function recurseForParts(object)
+        if object:IsA("BasePart") then
+            makeXRayPart(object)
+        end
+
+        -- Jangan proses karakter pemain
+        if object:FindFirstChildOfClass("Humanoid") then return end
+
+        -- Process children
+        for _, child in pairs(object:GetChildren()) do
+            recurseForParts(child)
+        end
+    end
+
+    -- Terapkan X-ray ke workspace
+    recurseForParts(workspace)
+    
+    -- Connection untuk parts baru
+    local function onDescendantAdded(descendant)
+        if descendant:IsA("BasePart") and not descendant:IsDescendantOf(LocalPlayer.Character) then
+            makeXRayPart(descendant)
+        end
+    end
+    
+    xRayConnections.descendantAdded = workspace.DescendantAdded:Connect(onDescendantAdded)
+    isXRayEnabled = true
+    
+    -- Update UI
+    TweenService:Create(
+        XRayToggle,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+    ):Play()
+    TweenService:Create(
+        XRaySwitch,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+    ):Play()
+end
+
+local function disableXRay()
+    if not isXRayEnabled then return end
+    
+    -- Kembalikan transparansi asli
+    for part, originalTransparency in pairs(originalTransparencies) do
+        if part and part.Parent then
+            part.LocalTransparencyModifier = 0
+        end
+    end
+    
+    -- Hapus connections
+    if xRayConnections.descendantAdded then
+        xRayConnections.descendantAdded:Disconnect()
+        xRayConnections.descendantAdded = nil
+    end
+    
+    originalTransparencies = {}
+    isXRayEnabled = false
+    
+    -- Update UI
+    TweenService:Create(
+        XRayToggle,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+    ):Play()
+    TweenService:Create(
+        XRaySwitch,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end
+
+local function toggleXRay()
+    if isXRayEnabled then
+        disableXRay()
+    else
+        enableXRay()
+    end
+end
+
+-- ==================== FUNGSI NOCLIP YANG DITAMBAHKAN ====================
+local function enableNoclip()
+    if isNoclipEnabled then return end
+    
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    -- Nonaktifkan collision untuk semua parts karakter
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalCollisionGroups[part] = part.CollisionGroup
+            part.CollisionGroup = "Noclip"
+        end
+    end
+    
+    -- Connection untuk parts baru di karakter
+    local function onCharacterDescendantAdded(descendant)
+        if descendant:IsA("BasePart") then
+            originalCollisionGroups[descendant] = descendant.CollisionGroup
+            descendant.CollisionGroup = "Noclip"
+        end
+    end
+    
+    noclipConnection = character.DescendantAdded:Connect(onCharacterDescendantAdded)
+    isNoclipEnabled = true
+    
+    -- Update UI
+    TweenService:Create(
+        NoclipToggle,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+    ):Play()
+    TweenService:Create(
+        NoclipSwitch,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+    ):Play()
+end
+
+local function disableNoclip()
+    if not isNoclipEnabled then return end
+    
+    -- Kembalikan collision group asli
+    for part, originalGroup in pairs(originalCollisionGroups) do
+        if part and part.Parent then
+            part.CollisionGroup = originalGroup
+        end
+    end
+    
+    -- Hapus connection
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+    
+    originalCollisionGroups = {}
+    isNoclipEnabled = false
+    
+    -- Update UI
+    TweenService:Create(
+        NoclipToggle,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+    ):Play()
+    TweenService:Create(
+        NoclipSwitch,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end
+
+local function toggleNoclip()
+    if isNoclipEnabled then
+        disableNoclip()
+    else
+        enableNoclip()
+    end
+end
+
 -- ==================== FUNGSI UTAMA YANG DIPERBAIKI ====================
 
 -- Fungsi untuk mengupdate posisi button
@@ -1099,29 +1315,6 @@ local function cleanUpFly()
     end
 end
 
--- Fungsi untuk membersihkan float
-local function cleanUpFloat()
-    if floatBodyForce then
-        floatBodyForce:Destroy()
-        floatBodyForce = nil
-    end
-    isFloating = false
-    
-    -- Update UI
-    if FloatToggle and FloatSwitch then
-        TweenService:Create(
-            FloatToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            FloatSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    end
-end
-
 -- Fungsi untuk membersihkan head
 local function cleanUpHead()
     if headConnection then
@@ -1135,6 +1328,20 @@ end
 local function cleanUpBrightness()
     if isBrightnessEnabled then
         toggleBrightness() -- Nonaktifkan brightness
+    end
+end
+
+-- Fungsi untuk membersihkan X-Ray
+local function cleanUpXRay()
+    if isXRayEnabled then
+        disableXRay()
+    end
+end
+
+-- Fungsi untuk membersihkan Noclip
+local function cleanUpNoclip()
+    if isNoclipEnabled then
+        disableNoclip()
     end
 end
 
@@ -1334,7 +1541,8 @@ local function executeScript(scriptCode, scriptTitle)
     if scriptCode and scriptCode ~= "" then
         -- Bersihkan fungsi aktif sebelum menjalankan script baru
         cleanUpFly()
-        cleanUpFloat()
+        cleanUpXRay()
+        cleanUpNoclip()
         cleanUpHead()
         cleanUpAllESP()
         cleanUpBrightness()
@@ -1770,9 +1978,9 @@ local function updatePartsList()
                     cleanUpFly()
                 end
                 
-                -- Nonaktifkan float jika sedang aktif
-                if isFloating then
-                    cleanUpFloat()
+                -- Nonaktifkan noclip jika sedang aktif
+                if isNoclipEnabled then
+                    disableNoclip()
                 end
                 
                 -- Tween ke part
@@ -2003,8 +2211,8 @@ local function updatePlayerList()
                             cleanUpFly()
                         end
                         
-                        if isFloating then
-                            cleanUpFloat()
+                        if isNoclipEnabled then
+                            disableNoclip()
                         end
                         
                         local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2099,8 +2307,8 @@ local function updateWaypointList()
                     cleanUpFly()
                 end
                 
-                if isFloating then
-                    cleanUpFloat()
+                if isNoclipEnabled then
+                    disableNoclip()
                 end
                 
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2232,7 +2440,8 @@ end
 local function destroyScript()
     -- Bersihkan semua fungsi aktif
     cleanUpFly()
-    cleanUpFloat()
+    cleanUpXRay()
+    cleanUpNoclip()
     cleanUpHead()
     cleanUpAllESP()
     cleanUpBrightness()
@@ -2326,8 +2535,8 @@ local function toggleFly()
     if isFlying then
         cleanUpFly()
     else
-        if isFloating then
-            cleanUpFloat()
+        if isNoclipEnabled then
+            disableNoclip()
         end
         
         if headingPlayer then
@@ -2408,44 +2617,6 @@ local function toggleFly()
     end
 end
 
--- Fungsi Float/Unfloat
-local function toggleFloat()
-    if isFloating then
-        cleanUpFloat()
-    else
-        if isFlying then
-            cleanUpFly()
-        end
-        
-        if headingPlayer then
-            cleanUpHead()
-            updatePlayerList()
-        end
-        
-        local character = LocalPlayer.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            cleanUpFloat()
-            
-            floatBodyForce = Instance.new("BodyForce")
-            floatBodyForce.Force = Vector3.new(0, character.HumanoidRootPart:GetMass() * workspace.Gravity, 0)
-            floatBodyForce.Parent = character.HumanoidRootPart
-            
-            isFloating = true
-            
-            TweenService:Create(
-                FloatToggle,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-            ):Play()
-            TweenService:Create(
-                FloatSwitch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-            ):Play()
-        end
-    end
-end
-
 -- Event handlers untuk tombol kontrol
 UpButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch then
@@ -2493,8 +2664,9 @@ end)
 
 -- Event handlers untuk switch
 FlySwitch.MouseButton1Click:Connect(toggleFly)
-FloatSwitch.MouseButton1Click:Connect(toggleFloat)
-BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness) -- DITAMBAHKAN
+XRaySwitch.MouseButton1Click:Connect(toggleXRay)
+NoclipSwitch.MouseButton1Click:Connect(toggleNoclip)
+BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness)
 
 -- Event handler untuk WalkSpeed
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -2801,7 +2973,7 @@ local function togglePopup()
         TweenService:Create(
             PopupFrame,
             TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-            {Size = UDim2.new(0, 350, 0, 450), Position = UDim2.new(0.5, -175, 0.5, -225)}
+            {Size = UDim2.new(0, 350, 0, 500), Position = UDim2.new(0.5, -175, 0.5, -250)}
         ):Play()
     end
 end
@@ -2891,7 +3063,7 @@ FloatingButton.MouseLeave:Connect(function()
     ):Play()
 end)
 
--- Efek hover pada tombol switch (termasuk brightness)
+-- Efek hover pada tombol switch (termasuk brightness, xray, noclip)
 local function setupSwitchHover(switch, toggle)
     switch.MouseEnter:Connect(function()
         if toggle.Position == UDim2.new(0, 27, 0, 2) then
@@ -2927,8 +3099,9 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
-setupSwitchHover(FloatSwitch, FloatToggle)
-setupSwitchHover(BrightnessSwitch, BrightnessToggle) -- DITAMBAHKAN
+setupSwitchHover(XRaySwitch, XRayToggle)
+setupSwitchHover(NoclipSwitch, NoclipToggle)
+setupSwitchHover(BrightnessSwitch, BrightnessToggle)
 
 -- Efek hover pada tombol Set WalkSpeed
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -2990,7 +3163,8 @@ local function onCharacterAdded(character)
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
-        cleanUpFloat()
+        cleanUpXRay()
+        cleanUpNoclip()
         cleanUpHead()
         updatePlayerList()
     end)
@@ -3006,7 +3180,7 @@ characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 -- Notifikasi
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Milky Menu Loaded",
-    Text = "Menu dengan ESP, Brightness, dan fitur lengkap telah dimuat!",
+    Text = "Menu dengan X-Ray, Noclip, ESP, Brightness dan fitur lengkap telah dimuat!",
     Duration = 5
 })
 
