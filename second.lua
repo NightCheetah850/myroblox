@@ -7,7 +7,6 @@ local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
 local Lighting = game:GetService("Lighting")
-local PhysicsService = game:GetService("PhysicsService")
 
 -- Main GUI dengan ZIndex tinggi agar tampil di atas UI lain
 local ScreenGui = Instance.new("ScreenGui")
@@ -923,7 +922,7 @@ ScriptListScroll.BackgroundTransparency = 1
 ScriptListScroll.ScrollBarThickness = 5
 ScriptListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 ScriptListScroll.ZIndex = 10002
-ScriptListScroll.Parent = ScriptListScroll
+ScriptListScroll.Parent = ScriptListFrame
 
 local ScriptListLayout = Instance.new("UIListLayout")
 ScriptListLayout.Padding = UDim.new(0, 5)
@@ -1003,310 +1002,7 @@ local xRayConnections = {}
 -- ==================== VARIABEL NOCLIP ====================
 local isNoclipEnabled = false
 local noclipConnection = nil
-local noclipLoopConnection = nil
 local originalCollisionGroups = {}
-local noclipGroupInitialized = false
-
--- ==================== INISIALISASI COLLISION GROUP ====================
-local function initializeNoclipGroup()
-    local success, error = pcall(function()
-        -- Coba buat collision group
-        PhysicsService:CreateCollisionGroup("Noclip")
-    end)
-    
-    -- Jika group sudah ada, tangani error dengan graceful
-    if not success and not string.find(error, "already exists") then
-        warn("Error creating collision group: " .. error)
-        return false
-    end
-    
-    -- Set collision group agar tidak bertabrakan dengan default dan lainnya
-    local configSuccess, configError = pcall(function()
-        PhysicsService:CollisionGroupSetCollidable("Noclip", "Default", false)
-        PhysicsService:CollisionGroupSetCollidable("Noclip", "Noclip", false)
-        
-        -- Nonaktifkan tabrakan dengan semua group yang umum
-        local collisionGroups = PhysicsService:GetCollisionGroups()
-        for _, groupName in pairs(collisionGroups) do
-            if groupName ~= "Noclip" then
-                PhysicsService:CollisionGroupSetCollidable("Noclip", groupName, false)
-            end
-        end
-    end)
-    
-    if not configSuccess then
-        warn("Error configuring collision groups: " .. configError)
-        return false
-    end
-    
-    return true
-end
-
--- Panggil inisialisasi di awal
-noclipGroupInitialized = initializeNoclipGroup()
-if not noclipGroupInitialized then
-    warn("Noclip collision group initialization failed - noclip may not work properly")
-end
-
--- ==================== FUNGSI NOCLIP YANG DIPERBAIKI ====================
-local function enableNoclip()
-    if isNoclipEnabled then return end
-    
-    local character = LocalPlayer.Character
-    if not character then 
-        warn("No character found for noclip")
-        return 
-    end
-    
-    -- Pastikan karakter memiliki HumanoidRootPart
-    if not character:FindFirstChild("HumanoidRootPart") then
-        warn("Character has no HumanoidRootPart")
-        return
-    end
-    
-    -- Pastikan collision group sudah diinisialisasi
-    if not noclipGroupInitialized then
-        noclipGroupInitialized = initializeNoclipGroup()
-        if not noclipGroupInitialized then
-            warn("Failed to initialize noclip collision group")
-            return
-        end
-    end
-    
-    -- Nonaktifkan collision untuk semua parts karakter
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            originalCollisionGroups[part] = part.CollisionGroup
-            part.CanCollide = false  -- Tambahkan ini sebagai backup
-            local success, error = pcall(function()
-                part.CollisionGroup = "Noclip"
-            end)
-            if not success then
-                warn("Failed to set collision group for part " .. part.Name .. ": " .. error)
-            end
-        end
-    end
-    
-    -- Connection untuk parts baru di karakter dengan error handling
-    local function onCharacterDescendantAdded(descendant)
-        if descendant:IsA("BasePart") then
-            originalCollisionGroups[descendant] = descendant.CollisionGroup
-            descendant.CanCollide = false
-            local success, error = pcall(function()
-                descendant.CollisionGroup = "Noclip"
-            end)
-            if not success then
-                warn("Failed to set collision group for new part " .. descendant.Name .. ": " .. error)
-            end
-        end
-    end
-    
-    noclipConnection = character.DescendantAdded:Connect(onCharacterDescendantAdded)
-    isNoclipEnabled = true
-    
-    -- Update UI
-    TweenService:Create(
-        NoclipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-    ):Play()
-    TweenService:Create(
-        NoclipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-    ):Play()
-    
-    print("Noclip enabled successfully")
-end
-
-local function disableNoclip()
-    if not isNoclipEnabled then return end
-    
-    -- Kembalikan collision group asli dan CanCollide
-    for part, originalGroup in pairs(originalCollisionGroups) do
-        if part and part.Parent then
-            part.CanCollide = true  -- Kembalikan CanCollide ke default
-            local success, error = pcall(function()
-                part.CollisionGroup = originalGroup
-            end)
-            if not success then
-                warn("Failed to restore collision group for part " .. part.Name .. ": " .. error)
-            end
-        end
-    end
-    
-    -- Hapus connection
-    if noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
-    end
-    
-    originalCollisionGroups = {}
-    isNoclipEnabled = false
-    
-    -- Update UI
-    TweenService:Create(
-        NoclipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-    ):Play()
-    TweenService:Create(
-        NoclipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-    
-    print("Noclip disabled")
-end
-
--- ==================== ALTERNATIF NOCLIP YANG LEBIH SEDERHANA ====================
-local function enableNoclipAlternative()
-    if isNoclipEnabled then return end
-    
-    local character = LocalPlayer.Character
-    if not character then return end
-    
-    -- Nonaktifkan collision untuk semua parts yang sudah ada
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-        end
-    end
-    
-    -- Connection untuk parts baru
-    local function onDescendantAdded(descendant)
-        if descendant:IsA("BasePart") then
-            descendant.CanCollide = false
-        end
-    end
-    
-    noclipConnection = character.DescendantAdded:Connect(onDescendantAdded)
-    
-    -- Loop untuk memastikan CanCollide tetap false (backup)
-    noclipLoopConnection = RunService.Heartbeat:Connect(function()
-        if not isNoclipEnabled or not character or not character.Parent then
-            if noclipLoopConnection then
-                noclipLoopConnection:Disconnect()
-                noclipLoopConnection = nil
-            end
-            return
-        end
-        
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
-    end)
-    
-    isNoclipEnabled = true
-    
-    -- Update UI
-    TweenService:Create(
-        NoclipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-    ):Play()
-    TweenService:Create(
-        NoclipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-    ):Play()
-    
-    print("Noclip (alternative) enabled successfully")
-end
-
-local function disableNoclipAlternative()
-    if not isNoclipEnabled then return end
-    
-    local character = LocalPlayer.Character
-    if character then
-        -- Kembalikan CanCollide ke true untuk semua parts
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-    end
-    
-    -- Hapus connections
-    if noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
-    end
-    
-    if noclipLoopConnection then
-        noclipLoopConnection:Disconnect()
-        noclipLoopConnection = nil
-    end
-    
-    isNoclipEnabled = false
-    
-    -- Update UI
-    TweenService:Create(
-        NoclipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-    ):Play()
-    TweenService:Create(
-        NoclipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-    
-    print("Noclip (alternative) disabled")
-end
-
--- ==================== FUNGSI TOGGLE NOCLIP FINAL ====================
-local function toggleNoclip()
-    local success, error = pcall(function()
-        if isNoclipEnabled then
-            -- Coba metode alternatif dulu untuk disable
-            disableNoclipAlternative()
-        else
-            -- Coba metode collision group dulu, jika gagal gunakan alternatif
-            local char = LocalPlayer.Character
-            if not char or not char:FindFirstChild("HumanoidRootPart") then
-                warn("No valid character for noclip")
-                return
-            end
-            
-            -- Coba metode collision group
-            local collisionSuccess = pcall(function()
-                enableNoclip()
-            end)
-            
-            if not collisionSuccess then
-                warn("Collision group method failed, using alternative method")
-                enableNoclipAlternative()
-            end
-        end
-    end)
-    
-    if not success then
-        warn("Error in toggleNoclip: " .. error)
-        -- Reset UI ke state off
-        TweenService:Create(
-            NoclipToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            NoclipSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    end
-end
-
--- ==================== FUNGSI CLEANUP NOCLIP ====================
-local function cleanUpNoclip()
-    if isNoclipEnabled then
-        -- Coba kedua metode untuk memastikan noclip benar-benar dimatikan
-        pcall(disableNoclip)
-        pcall(disableNoclipAlternative)
-    end
-end
 
 -- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
 -- Variabel untuk drag functionality
@@ -1487,6 +1183,85 @@ local function toggleXRay()
     end
 end
 
+-- ==================== FUNGSI NOCLIP YANG DITAMBAHKAN ====================
+local function enableNoclip()
+    if isNoclipEnabled then return end
+    
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    -- Nonaktifkan collision untuk semua parts karakter
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalCollisionGroups[part] = part.CollisionGroup
+            part.CollisionGroup = "Noclip"
+        end
+    end
+    
+    -- Connection untuk parts baru di karakter
+    local function onCharacterDescendantAdded(descendant)
+        if descendant:IsA("BasePart") then
+            originalCollisionGroups[descendant] = descendant.CollisionGroup
+            descendant.CollisionGroup = "Noclip"
+        end
+    end
+    
+    noclipConnection = character.DescendantAdded:Connect(onCharacterDescendantAdded)
+    isNoclipEnabled = true
+    
+    -- Update UI
+    TweenService:Create(
+        NoclipToggle,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+    ):Play()
+    TweenService:Create(
+        NoclipSwitch,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+    ):Play()
+end
+
+local function disableNoclip()
+    if not isNoclipEnabled then return end
+    
+    -- Kembalikan collision group asli
+    for part, originalGroup in pairs(originalCollisionGroups) do
+        if part and part.Parent then
+            part.CollisionGroup = originalGroup
+        end
+    end
+    
+    -- Hapus connection
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+    
+    originalCollisionGroups = {}
+    isNoclipEnabled = false
+    
+    -- Update UI
+    TweenService:Create(
+        NoclipToggle,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+    ):Play()
+    TweenService:Create(
+        NoclipSwitch,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end
+
+local function toggleNoclip()
+    if isNoclipEnabled then
+        disableNoclip()
+    else
+        enableNoclip()
+    end
+end
+
 -- ==================== FUNGSI UTAMA YANG DIPERBAIKI ====================
 
 -- Fungsi untuk mengupdate posisi button
@@ -1560,6 +1335,13 @@ end
 local function cleanUpXRay()
     if isXRayEnabled then
         disableXRay()
+    end
+end
+
+-- Fungsi untuk membersihkan Noclip
+local function cleanUpNoclip()
+    if isNoclipEnabled then
+        disableNoclip()
     end
 end
 
@@ -2198,7 +1980,7 @@ local function updatePartsList()
                 
                 -- Nonaktifkan noclip jika sedang aktif
                 if isNoclipEnabled then
-                    cleanUpNoclip()
+                    disableNoclip()
                 end
                 
                 -- Tween ke part
@@ -2430,7 +2212,7 @@ local function updatePlayerList()
                         end
                         
                         if isNoclipEnabled then
-                            cleanUpNoclip()
+                            disableNoclip()
                         end
                         
                         local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2526,7 +2308,7 @@ local function updateWaypointList()
                 end
                 
                 if isNoclipEnabled then
-                    cleanUpNoclip()
+                    disableNoclip()
                 end
                 
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2754,7 +2536,7 @@ local function toggleFly()
         cleanUpFly()
     else
         if isNoclipEnabled then
-            cleanUpNoclip()
+            disableNoclip()
         end
         
         if headingPlayer then
