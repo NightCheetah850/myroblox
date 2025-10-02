@@ -3014,4 +3014,3 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 game:BindToClose(function()
     destroyScript()
 end)
-ubah tombol mengambang pada ribbon utama menjadi tombol xray seperti pada infinite yield, dan tambahkan tombol noclip juga, dan tambahkan juga garis scroll disamping popup agar pengguna dapat mengscroll dari atas ke bawah dengan mudah
