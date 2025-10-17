@@ -290,17 +290,6 @@ UtamaContent.Visible = true
 UtamaContent.ZIndex = 10001
 UtamaContent.Parent = ContentFrame
 
-local Message = Instance.new("TextLabel")
-Message.Size = UDim2.new(1, -20, 0, 40)
-Message.Position = UDim2.new(0, 10, 0, 10)
-Message.BackgroundTransparency = 1
-Message.Text = "halo saya milky"
-Message.TextColor3 = Color3.fromRGB(255, 255, 255)
-Message.Font = Enum.Font.Gotham
-Message.TextSize = 16
-Message.ZIndex = 10002
-Message.Parent = UtamaContent
-
 -- Fly Switch
 local FlyFrame = Instance.new("Frame")
 FlyFrame.Size = UDim2.new(0, 310, 0, 30)
