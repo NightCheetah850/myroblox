@@ -293,7 +293,7 @@ UtamaContent.Parent = ContentFrame
 -- Fly Switch
 local FlyFrame = Instance.new("Frame")
 FlyFrame.Size = UDim2.new(0, 310, 0, 30)
-FlyFrame.Position = UDim2.new(0, 20, 0, 60)
+FlyFrame.Position = UDim2.new(0, 20, 0, 20)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.ZIndex = 10002
 FlyFrame.Parent = UtamaContent
@@ -333,48 +333,91 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Float Switch
-local FloatFrame = Instance.new("Frame")
-FloatFrame.Size = UDim2.new(0, 310, 0, 30)
-FloatFrame.Position = UDim2.new(0, 20, 0, 100)
-FloatFrame.BackgroundTransparency = 1
-FloatFrame.ZIndex = 10002
-FloatFrame.Parent = UtamaContent
+-- Noclip Switch
+local NoclipFrame = Instance.new("Frame")
+NoclipFrame.Size = UDim2.new(0, 310, 0, 30)
+NoclipFrame.Position = UDim2.new(0, 20, 0, 60)
+NoclipFrame.BackgroundTransparency = 1
+NoclipFrame.ZIndex = 10002
+NoclipFrame.Parent = UtamaContent
 
-local FloatLabel = Instance.new("TextLabel")
-FloatLabel.Size = UDim2.new(0, 100, 1, 0)
-FloatLabel.Position = UDim2.new(0, 0, 0, 0)
-FloatLabel.BackgroundTransparency = 1
-FloatLabel.Text = "Mengambang:"
-FloatLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatLabel.Font = Enum.Font.Gotham
-FloatLabel.TextSize = 14
-FloatLabel.TextXAlignment = Enum.TextXAlignment.Left
-FloatLabel.ZIndex = 10002
-FloatLabel.Parent = FloatFrame
+local NoclipLabel = Instance.new("TextLabel")
+NoclipLabel.Size = UDim2.new(0, 100, 1, 0)
+NoclipLabel.Position = UDim2.new(0, 0, 0, 0)
+NoclipLabel.BackgroundTransparency = 1
+NoclipLabel.Text = "Noclip:"
+NoclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+NoclipLabel.Font = Enum.Font.Gotham
+NoclipLabel.TextSize = 14
+NoclipLabel.TextXAlignment = Enum.TextXAlignment.Left
+NoclipLabel.ZIndex = 10002
+NoclipLabel.Parent = NoclipFrame
 
-local FloatSwitch = Instance.new("TextButton")
-FloatSwitch.Size = UDim2.new(0, 50, 0, 25)
-FloatSwitch.Position = UDim2.new(1, -50, 0, 2)
-FloatSwitch.Text = ""
-FloatSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-FloatSwitch.ZIndex = 10002
-FloatSwitch.Parent = FloatFrame
+local NoclipSwitch = Instance.new("TextButton")
+NoclipSwitch.Size = UDim2.new(0, 50, 0, 25)
+NoclipSwitch.Position = UDim2.new(1, -50, 0, 2)
+NoclipSwitch.Text = ""
+NoclipSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+NoclipSwitch.ZIndex = 10002
+NoclipSwitch.Parent = NoclipFrame
 
-local FloatSwitchCorner = Instance.new("UICorner")
-FloatSwitchCorner.CornerRadius = UDim.new(0, 12)
-FloatSwitchCorner.Parent = FloatSwitch
+local NoclipSwitchCorner = Instance.new("UICorner")
+NoclipSwitchCorner.CornerRadius = UDim.new(0, 12)
+NoclipSwitchCorner.Parent = NoclipSwitch
 
-local FloatToggle = Instance.new("Frame")
-FloatToggle.Size = UDim2.new(0, 21, 0, 21)
-FloatToggle.Position = UDim2.new(0, 2, 0, 2)
-FloatToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-FloatToggle.ZIndex = 10003
-FloatToggle.Parent = FloatSwitch
+local NoclipToggle = Instance.new("Frame")
+NoclipToggle.Size = UDim2.new(0, 21, 0, 21)
+NoclipToggle.Position = UDim2.new(0, 2, 0, 2)
+NoclipToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+NoclipToggle.ZIndex = 10003
+NoclipToggle.Parent = NoclipSwitch
 
-local FloatToggleCorner = Instance.new("UICorner")
-FloatToggleCorner.CornerRadius = UDim.new(0, 10)
-FloatToggleCorner.Parent = FloatToggle
+local NoclipToggleCorner = Instance.new("UICorner")
+NoclipToggleCorner.CornerRadius = UDim.new(0, 10)
+NoclipToggleCorner.Parent = NoclipToggle
+
+-- Xray Switch
+local XrayFrame = Instance.new("Frame")
+XrayFrame.Size = UDim2.new(0, 310, 0, 30)
+XrayFrame.Position = UDim2.new(0, 20, 0, 100)
+XrayFrame.BackgroundTransparency = 1
+XrayFrame.ZIndex = 10002
+XrayFrame.Parent = UtamaContent
+
+local XrayLabel = Instance.new("TextLabel")
+XrayLabel.Size = UDim2.new(0, 100, 1, 0)
+XrayLabel.Position = UDim2.new(0, 0, 0, 0)
+XrayLabel.BackgroundTransparency = 1
+XrayLabel.Text = "Xray:"
+XrayLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+XrayLabel.Font = Enum.Font.Gotham
+XrayLabel.TextSize = 14
+XrayLabel.TextXAlignment = Enum.TextXAlignment.Left
+XrayLabel.ZIndex = 10002
+XrayLabel.Parent = XrayFrame
+
+local XraySwitch = Instance.new("TextButton")
+XraySwitch.Size = UDim2.new(0, 50, 0, 25)
+XraySwitch.Position = UDim2.new(1, -50, 0, 2)
+XraySwitch.Text = ""
+XraySwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+XraySwitch.ZIndex = 10002
+XraySwitch.Parent = XrayFrame
+
+local XraySwitchCorner = Instance.new("UICorner")
+XraySwitchCorner.CornerRadius = UDim.new(0, 12)
+XraySwitchCorner.Parent = XraySwitch
+
+local XrayToggle = Instance.new("Frame")
+XrayToggle.Size = UDim2.new(0, 21, 0, 21)
+XrayToggle.Position = UDim2.new(0, 2, 0, 2)
+XrayToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+XrayToggle.ZIndex = 10003
+XrayToggle.Parent = XraySwitch
+
+local XrayToggleCorner = Instance.new("UICorner")
+XrayToggleCorner.CornerRadius = UDim.new(0, 10)
+XrayToggleCorner.Parent = XrayToggle
 
 -- Brightness Switch
 local BrightnessFrame = Instance.new("Frame")
@@ -988,9 +1031,14 @@ local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
 local flyConnection
 
--- Variabel untuk float
-local isFloating = false
-local floatBodyForce
+-- Variabel untuk noclip
+local isNoclipping = false
+local noclipConnection = nil
+local originalCollisions = {}
+
+-- Variabel untuk xray
+local isXray = false
+local originalTransparencies = {}
 
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
@@ -1080,22 +1128,58 @@ local function cleanUpFly()
     end
 end
 
--- Fungsi untuk membersihkan float
-local function cleanUpFloat()
-    if floatBodyForce then
-        floatBodyForce:Destroy()
-        floatBodyForce = nil
+-- Fungsi untuk membersihkan noclip
+local function cleanUpNoclip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
     end
-    isFloating = false
+    isNoclipping = false
     
-    if FloatToggle and FloatSwitch then
+    -- Restore original collisions
+    for part, collision in pairs(originalCollisions) do
+        if part and part.Parent then
+            part.CanCollide = collision
+        end
+    end
+    originalCollisions = {}
+    
+    if NoclipToggle and NoclipSwitch then
         TweenService:Create(
-            FloatToggle,
+            NoclipToggle,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
         ):Play()
         TweenService:Create(
-            FloatSwitch,
+            NoclipSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    end
+end
+
+-- Fungsi untuk membersihkan xray
+local function cleanUpXray()
+    isXray = false
+    
+    -- Restore original transparencies
+    for part, transparency in pairs(originalTransparencies) do
+        if part and part.Parent then
+            if part:IsA("BasePart") then
+                part.Transparency = transparency
+            end
+        end
+    end
+    originalTransparencies = {}
+    
+    if XrayToggle and XraySwitch then
+        TweenService:Create(
+            XrayToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            XraySwitch,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
         ):Play()
@@ -1161,6 +1245,74 @@ local function toggleBrightness()
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
         ):Play()
+    end
+end
+
+-- ==================== FUNGSI NOCLIP ====================
+local function toggleNoclip()
+    if isNoclipping then
+        cleanUpNoclip()
+    else
+        local character = LocalPlayer.Character
+        if character then
+            cleanUpNoclip()
+            
+            isNoclipping = true
+            
+            TweenService:Create(
+                NoclipToggle,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+            ):Play()
+            TweenService:Create(
+                NoclipSwitch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+            ):Play()
+            
+            noclipConnection = RunService.Stepped:Connect(function()
+                if not isNoclipping or not character then
+                    return
+                end
+                
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide then
+                        originalCollisions[part] = part.CanCollide
+                        part.CanCollide = false
+                    end
+                end
+            end)
+        end
+    end
+end
+
+-- ==================== FUNGSI XRAY ====================
+local function toggleXray()
+    if isXray then
+        cleanUpXray()
+    else
+        cleanUpXray()
+        
+        isXray = true
+        
+        TweenService:Create(
+            XrayToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+        ):Play()
+        TweenService:Create(
+            XraySwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+        ):Play()
+        
+        -- Make all parts in workspace semi-transparent
+        for _, part in pairs(workspace:GetDescendants()) do
+            if part:IsA("BasePart") and part.Transparency < 0.9 then
+                originalTransparencies[part] = part.Transparency
+                part.Transparency = 0.5
+            end
+        end
     end
 end
 
@@ -1347,7 +1499,8 @@ end
 local function executeScript(scriptCode, scriptTitle)
     if scriptCode and scriptCode ~= "" then
         cleanUpFly()
-        cleanUpFloat()
+        cleanUpNoclip()
+        cleanUpXray()
         cleanUpHead()
         cleanUpAllESP()
         cleanUpBrightness()
@@ -1748,8 +1901,8 @@ local function updatePartsList()
                     cleanUpFly()
                 end
                 
-                if isFloating then
-                    cleanUpFloat()
+                if isNoclipping then
+                    cleanUpNoclip()
                 end
                 
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -1971,8 +2124,8 @@ local function updatePlayerList()
                             cleanUpFly()
                         end
                         
-                        if isFloating then
-                            cleanUpFloat()
+                        if isNoclipping then
+                            cleanUpNoclip()
                         end
                         
                         local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2066,8 +2219,8 @@ local function updateWaypointList()
                     cleanUpFly()
                 end
                 
-                if isFloating then
-                    cleanUpFloat()
+                if isNoclipping then
+                    cleanUpNoclip()
                 end
                 
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2185,7 +2338,8 @@ end
 -- ==================== FUNGSI DESTROY SCRIPT ====================
 local function destroyScript()
     cleanUpFly()
-    cleanUpFloat()
+    cleanUpNoclip()
+    cleanUpXray()
     cleanUpHead()
     cleanUpAllESP()
     cleanUpBrightness()
@@ -2267,8 +2421,8 @@ local function toggleFly()
     if isFlying then
         cleanUpFly()
     else
-        if isFloating then
-            cleanUpFloat()
+        if isNoclipping then
+            cleanUpNoclip()
         end
         
         if headingPlayer then
@@ -2345,44 +2499,6 @@ local function toggleFly()
                     flyBodyVelocity.Velocity = horizontalVelocity + Vector3.new(0, verticalVelocity, 0)
                 end
             end)
-        end
-    end
-end
-
--- ==================== FUNGSI FLOAT ====================
-local function toggleFloat()
-    if isFloating then
-        cleanUpFloat()
-    else
-        if isFlying then
-            cleanUpFly()
-        end
-        
-        if headingPlayer then
-            cleanUpHead()
-            updatePlayerList()
-        end
-        
-        local character = LocalPlayer.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            cleanUpFloat()
-            
-            floatBodyForce = Instance.new("BodyForce")
-            floatBodyForce.Force = Vector3.new(0, character.HumanoidRootPart:GetMass() * workspace.Gravity, 0)
-            floatBodyForce.Parent = character.HumanoidRootPart
-            
-            isFloating = true
-            
-            TweenService:Create(
-                FloatToggle,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-            ):Play()
-            TweenService:Create(
-                FloatSwitch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-            ):Play()
         end
     end
 end
@@ -2488,7 +2604,8 @@ end)
 
 -- Switch functionality
 FlySwitch.MouseButton1Click:Connect(toggleFly)
-FloatSwitch.MouseButton1Click:Connect(toggleFloat)
+NoclipSwitch.MouseButton1Click:Connect(toggleNoclip)
+XraySwitch.MouseButton1Click:Connect(toggleXray)
 BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness)
 
 -- WalkSpeed functionality
@@ -2674,7 +2791,7 @@ local function onCharacterAdded(character)
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
-        cleanUpFloat()
+        cleanUpNoclip()
         cleanUpHead()
         updatePlayerList()
     end)
@@ -2783,7 +2900,8 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
-setupSwitchHover(FloatSwitch, FloatToggle)
+setupSwitchHover(NoclipSwitch, NoclipToggle)
+setupSwitchHover(XraySwitch, XrayToggle)
 setupSwitchHover(BrightnessSwitch, BrightnessToggle)
 
 -- Button hover effects
