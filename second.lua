@@ -16,26 +16,104 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- Global untuk ZIndex ter
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 9999 -- Nilai sangat tinggi untuk tampil di atas semua UI
 
--- Floating Button (Lingkaran) dengan ZIndex tinggi
-local FloatingButton = Instance.new("TextButton")
-FloatingButton.Size = UDim2.new(0, 60, 0, 60)
-FloatingButton.Position = UDim2.new(0, 100, 0, 100)
-FloatingButton.Text = "Milky"
-FloatingButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
-FloatingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-FloatingButton.Font = Enum.Font.GothamBold
-FloatingButton.TextSize = 14
-FloatingButton.AutoButtonColor = false
-FloatingButton.Active = true
-FloatingButton.Draggable = false
-FloatingButton.Selectable = false
-FloatingButton.ZIndex = 10000 -- ZIndex sangat tinggi
-FloatingButton.Parent = ScreenGui
+-- ==================== WINDOWS-LIKE MAIN WINDOW ====================
+local MainWindow = Instance.new("Frame")
+MainWindow.Size = UDim2.new(0, 350, 0, 450)
+MainWindow.Position = UDim2.new(0.1, 0, 0.1, 0) -- Posisi awal
+MainWindow.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+MainWindow.BorderSizePixel = 1
+MainWindow.BorderColor3 = Color3.fromRGB(80, 80, 80)
+MainWindow.Active = true
+MainWindow.Selectable = true
+MainWindow.ClipsDescendants = true
+MainWindow.ZIndex = 10000
+MainWindow.Parent = ScreenGui
 
--- Membuat bentuk lingkaran
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(1, 0)
-UICorner.Parent = FloatingButton
+-- Windows Style Shadow Effect
+local WindowShadow = Instance.new("Frame")
+WindowShadow.Size = UDim2.new(1, 6, 1, 6)
+WindowShadow.Position = UDim2.new(0, -3, 0, -3)
+WindowShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+WindowShadow.BackgroundTransparency = 0.8
+WindowShadow.BorderSizePixel = 0
+WindowShadow.ZIndex = 9999
+WindowShadow.Parent = MainWindow
+
+local WindowShadowCorner = Instance.new("UICorner")
+WindowShadowCorner.CornerRadius = UDim.new(0, 8)
+WindowShadowCorner.Parent = WindowShadow
+
+local WindowCorner = Instance.new("UICorner")
+WindowCorner.CornerRadius = UDim.new(0, 6)
+WindowCorner.Parent = MainWindow
+
+-- Title Bar (untuk drag functionality)
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.Position = UDim2.new(0, 0, 0, 0)
+TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleBar.BorderSizePixel = 0
+TitleBar.ZIndex = 10001
+TitleBar.Parent = MainWindow
+
+local TitleBarCorner = Instance.new("UICorner")
+TitleBarCorner.CornerRadius = UDim.new(0, 6)
+TitleBarCorner.Parent = TitleBar
+
+-- Title Text
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, -80, 1, 0)
+TitleLabel.Position = UDim2.new(0, 10, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "Milky Menu v1.0"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextSize = 14
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.ZIndex = 10002
+TitleLabel.Parent = TitleBar
+
+-- Window Controls (Minimize, Maximize, Close)
+local WindowControls = Instance.new("Frame")
+WindowControls.Size = UDim2.new(0, 60, 1, 0)
+WindowControls.Position = UDim2.new(1, -65, 0, 0)
+WindowControls.BackgroundTransparency = 1
+WindowControls.ZIndex = 10002
+WindowControls.Parent = TitleBar
+
+-- Minimize Button
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Size = UDim2.new(0, 18, 0, 18)
+MinimizeButton.Position = UDim2.new(0, 5, 0.5, -9)
+MinimizeButton.Text = "_"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.Font = Enum.Font.GothamBold
+MinimizeButton.TextSize = 14
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.ZIndex = 10003
+MinimizeButton.Parent = WindowControls
+
+local MinimizeCorner = Instance.new("UICorner")
+MinimizeCorner.CornerRadius = UDim.new(0, 3)
+MinimizeCorner.Parent = MinimizeButton
+
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 18, 0, 18)
+CloseButton.Position = UDim2.new(1, -23, 0.5, -9)
+CloseButton.Text = "×"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 16
+CloseButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+CloseButton.BorderSizePixel = 0
+CloseButton.ZIndex = 10003
+CloseButton.Parent = WindowControls
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 3)
+CloseCorner.Parent = CloseButton
 
 -- ==================== POPUP KONFIRMASI ====================
 -- Popup Konfirmasi Penutupan
@@ -43,14 +121,29 @@ local ConfirmPopup = Instance.new("Frame")
 ConfirmPopup.Size = UDim2.new(0, 300, 0, 150)
 ConfirmPopup.Position = UDim2.new(0.5, -150, 0.5, -75)
 ConfirmPopup.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ConfirmPopup.BorderSizePixel = 0
+ConfirmPopup.BorderSizePixel = 1
+ConfirmPopup.BorderColor3 = Color3.fromRGB(80, 80, 80)
 ConfirmPopup.Visible = false
-ConfirmPopup.ZIndex = 10010 -- Lebih tinggi dari semua UI
+ConfirmPopup.ZIndex = 10010
 ConfirmPopup.Parent = ScreenGui
 
 local ConfirmCorner = Instance.new("UICorner")
-ConfirmCorner.CornerRadius = UDim.new(0, 12)
+ConfirmCorner.CornerRadius = UDim.new(0, 8)
 ConfirmCorner.Parent = ConfirmPopup
+
+-- Shadow untuk ConfirmPopup
+local ConfirmShadow = Instance.new("Frame")
+ConfirmShadow.Size = UDim2.new(1, 6, 1, 6)
+ConfirmShadow.Position = UDim2.new(0, -3, 0, -3)
+ConfirmShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ConfirmShadow.BackgroundTransparency = 0.8
+ConfirmShadow.BorderSizePixel = 0
+ConfirmShadow.ZIndex = 10009
+ConfirmShadow.Parent = ConfirmPopup
+
+local ConfirmShadowCorner = Instance.new("UICorner")
+ConfirmShadowCorner.CornerRadius = UDim.new(0, 8)
+ConfirmShadowCorner.Parent = ConfirmShadow
 
 -- Judul Konfirmasi
 local ConfirmTitle = Instance.new("TextLabel")
@@ -65,7 +158,7 @@ ConfirmTitle.ZIndex = 10011
 ConfirmTitle.Parent = ConfirmPopup
 
 local ConfirmTitleCorner = Instance.new("UICorner")
-ConfirmTitleCorner.CornerRadius = UDim.new(0, 12)
+ConfirmTitleCorner.CornerRadius = UDim.new(0, 8)
 ConfirmTitleCorner.Parent = ConfirmTitle
 
 -- Pesan Konfirmasi
@@ -113,20 +206,14 @@ local ConfirmNoCorner = Instance.new("UICorner")
 ConfirmNoCorner.CornerRadius = UDim.new(0, 6)
 ConfirmNoCorner.Parent = ConfirmNoButton
 
--- ==================== MAIN POPUP WINDOW (DIPERLEBAR) ====================
--- Popup Window dengan ZIndex tinggi (diperlebar dari 300 menjadi 350)
-local PopupFrame = Instance.new("Frame")
-PopupFrame.Size = UDim2.new(0, 350, 0, 450) -- Diperlebar dan dipertinggi
-PopupFrame.Position = UDim2.new(0.5, -175, 0.5, -225) -- Disesuaikan dengan ukuran baru
-PopupFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-PopupFrame.BorderSizePixel = 0
-PopupFrame.Visible = false
-PopupFrame.ZIndex = 10000 -- ZIndex sangat tinggi
-PopupFrame.Parent = ScreenGui
-
-local PopupCorner = Instance.new("UICorner")
-PopupCorner.CornerRadius = UDim.new(0, 12)
-PopupCorner.Parent = PopupFrame
+-- ==================== MAIN CONTENT AREA ====================
+-- Container untuk konten utama (di bawah title bar)
+local ContentArea = Instance.new("Frame")
+ContentArea.Size = UDim2.new(1, 0, 1, -30)
+ContentArea.Position = UDim2.new(0, 0, 0, 30)
+ContentArea.BackgroundTransparency = 1
+ContentArea.ZIndex = 10001
+ContentArea.Parent = MainWindow
 
 -- Ribbon Navigation (4 ribbon)
 local RibbonFrame = Instance.new("Frame")
@@ -134,14 +221,14 @@ RibbonFrame.Size = UDim2.new(1, 0, 0, 40)
 RibbonFrame.Position = UDim2.new(0, 0, 0, 0)
 RibbonFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 RibbonFrame.BorderSizePixel = 0
-RibbonFrame.ZIndex = 10001 -- Lebih tinggi dari PopupFrame
-RibbonFrame.Parent = PopupFrame
+RibbonFrame.ZIndex = 10001
+RibbonFrame.Parent = ContentArea
 
 local RibbonCorner = Instance.new("UICorner")
-RibbonCorner.CornerRadius = UDim.new(0, 12)
+RibbonCorner.CornerRadius = UDim.new(0, 6)
 RibbonCorner.Parent = RibbonFrame
 
--- Ribbon Buttons (4 ribbon - disesuaikan ukurannya)
+-- Ribbon Buttons (4 ribbon)
 local UtamaRibbon = Instance.new("TextButton")
 UtamaRibbon.Size = UDim2.new(0.25, 0, 1, 0)
 UtamaRibbon.Position = UDim2.new(0, 0, 0, 0)
@@ -150,7 +237,7 @@ UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
 UtamaRibbon.Font = Enum.Font.GothamBold
 UtamaRibbon.TextSize = 12
-UtamaRibbon.ZIndex = 10002 -- Lebih tinggi dari RibbonFrame
+UtamaRibbon.ZIndex = 10002
 UtamaRibbon.Parent = RibbonFrame
 
 local TweenRibbon = Instance.new("TextButton")
@@ -175,7 +262,6 @@ PartsRibbon.TextSize = 12
 PartsRibbon.ZIndex = 10002
 PartsRibbon.Parent = RibbonFrame
 
--- Tambahkan ScriptRibbon sebagai ribbon ke-4
 local ScriptRibbon = Instance.new("TextButton")
 ScriptRibbon.Size = UDim2.new(0.25, 0, 1, 0)
 ScriptRibbon.Position = UDim2.new(0.75, 0, 0, 0)
@@ -187,31 +273,15 @@ ScriptRibbon.TextSize = 12
 ScriptRibbon.ZIndex = 10002
 ScriptRibbon.Parent = RibbonFrame
 
--- Close Button dipindahkan ke kanan ribbon (di samping ribbon)
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 25, 0, 25) -- Diperkecil sedikit
-CloseButton.Position = UDim2.new(1, -30, 0, 7) -- Posisi di kanan atas, sejajar dengan ribbon
-CloseButton.Text = "×" -- Gunakan karakter × yang lebih elegan
-CloseButton.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextSize = 18
-CloseButton.ZIndex = 10003 -- ZIndex tertinggi agar selalu tampil di atas
-CloseButton.Parent = PopupFrame
-
-local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(1, 0)
-CloseCorner.Parent = CloseButton
-
 -- Content Frames
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Size = UDim2.new(1, 0, 1, -40)
 ContentFrame.Position = UDim2.new(0, 0, 0, 40)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.ZIndex = 10001
-ContentFrame.Parent = PopupFrame
+ContentFrame.Parent = ContentArea
 
--- Utama Content (DIPERLEBAR)
+-- Utama Content
 local UtamaContent = Instance.new("Frame")
 UtamaContent.Size = UDim2.new(1, 0, 1, 0)
 UtamaContent.Position = UDim2.new(0, 0, 0, 0)
@@ -231,9 +301,9 @@ Message.TextSize = 16
 Message.ZIndex = 10002
 Message.Parent = UtamaContent
 
--- Fly Switch (DIPERLEBAR)
+-- Fly Switch
 local FlyFrame = Instance.new("Frame")
-FlyFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+FlyFrame.Size = UDim2.new(0, 310, 0, 30)
 FlyFrame.Position = UDim2.new(0, 20, 0, 60)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.ZIndex = 10002
@@ -274,9 +344,9 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Float Switch (DIPERLEBAR)
+-- Float Switch
 local FloatFrame = Instance.new("Frame")
-FloatFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+FloatFrame.Size = UDim2.new(0, 310, 0, 30)
 FloatFrame.Position = UDim2.new(0, 20, 0, 100)
 FloatFrame.BackgroundTransparency = 1
 FloatFrame.ZIndex = 10002
@@ -317,9 +387,9 @@ local FloatToggleCorner = Instance.new("UICorner")
 FloatToggleCorner.CornerRadius = UDim.new(0, 10)
 FloatToggleCorner.Parent = FloatToggle
 
--- Brightness Switch (DITAMBAHKAN)
+-- Brightness Switch
 local BrightnessFrame = Instance.new("Frame")
-BrightnessFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+BrightnessFrame.Size = UDim2.new(0, 310, 0, 30)
 BrightnessFrame.Position = UDim2.new(0, 20, 0, 140)
 BrightnessFrame.BackgroundTransparency = 1
 BrightnessFrame.ZIndex = 10002
@@ -360,9 +430,9 @@ local BrightnessToggleCorner = Instance.new("UICorner")
 BrightnessToggleCorner.CornerRadius = UDim.new(0, 10)
 BrightnessToggleCorner.Parent = BrightnessToggle
 
--- WalkSpeed Input (DIPERLEBAR)
+-- WalkSpeed Input
 local WalkSpeedFrame = Instance.new("Frame")
-WalkSpeedFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+WalkSpeedFrame.Size = UDim2.new(0, 310, 0, 30)
 WalkSpeedFrame.Position = UDim2.new(0, 20, 0, 180)
 WalkSpeedFrame.BackgroundTransparency = 1
 WalkSpeedFrame.ZIndex = 10002
@@ -411,10 +481,10 @@ local SetWalkSpeedCorner = Instance.new("UICorner")
 SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
--- Daftar Pemain (DIPERLEBAR) - DIPINDAHKAN KE BAWAH
+-- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
-PlayerListFrame.Size = UDim2.new(0, 310, 0, 120) -- Diperlebar dari 260 menjadi 310
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 220) -- Dipindahkan ke bawah
+PlayerListFrame.Size = UDim2.new(0, 310, 0, 120)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.ZIndex = 10002
 PlayerListFrame.Parent = UtamaContent
@@ -451,8 +521,7 @@ local PlayerListLayout = Instance.new("UIListLayout")
 PlayerListLayout.Padding = UDim.new(0, 5)
 PlayerListLayout.Parent = PlayerListScroll
 
--- ... (Kode Tween Content, Parts Content, Script Content, dan lainnya tetap sama)
--- Tween Content (DIPERLEBAR)
+-- Tween Content
 local TweenContent = Instance.new("Frame")
 TweenContent.Size = UDim2.new(1, 0, 1, 0)
 TweenContent.Position = UDim2.new(0, 0, 0, 0)
@@ -461,9 +530,9 @@ TweenContent.Visible = false
 TweenContent.ZIndex = 10001
 TweenContent.Parent = ContentFrame
 
--- Waypoint Input Form (DIPERLEBAR)
+-- Waypoint Input Form
 local WaypointFrame = Instance.new("Frame")
-WaypointFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+WaypointFrame.Size = UDim2.new(0, 310, 0, 30)
 WaypointFrame.Position = UDim2.new(0, 20, 0, 10)
 WaypointFrame.BackgroundTransparency = 1
 WaypointFrame.ZIndex = 10002
@@ -512,9 +581,9 @@ local SetWaypointCorner = Instance.new("UICorner")
 SetWaypointCorner.CornerRadius = UDim.new(0, 6)
 SetWaypointCorner.Parent = SetWaypointButton
 
--- Daftar Waypoint (DIPERLEBAR)
+-- Daftar Waypoint
 local WaypointListFrame = Instance.new("Frame")
-WaypointListFrame.Size = UDim2.new(0, 310, 0, 330) -- Diperlebar dari 260 menjadi 310, dipertinggi
+WaypointListFrame.Size = UDim2.new(0, 310, 0, 330)
 WaypointListFrame.Position = UDim2.new(0, 20, 0, 50)
 WaypointListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 WaypointListFrame.ZIndex = 10002
@@ -552,7 +621,7 @@ local WaypointListLayout = Instance.new("UIListLayout")
 WaypointListLayout.Padding = UDim.new(0, 5)
 WaypointListLayout.Parent = WaypointListScroll
 
--- Parts Content (DIPERLEBAR)
+-- Parts Content
 local PartsContent = Instance.new("Frame")
 PartsContent.Size = UDim2.new(1, 0, 1, 0)
 PartsContent.Position = UDim2.new(0, 0, 0, 0)
@@ -561,9 +630,9 @@ PartsContent.Visible = false
 PartsContent.ZIndex = 10001
 PartsContent.Parent = ContentFrame
 
--- Pencarian Parts (DIPERLEBAR)
+-- Pencarian Parts
 local PartsSearchFrame = Instance.new("Frame")
-PartsSearchFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+PartsSearchFrame.Size = UDim2.new(0, 310, 0, 30)
 PartsSearchFrame.Position = UDim2.new(0, 20, 0, 10)
 PartsSearchFrame.BackgroundTransparency = 1
 PartsSearchFrame.ZIndex = 10002
@@ -615,7 +684,7 @@ RefreshPartsCorner.Parent = RefreshPartsButton
 
 -- Info Parts
 local PartsInfoLabel = Instance.new("TextLabel")
-PartsInfoLabel.Size = UDim2.new(0, 240, 0, 20) -- Diperlebar
+PartsInfoLabel.Size = UDim2.new(0, 240, 0, 20)
 PartsInfoLabel.Position = UDim2.new(0, 20, 0, 45)
 PartsInfoLabel.BackgroundTransparency = 1
 PartsInfoLabel.Text = "Total Parts: 0"
@@ -626,9 +695,9 @@ PartsInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
 PartsInfoLabel.ZIndex = 10002
 PartsInfoLabel.Parent = PartsContent
 
--- Daftar Parts (DIPERLEBAR)
+-- Daftar Parts
 local PartsListFrame = Instance.new("Frame")
-PartsListFrame.Size = UDim2.new(0, 310, 0, 350) -- Diperlebar dari 260 menjadi 310, dipertinggi
+PartsListFrame.Size = UDim2.new(0, 310, 0, 350)
 PartsListFrame.Position = UDim2.new(0, 20, 0, 80)
 PartsListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PartsListFrame.ZIndex = 10002
@@ -666,7 +735,7 @@ local PartsListLayout = Instance.new("UIListLayout")
 PartsListLayout.Padding = UDim.new(0, 5)
 PartsListLayout.Parent = PartsListScroll
 
--- Script Content (DIPERLEBAR)
+-- Script Content
 local ScriptContent = Instance.new("Frame")
 ScriptContent.Size = UDim2.new(1, 0, 1, 0)
 ScriptContent.Position = UDim2.new(0, 0, 0, 0)
@@ -675,9 +744,9 @@ ScriptContent.Visible = false
 ScriptContent.ZIndex = 10001
 ScriptContent.Parent = ContentFrame
 
--- Info Game (DIPERLEBAR)
+-- Info Game
 local GameInfoFrame = Instance.new("Frame")
-GameInfoFrame.Size = UDim2.new(0, 310, 0, 60) -- Diperlebar dari 260 menjadi 310
+GameInfoFrame.Size = UDim2.new(0, 310, 0, 60)
 GameInfoFrame.Position = UDim2.new(0, 20, 0, 10)
 GameInfoFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 GameInfoFrame.ZIndex = 10002
@@ -727,9 +796,9 @@ PlaceIdLabel.TextXAlignment = Enum.TextXAlignment.Left
 PlaceIdLabel.ZIndex = 10002
 PlaceIdLabel.Parent = GameInfoFrame
 
--- Pencarian Script (DIPERLEBAR)
+-- Pencarian Script
 local ScriptSearchFrame = Instance.new("Frame")
-ScriptSearchFrame.Size = UDim2.new(0, 310, 0, 30) -- Diperlebar dari 260 menjadi 310
+ScriptSearchFrame.Size = UDim2.new(0, 310, 0, 30)
 ScriptSearchFrame.Position = UDim2.new(0, 20, 0, 80)
 ScriptSearchFrame.BackgroundTransparency = 1
 ScriptSearchFrame.ZIndex = 10002
@@ -779,9 +848,9 @@ local SearchScriptCorner = Instance.new("UICorner")
 SearchScriptCorner.CornerRadius = UDim.new(0, 6)
 SearchScriptCorner.Parent = SearchScriptButton
 
--- Filter Script (DIPERLEBAR)
+-- Filter Script
 local FilterFrame = Instance.new("Frame")
-FilterFrame.Size = UDim2.new(0, 310, 0, 25) -- Diperlebar dari 260 menjadi 310
+FilterFrame.Size = UDim2.new(0, 310, 0, 25)
 FilterFrame.Position = UDim2.new(0, 20, 0, 120)
 FilterFrame.BackgroundTransparency = 1
 FilterFrame.ZIndex = 10002
@@ -834,7 +903,7 @@ UniversalFilterCorner.Parent = UniversalFilter
 
 -- Status Pencarian
 local SearchStatusLabel = Instance.new("TextLabel")
-SearchStatusLabel.Size = UDim2.new(0, 310, 0, 20) -- Diperlebar
+SearchStatusLabel.Size = UDim2.new(0, 310, 0, 20)
 SearchStatusLabel.Position = UDim2.new(0, 20, 0, 150)
 SearchStatusLabel.BackgroundTransparency = 1
 SearchStatusLabel.Text = "Tekan 'Cari' untuk memuat script"
@@ -845,9 +914,9 @@ SearchStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
 SearchStatusLabel.ZIndex = 10002
 SearchStatusLabel.Parent = ScriptContent
 
--- Daftar Script (DIPERLEBAR)
+-- Daftar Script
 local ScriptListFrame = Instance.new("Frame")
-ScriptListFrame.Size = UDim2.new(0, 310, 0, 230) -- Diperlebar dari 260 menjadi 310, dipertinggi
+ScriptListFrame.Size = UDim2.new(0, 310, 0, 230)
 ScriptListFrame.Position = UDim2.new(0, 20, 0, 175)
 ScriptListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 ScriptListFrame.ZIndex = 10002
@@ -920,39 +989,7 @@ local DownButtonCorner = Instance.new("UICorner")
 DownButtonCorner.CornerRadius = UDim.new(1, 0)
 DownButtonCorner.Parent = DownButton
 
--- ==================== FUNGSI POPUP KONFIRMASI YANG DIPERBAIKI ====================
-local function showConfirmPopup()
-    ConfirmPopup.Visible = true
-    ConfirmPopup.Size = UDim2.new(0, 0, 0, 0)
-    ConfirmPopup.Position = UDim2.new(0.5, 0, 0.5, 0)
-    
-    TweenService:Create(
-        ConfirmPopup,
-        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 300, 0, 150), Position = UDim2.new(0.5, -150, 0.5, -75)}
-    ):Play()
-end
-
-local function hideConfirmPopup()
-    TweenService:Create(
-        ConfirmPopup,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-        {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
-    ):Play()
-    
-    wait(0.2)
-    ConfirmPopup.Visible = false
-end
-
--- ==================== VARIABEL BARU UNTUK BRIGHTNESS ====================
-local isBrightnessEnabled = false
-local originalBrightness = Lighting.Brightness
-local originalAmbient = Lighting.Ambient
-local originalOutdoorAmbient = Lighting.OutdoorAmbient
-local originalFogEnd = Lighting.FogEnd
-
--- ==================== FUNGSI YANG SUDAH ADA (TANPA PERUBAHAN) ====================
--- Variabel untuk drag functionality
+-- ==================== VARIABEL GLOBAL ====================
 local dragging = false
 local dragInput, dragStart, startPos
 
@@ -995,63 +1032,21 @@ local activeFilters = {
     universal = false
 }
 
--- Variabel untuk koneksi event (DITAMBAHKAN UNTUK PERBAIKAN)
+-- Variabel untuk koneksi event
 local playerAddedConn, playerRemovingConn, characterAddedConn
 
--- ==================== FUNGSI BRIGHTNESS YANG DITAMBAHKAN ====================
-local function toggleBrightness()
-    if isBrightnessEnabled then
-        -- Nonaktifkan brightness (kembalikan ke nilai asli)
-        Lighting.Brightness = originalBrightness
-        Lighting.Ambient = originalAmbient
-        Lighting.OutdoorAmbient = originalOutdoorAmbient
-        Lighting.FogEnd = originalFogEnd
-        
-        isBrightnessEnabled = false
-        
-        TweenService:Create(
-            BrightnessToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            BrightnessSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    else
-        -- Aktifkan brightness (terangkan ruangan)
-        originalBrightness = Lighting.Brightness
-        originalAmbient = Lighting.Ambient
-        originalOutdoorAmbient = Lighting.OutdoorAmbient
-        originalFogEnd = Lighting.FogEnd
-        
-        Lighting.Brightness = 2  -- Tingkatkan brightness
-        Lighting.Ambient = Color3.fromRGB(200, 200, 200)  -- Ambient light terang
-        Lighting.OutdoorAmbient = Color3.fromRGB(200, 200, 200)  -- Outdoor ambient terang
-        Lighting.FogEnd = 100000  -- Hilangkan fog dengan men-set nilai sangat besar
-        
-        isBrightnessEnabled = true
-        
-        TweenService:Create(
-            BrightnessToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-        ):Play()
-        TweenService:Create(
-            BrightnessSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-        ):Play()
-    end
-end
+-- Variabel untuk brightness
+local isBrightnessEnabled = false
+local originalBrightness = Lighting.Brightness
+local originalAmbient = Lighting.Ambient
+local originalOutdoorAmbient = Lighting.OutdoorAmbient
+local originalFogEnd = Lighting.FogEnd
 
--- ==================== FUNGSI UTAMA YANG DIPERBAIKI ====================
-
--- Fungsi untuk mengupdate posisi button
+-- ==================== FUNGSI UTAMA ====================
+-- Fungsi untuk mengupdate posisi window
 local function update(input)
     local delta = input.Position - dragStart
-    FloatingButton.Position = UDim2.new(
+    MainWindow.Position = UDim2.new(
         startPos.X.Scale, 
         startPos.X.Offset + delta.X, 
         startPos.Y.Scale, 
@@ -1075,16 +1070,13 @@ local function cleanUpFly()
     end
     isFlying = false
     
-    -- Kembalikan gravitasi
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
         LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
     end
     
-    -- Sembunyikan tombol kontrol
     UpButton.Visible = false
     DownButton.Visible = false
     
-    -- Update UI
     if FlyToggle and FlySwitch then
         TweenService:Create(
             FlyToggle,
@@ -1107,7 +1099,6 @@ local function cleanUpFloat()
     end
     isFloating = false
     
-    -- Update UI
     if FloatToggle and FloatSwitch then
         TweenService:Create(
             FloatToggle,
@@ -1134,12 +1125,57 @@ end
 -- Fungsi untuk membersihkan brightness
 local function cleanUpBrightness()
     if isBrightnessEnabled then
-        toggleBrightness() -- Nonaktifkan brightness
+        toggleBrightness()
+    end
+end
+
+-- Fungsi toggle brightness
+local function toggleBrightness()
+    if isBrightnessEnabled then
+        Lighting.Brightness = originalBrightness
+        Lighting.Ambient = originalAmbient
+        Lighting.OutdoorAmbient = originalOutdoorAmbient
+        Lighting.FogEnd = originalFogEnd
+        
+        isBrightnessEnabled = false
+        
+        TweenService:Create(
+            BrightnessToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            BrightnessSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    else
+        originalBrightness = Lighting.Brightness
+        originalAmbient = Lighting.Ambient
+        originalOutdoorAmbient = Lighting.OutdoorAmbient
+        originalFogEnd = Lighting.FogEnd
+        
+        Lighting.Brightness = 2
+        Lighting.Ambient = Color3.fromRGB(200, 200, 200)
+        Lighting.OutdoorAmbient = Color3.fromRGB(200, 200, 200)
+        Lighting.FogEnd = 100000
+        
+        isBrightnessEnabled = true
+        
+        TweenService:Create(
+            BrightnessToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+        ):Play()
+        TweenService:Create(
+            BrightnessSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+        ):Play()
     end
 end
 
 -- ==================== FUNGSI ESP ====================
--- Fungsi untuk membuat ESP pada part
 local function createESP(partData)
     if not partData or not partData.Object or not partData.Object.Parent then
         return false
@@ -1147,7 +1183,6 @@ local function createESP(partData)
     
     local part = partData.Object
     
-    -- Hapus ESP lama jika sudah ada
     if espHighlights[part] then
         espHighlights[part]:Destroy()
         espHighlights[part] = nil
@@ -1158,7 +1193,6 @@ local function createESP(partData)
         espConnections[part] = nil
     end
     
-    -- Buat Highlight untuk ESP
     local highlight = Instance.new("Highlight")
     highlight.Name = "MilkyESP_" .. part.Name
     highlight.Adornee = part
@@ -1168,7 +1202,6 @@ local function createESP(partData)
     highlight.OutlineTransparency = 0
     highlight.Parent = game.CoreGui
     
-    -- Buat BillboardGui untuk menampilkan nama
     local billboard = Instance.new("BillboardGui")
     billboard.Name = "MilkyESPBillboard_" .. part.Name
     billboard.Adornee = part
@@ -1201,11 +1234,9 @@ local function createESP(partData)
     parentLabel.TextSize = 12
     parentLabel.Parent = billboard
     
-    -- Simpan ESP objects
     espHighlights[part] = highlight
     espHighlights[part .. "_billboard"] = billboard
     
-    -- Connection untuk menghapus ESP jika part dihapus
     espConnections[part] = part.AncestryChanged:Connect(function()
         if not part.Parent then
             if espHighlights[part] then
@@ -1226,7 +1257,6 @@ local function createESP(partData)
     return true
 end
 
--- Fungsi untuk menghapus ESP dari part
 local function removeESP(partData)
     if not partData or not partData.Object then
         return false
@@ -1252,7 +1282,6 @@ local function removeESP(partData)
     return true
 end
 
--- Fungsi untuk membersihkan semua ESP
 local function cleanUpAllESP()
     for part, highlight in pairs(espHighlights) do
         if highlight then
@@ -1270,16 +1299,13 @@ local function cleanUpAllESP()
     espConnections = {}
 end
 
--- ==================== FUNGSI SCRIPT BLOCK ====================
-
--- Fungsi untuk mendapatkan script dari ScriptBlox API
+-- ==================== FUNGSI SCRIPT BLOX ====================
 local function searchScripts(query, filters)
     SearchStatusLabel.Text = "Mencari script..."
     SearchStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
     
     local url = scriptBloxAPI .. "?q=" .. query .. "&max=20"
     
-    -- Tambahkan filter ke URL
     if filters.verified then
         url = url .. "&verified=1"
     end
@@ -1329,17 +1355,14 @@ local function searchScripts(query, filters)
     end
 end
 
--- Fungsi untuk mengeksekusi script
 local function executeScript(scriptCode, scriptTitle)
     if scriptCode and scriptCode ~= "" then
-        -- Bersihkan fungsi aktif sebelum menjalankan script baru
         cleanUpFly()
         cleanUpFloat()
         cleanUpHead()
         cleanUpAllESP()
         cleanUpBrightness()
         
-        -- Eksekusi script menggunakan loadstring
         local success, errorMessage = pcall(function()
             loadstring(scriptCode)()
         end)
@@ -1366,7 +1389,6 @@ local function executeScript(scriptCode, scriptTitle)
     end
 end
 
--- Fungsi untuk memperbarui daftar script di GUI
 local function updateScriptList()
     for _, child in ipairs(ScriptListScroll:GetChildren()) do
         if child:IsA("Frame") then
@@ -1387,7 +1409,6 @@ local function updateScriptList()
         scriptItemCorner.CornerRadius = UDim.new(0, 4)
         scriptItemCorner.Parent = scriptItem
         
-        -- Judul Script
         local scriptTitle = Instance.new("TextLabel")
         scriptTitle.Size = UDim2.new(1, -10, 0, 20)
         scriptTitle.Position = UDim2.new(0, 5, 0, 0)
@@ -1401,7 +1422,6 @@ local function updateScriptList()
         scriptTitle.ZIndex = 10002
         scriptTitle.Parent = scriptItem
         
-        -- Info Script
         local scriptInfo = Instance.new("TextLabel")
         scriptInfo.Size = UDim2.new(1, -10, 0, 15)
         scriptInfo.Position = UDim2.new(0, 5, 0, 20)
@@ -1415,7 +1435,6 @@ local function updateScriptList()
         scriptInfo.ZIndex = 10002
         scriptInfo.Parent = scriptItem
         
-        -- Status Script (Verified, Free, etc.)
         local scriptStatus = Instance.new("TextLabel")
         scriptStatus.Size = UDim2.new(1, -10, 0, 15)
         scriptStatus.Position = UDim2.new(0, 5, 0, 35)
@@ -1443,7 +1462,6 @@ local function updateScriptList()
         scriptStatus.ZIndex = 10002
         scriptStatus.Parent = scriptItem
         
-        -- Stats (Likes/Views)
         local scriptStats = Instance.new("TextLabel")
         scriptStats.Size = UDim2.new(1, -10, 0, 15)
         scriptStats.Position = UDim2.new(0, 5, 0, 50)
@@ -1456,7 +1474,6 @@ local function updateScriptList()
         scriptStats.ZIndex = 10002
         scriptStats.Parent = scriptItem
         
-        -- Tombol Execute
         local executeButton = Instance.new("TextButton")
         executeButton.Size = UDim2.new(0, 60, 0, 25)
         executeButton.Position = UDim2.new(1, -65, 0, 5)
@@ -1472,13 +1489,11 @@ local function updateScriptList()
         executeButtonCorner.CornerRadius = UDim.new(0, 4)
         executeButtonCorner.Parent = executeButton
         
-        -- Nonaktifkan tombol jika script patched
         if scriptData.isPatched then
             executeButton.Active = false
             executeButton.Text = "Patched"
         end
         
-        -- Event handler untuk tombol execute
         executeButton.MouseButton1Click:Connect(function()
             if not scriptData.isPatched then
                 executeButton.Text = "Executing..."
@@ -1486,7 +1501,6 @@ local function updateScriptList()
                 
                 executeScript(scriptData.script, scriptData.title)
                 
-                -- Kembalikan tampilan tombol setelah 2 detik
                 wait(2)
                 if executeButton then
                     executeButton.Text = "Execute"
@@ -1495,7 +1509,6 @@ local function updateScriptList()
             end
         end)
         
-        -- Efek hover pada tombol execute
         if not scriptData.isPatched then
             executeButton.MouseEnter:Connect(function()
                 TweenService:Create(
@@ -1520,20 +1533,16 @@ local function updateScriptList()
     ScriptListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
--- ==================== FUNGSI PARTS YANG DIPERBAIKI ====================
--- Fungsi untuk memeriksa apakah part dapat diinteraksi
+-- ==================== FUNGSI PARTS ====================
 local function isPartInteractable(part)
-    -- Cek jika part adalah bagian dari karakter pemain
     if part:IsDescendantOf(LocalPlayer.Character) then
         return false
     end
     
-    -- Cek jika part adalah bagian dari workspace yang tidak dapat diinteraksi
     if part:IsDescendantOf(workspace.Terrain) then
         return false
     end
     
-    -- Cek jika part memiliki properti khusus yang menandakan dapat diinteraksi
     if part:FindFirstChildWhichIsA("ClickDetector") then
         return true
     end
@@ -1546,7 +1555,6 @@ local function isPartInteractable(part)
         return true
     end
     
-    -- Cek jika part memiliki script khusus yang menandakan interaktivitas
     local parentModel = part.Parent
     if parentModel and parentModel:IsA("Model") then
         if parentModel:FindFirstChildWhichIsA("Script") then
@@ -1563,7 +1571,6 @@ local function isPartInteractable(part)
         end
     end
     
-    -- Cek berdasarkan nama part (hindari part generik)
     local genericNames = {
         "baseplate", "part", "block", "brick", "wall", "floor", "ground",
         "spawn", "camera", "light", "decal", "texture", "mesh"
@@ -1576,7 +1583,6 @@ local function isPartInteractable(part)
         end
     end
     
-    -- Cek jika part memiliki nama yang spesifik (biasanya menandakan part penting)
     if string.find(partNameLower, "button") or 
        string.find(partNameLower, "door") or 
        string.find(partNameLower, "lever") or 
@@ -1589,11 +1595,9 @@ local function isPartInteractable(part)
         return true
     end
     
-    -- Default: part tidak dianggap interaktif
     return false
 end
 
--- Fungsi untuk mengumpulkan part interaktif di workspace
 local function collectInteractableParts()
     allParts = {}
     filteredParts = {}
@@ -1601,7 +1605,6 @@ local function collectInteractableParts()
     local function scanModel(model)
         for _, child in ipairs(model:GetChildren()) do
             if child:IsA("BasePart") then
-                -- Hanya tambahkan part yang dapat diinteraksi
                 if isPartInteractable(child) then
                     table.insert(allParts, {
                         Object = child,
@@ -1613,7 +1616,6 @@ local function collectInteractableParts()
                     })
                 end
             elseif child:IsA("Model") or child:IsA("Folder") then
-                -- Jangan scan karakter pemain
                 if not child:IsDescendantOf(LocalPlayer.Character) then
                     scanModel(child)
                 end
@@ -1621,10 +1623,8 @@ local function collectInteractableParts()
         end
     end
     
-    -- Scan workspace (kecuali karakter pemain)
     scanModel(workspace)
     
-    -- Salin ke filteredParts untuk pencarian awal
     for i, part in ipairs(allParts) do
         filteredParts[i] = part
     end
@@ -1632,7 +1632,6 @@ local function collectInteractableParts()
     return #allParts
 end
 
--- Fungsi untuk memfilter parts berdasarkan nama
 local function filterParts(searchText)
     filteredParts = {}
     
@@ -1653,7 +1652,6 @@ local function filterParts(searchText)
     return #filteredParts
 end
 
--- Fungsi untuk memperbarui daftar parts di GUI
 local function updatePartsList()
     for _, child in ipairs(PartsListScroll:GetChildren()) do
         if child:IsA("Frame") then
@@ -1674,7 +1672,6 @@ local function updatePartsList()
         partItemCorner.CornerRadius = UDim.new(0, 4)
         partItemCorner.Parent = partItem
         
-        -- Nama Part
         local partName = Instance.new("TextLabel")
         partName.Size = UDim2.new(0.7, 0, 0.33, 0)
         partName.Position = UDim2.new(0, 5, 0, 0)
@@ -1688,7 +1685,6 @@ local function updatePartsList()
         partName.ZIndex = 10002
         partName.Parent = partItem
         
-        -- Parent Part
         local partParent = Instance.new("TextLabel")
         partParent.Size = UDim2.new(0.7, 0, 0.33, 0)
         partParent.Position = UDim2.new(0, 5, 0.33, 0)
@@ -1702,7 +1698,6 @@ local function updatePartsList()
         partParent.ZIndex = 10002
         partParent.Parent = partItem
         
-        -- Info Material/Collision
         local partInfo = Instance.new("TextLabel")
         partInfo.Size = UDim2.new(0.7, 0, 0.34, 0)
         partInfo.Position = UDim2.new(0, 5, 0.66, 0)
@@ -1715,7 +1710,6 @@ local function updatePartsList()
         partInfo.ZIndex = 10002
         partInfo.Parent = partItem
         
-        -- Container untuk tombol
         local buttonContainer = Instance.new("Frame")
         buttonContainer.Size = UDim2.new(0.3, 0, 1, 0)
         buttonContainer.Position = UDim2.new(0.7, 0, 0, 0)
@@ -1723,7 +1717,6 @@ local function updatePartsList()
         buttonContainer.ZIndex = 10002
         buttonContainer.Parent = partItem
 
-        -- Tombol Tween ke Part
         local tweenButton = Instance.new("TextButton")
         tweenButton.Size = UDim2.new(0.45, 0, 0.4, 0)
         tweenButton.Position = UDim2.new(0.05, 0, 0.1, 0)
@@ -1739,7 +1732,6 @@ local function updatePartsList()
         tweenButtonCorner.CornerRadius = UDim.new(0, 4)
         tweenButtonCorner.Parent = tweenButton
         
-        -- Tombol ESP/UnESP
         local espButton = Instance.new("TextButton")
         espButton.Size = UDim2.new(0.45, 0, 0.4, 0)
         espButton.Position = UDim2.new(0.5, 0, 0.1, 0)
@@ -1755,27 +1747,22 @@ local function updatePartsList()
         espButtonCorner.CornerRadius = UDim.new(0, 4)
         espButtonCorner.Parent = espButton
         
-        -- Cek apakah part ini sudah memiliki ESP aktif
         if espHighlights[partData.Object] then
             espButton.Text = "Un ESP"
             espButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
         end
         
-        -- Event handler untuk tombol tween part
         tweenButton.MouseButton1Click:Connect(function()
             local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
-                -- Nonaktifkan fly jika sedang aktif
                 if isFlying then
                     cleanUpFly()
                 end
                 
-                -- Nonaktifkan float jika sedang aktif
                 if isFloating then
                     cleanUpFloat()
                 end
                 
-                -- Tween ke part
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                 if rootPart and partData.Object and partData.Object.Parent then
                     local targetPosition = partData.Position
@@ -1788,7 +1775,6 @@ local function updatePartsList()
                     local tween = TweenService:Create(rootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 3, 0))})
                     tween:Play()
                     
-                    -- Feedback visual
                     tweenButton.Text = "Moving..."
                     tweenButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
                     
@@ -1806,16 +1792,13 @@ local function updatePartsList()
             end
         end)
         
-        -- Event handler untuk tombol ESP
         espButton.MouseButton1Click:Connect(function()
             if espButton.Text == "ESP" then
-                -- Aktifkan ESP
                 if createESP(partData) then
                     espButton.Text = "Un ESP"
                     espButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
                 end
             else
-                -- Nonaktifkan ESP
                 if removeESP(partData) then
                     espButton.Text = "ESP"
                     espButton.BackgroundColor3 = Color3.fromRGB(200, 120, 0)
@@ -1823,7 +1806,6 @@ local function updatePartsList()
             end
         end)
         
-        -- Efek hover pada tombol tween
         tweenButton.MouseEnter:Connect(function()
             TweenService:Create(
                 tweenButton,
@@ -1840,7 +1822,6 @@ local function updatePartsList()
             ):Play()
         end)
         
-        -- Efek hover pada tombol ESP
         espButton.MouseEnter:Connect(function()
             if espButton.Text == "ESP" then
                 TweenService:Create(
@@ -1879,7 +1860,6 @@ local function updatePartsList()
     PartsListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
--- Fungsi untuk memuat dan menampilkan parts
 local function loadAndDisplayParts()
     local totalParts = collectInteractableParts()
     local displayedParts = filterParts(PartsSearchBox.Text)
@@ -1888,8 +1868,7 @@ local function loadAndDisplayParts()
     updatePartsList()
 end
 
--- ==================== FUNGSI YANG SUDAH ADA ====================
--- Fungsi untuk memperbarui daftar pemain
+-- ==================== FUNGSI LAINNYA ====================
 local function updatePlayerList()
     for _, child in ipairs(PlayerListScroll:GetChildren()) do
         if child:IsA("Frame") then
@@ -2044,7 +2023,6 @@ local function updatePlayerList()
     PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
--- Fungsi untuk memperbarui daftar waypoint
 local function updateWaypointList()
     for _, child in ipairs(WaypointListScroll:GetChildren()) do
         if child:IsA("Frame") then
@@ -2131,7 +2109,6 @@ local function updateWaypointList()
     WaypointListScroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
--- Fungsi untuk menyimpan waypoint
 local function setWaypoint()
     local name = WaypointBox.Text
     if name and name ~= "" then
@@ -2169,15 +2146,85 @@ local function setWaypoint()
     end
 end
 
--- ==================== FUNGSI SWITCH RIBBON YANG DIPERBAIKI ====================
+-- ==================== FUNGSI WINDOW CONTROLS ====================
+local function minimizeWindow()
+    TweenService:Create(
+        MainWindow,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Size = UDim2.new(0, 350, 0, 30)}
+    ):Play()
+    
+    ContentArea.Visible = false
+    MinimizeButton.Text = "+"
+end
+
+local function restoreWindow()
+    TweenService:Create(
+        MainWindow,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Size = UDim2.new(0, 350, 0, 450)}
+    ):Play()
+    
+    ContentArea.Visible = true
+    MinimizeButton.Text = "_"
+end
+
+-- ==================== FUNGSI POPUP KONFIRMASI ====================
+local function showConfirmPopup()
+    ConfirmPopup.Visible = true
+    ConfirmPopup.Size = UDim2.new(0, 0, 0, 0)
+    ConfirmPopup.Position = UDim2.new(0.5, 0, 0.5, 0)
+    
+    TweenService:Create(
+        ConfirmPopup,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Size = UDim2.new(0, 300, 0, 150), Position = UDim2.new(0.5, -150, 0.5, -75)}
+    ):Play()
+end
+
+local function hideConfirmPopup()
+    TweenService:Create(
+        ConfirmPopup,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
+    ):Play()
+    
+    wait(0.2)
+    ConfirmPopup.Visible = false
+end
+
+-- ==================== FUNGSI DESTROY SCRIPT ====================
+local function destroyScript()
+    cleanUpFly()
+    cleanUpFloat()
+    cleanUpHead()
+    cleanUpAllESP()
+    cleanUpBrightness()
+    
+    if playerAddedConn then
+        playerAddedConn:Disconnect()
+    end
+    
+    if playerRemovingConn then
+        playerRemovingConn:Disconnect()
+    end
+    
+    if characterAddedConn then
+        characterAddedConn:Disconnect()
+    end
+    
+    if ScreenGui then
+        ScreenGui:Destroy()
+    end
+end
+
+-- ==================== FUNGSI RIBBON SWITCHING ====================
 local function switchRibbon(ribbonName)
-    -- Sematkan semua konten terlebih dahulu
     UtamaContent.Visible = false
     TweenContent.Visible = false
     PartsContent.Visible = false
     ScriptContent.Visible = false
     
-    -- Reset warna semua ribbon
     UtamaRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     UtamaRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
     TweenRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
@@ -2187,11 +2234,11 @@ local function switchRibbon(ribbonName)
     ScriptRibbon.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     ScriptRibbon.TextColor3 = Color3.fromRGB(200, 200, 200)
     
-    -- Aktifkan ribbon dan konten yang dipilih
     if ribbonName == "Utama" then
         UtamaRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         UtamaRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
         UtamaContent.Visible = true
+        updatePlayerList()
     elseif ribbonName == "Tween" then
         TweenRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         TweenRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -2209,16 +2256,14 @@ local function switchRibbon(ribbonName)
             PartsInfoLabel.Text = "Parts Interaktif: " .. #allParts .. " | Ditampilkan: " .. displayedParts
             updatePartsList()
         end
-    else -- Script
+    else
         ScriptRibbon.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
         ScriptRibbon.TextColor3 = Color3.fromRGB(255, 255, 255)
         ScriptContent.Visible = true
         
-        -- Otomatis mencari script untuk game saat ini ketika membuka tab Script
         if #currentScripts == 0 then
             local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
             ScriptSearchBox.Text = gameName
-            -- Pencarian dilakukan secara asynchronous untuk tidak membebankan GUI
             spawn(function()
                 if searchScripts(gameName, activeFilters) then
                     updateScriptList()
@@ -2228,100 +2273,7 @@ local function switchRibbon(ribbonName)
     end
 end
 
--- ==================== FUNGSI DESTROY SCRIPT YANG DIPERBAIKI ====================
-local function destroyScript()
-    -- Bersihkan semua fungsi aktif
-    cleanUpFly()
-    cleanUpFloat()
-    cleanUpHead()
-    cleanUpAllESP()
-    cleanUpBrightness()
-    
-    -- Hapus semua koneksi event yang sudah dideklarasikan
-    if playerAddedConn then
-        playerAddedConn:Disconnect()
-    end
-    
-    if playerRemovingConn then
-        playerRemovingConn:Disconnect()
-    end
-    
-    if characterAddedConn then
-        characterAddedConn:Disconnect()
-    end
-    
-    -- Hancurkan GUI
-    if ScreenGui then
-        ScreenGui:Destroy()
-    end
-    
-    -- Hentikan eksekusi script lebih lanjut
-    -- Dengan menggunakan error untuk menghentikan eksekusi
-    error("Script destroyed by user")
-end
-
--- ==================== EVENT HANDLERS ====================
--- Event handling untuk drag
-FloatingButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = FloatingButton.Position
-        
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-FloatingButton.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
-end)
-
--- Fungsi untuk mengatur WalkSpeed
-local function setWalkSpeed()
-    local speed = tonumber(WalkSpeedBox.Text)
-    if speed and speed > 0 then
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = speed
-            TweenService:Create(
-                WalkSpeedBox,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 150, 0)}
-            ):Play()
-            wait(0.3)
-            TweenService:Create(
-                WalkSpeedBox,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-            ):Play()
-        end
-    else
-        TweenService:Create(
-            WalkSpeedBox,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(150, 0, 0)}
-        ):Play()
-        wait(0.3)
-        TweenService:Create(
-            WalkSpeedBox,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-        ):Play()
-    end
-end
-
--- Fungsi Fly yang Diperbaiki untuk Mobile
+-- ==================== FUNGSI FLY ====================
 local function toggleFly()
     if isFlying then
         cleanUpFly()
@@ -2408,7 +2360,7 @@ local function toggleFly()
     end
 end
 
--- Fungsi Float/Unfloat
+-- ==================== FUNGSI FLOAT ====================
 local function toggleFloat()
     if isFloating then
         cleanUpFloat()
@@ -2446,57 +2398,111 @@ local function toggleFloat()
     end
 end
 
--- Event handlers untuk tombol kontrol
-UpButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        upButtonPressed = true
+-- ==================== FUNGSI WALKSPEED ====================
+local function setWalkSpeed()
+    local speed = tonumber(WalkSpeedBox.Text)
+    if speed and speed > 0 then
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = speed
+            TweenService:Create(
+                WalkSpeedBox,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 150, 0)}
+            ):Play()
+            wait(0.3)
+            TweenService:Create(
+                WalkSpeedBox,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+            ):Play()
+        end
+    else
         TweenService:Create(
-            UpButton,
-            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundTransparency = 0.2}
+            WalkSpeedBox,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(150, 0, 0)}
         ):Play()
+        wait(0.3)
+        TweenService:Create(
+            WalkSpeedBox,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+        ):Play()
+    end
+end
+
+-- ==================== EVENT HANDLERS ====================
+-- Drag functionality
+TitleBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainWindow.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
     end
 end)
 
-UpButton.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        upButtonPressed = false
-        TweenService:Create(
-            UpButton,
-            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundTransparency = 0.5}
-        ):Play()
+TitleBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
     end
 end)
 
-DownButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        downButtonPressed = true
-        TweenService:Create(
-            DownButton,
-            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundTransparency = 0.2}
-        ):Play()
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
     end
 end)
 
-DownButton.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        downButtonPressed = false
-        TweenService:Create(
-            DownButton,
-            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundTransparency = 0.5}
-        ):Play()
+-- Window controls
+MinimizeButton.MouseButton1Click:Connect(function()
+    if ContentArea.Visible then
+        minimizeWindow()
+    else
+        restoreWindow()
     end
 end)
 
--- Event handlers untuk switch
+CloseButton.MouseButton1Click:Connect(showConfirmPopup)
+
+-- Konfirmasi popup
+ConfirmYesButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+    destroyScript()
+end)
+
+ConfirmNoButton.MouseButton1Click:Connect(function()
+    hideConfirmPopup()
+end)
+
+-- Ribbon switching
+UtamaRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Utama")
+end)
+
+TweenRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Tween")
+end)
+
+PartsRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Parts")
+end)
+
+ScriptRibbon.MouseButton1Click:Connect(function()
+    switchRibbon("Script")
+end)
+
+-- Switch functionality
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 FloatSwitch.MouseButton1Click:Connect(toggleFloat)
-BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness) -- DITAMBAHKAN
+BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness)
 
--- Event handler untuk WalkSpeed
+-- WalkSpeed functionality
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
 
 WalkSpeedBox.FocusLost:Connect(function(enterPressed)
@@ -2505,7 +2511,7 @@ WalkSpeedBox.FocusLost:Connect(function(enterPressed)
     end
 end)
 
--- Event handler untuk Waypoint
+-- Waypoint functionality
 SetWaypointButton.MouseButton1Click:Connect(setWaypoint)
 
 WaypointBox.FocusLost:Connect(function(enterPressed)
@@ -2514,7 +2520,7 @@ WaypointBox.FocusLost:Connect(function(enterPressed)
     end
 end)
 
--- ==================== EVENT HANDLERS PARTS ====================
+-- Parts functionality
 PartsSearchBox:GetPropertyChangedSignal("Text"):Connect(function()
     local displayedParts = filterParts(PartsSearchBox.Text)
     PartsInfoLabel.Text = "Parts Interaktif: " .. #allParts .. " | Ditampilkan: " .. displayedParts
@@ -2537,13 +2543,10 @@ RefreshPartsButton.MouseButton1Click:Connect(function()
     ):Play()
 end)
 
--- ==================== EVENT HANDLERS SCRIPT ====================
-
--- Event handler untuk pencarian script
+-- Script functionality
 SearchScriptButton.MouseButton1Click:Connect(function()
     local searchQuery = ScriptSearchBox.Text
     if searchQuery == "" then
-        -- Jika kotak pencarian kosong, gunakan nama game sebagai query
         searchQuery = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
     end
     
@@ -2577,7 +2580,7 @@ ScriptSearchBox.FocusLost:Connect(function(enterPressed)
     end
 end)
 
--- Event handlers untuk filter
+-- Filter functionality
 VerifiedFilter.MouseButton1Click:Connect(function()
     activeFilters.verified = not activeFilters.verified
     if activeFilters.verified then
@@ -2629,7 +2632,237 @@ UniversalFilter.MouseButton1Click:Connect(function()
     end
 end)
 
--- Efek hover untuk tombol filter
+-- Mobile controls
+UpButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        upButtonPressed = true
+        TweenService:Create(
+            UpButton,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.2}
+        ):Play()
+    end
+end)
+
+UpButton.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        upButtonPressed = false
+        TweenService:Create(
+            UpButton,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.5}
+        ):Play()
+    end
+end)
+
+DownButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        downButtonPressed = true
+        TweenService:Create(
+            DownButton,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.2}
+        ):Play()
+    end
+end)
+
+DownButton.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        downButtonPressed = false
+        TweenService:Create(
+            DownButton,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.5}
+        ):Play()
+    end
+end)
+
+-- Player events
+playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
+playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
+
+local function onCharacterAdded(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    humanoid.Died:Connect(function()
+        cleanUpFly()
+        cleanUpFloat()
+        cleanUpHead()
+        updatePlayerList()
+    end)
+end
+
+if LocalPlayer.Character then
+    onCharacterAdded(LocalPlayer.Character)
+end
+
+characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+-- Hover effects
+MinimizeButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        MinimizeButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(100, 100, 100)}
+    ):Play()
+end)
+
+MinimizeButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        MinimizeButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+    ):Play()
+end)
+
+CloseButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        CloseButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
+    ):Play()
+end)
+
+CloseButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        CloseButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
+    ):Play()
+end)
+
+-- Ribbon hover effects
+local function setupRibbonHover(ribbon)
+    ribbon.MouseEnter:Connect(function()
+        if ribbon.BackgroundColor3 ~= Color3.fromRGB(0, 120, 215) then
+            TweenService:Create(
+                ribbon,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+            ):Play()
+        end
+    end)
+    
+    ribbon.MouseLeave:Connect(function()
+        if ribbon.BackgroundColor3 ~= Color3.fromRGB(0, 120, 215) then
+            TweenService:Create(
+                ribbon,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
+            ):Play()
+        end
+    end)
+end
+
+setupRibbonHover(UtamaRibbon)
+setupRibbonHover(TweenRibbon)
+setupRibbonHover(PartsRibbon)
+setupRibbonHover(ScriptRibbon)
+
+-- Switch hover effects
+local function setupSwitchHover(switch, toggle)
+    switch.MouseEnter:Connect(function()
+        if toggle.Position == UDim2.new(0, 27, 0, 2) then
+            TweenService:Create(
+                switch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 120, 0)}
+            ):Play()
+        else
+            TweenService:Create(
+                switch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(100, 100, 100)}
+            ):Play()
+        end
+    end)
+    
+    switch.MouseLeave:Connect(function()
+        if toggle.Position == UDim2.new(0, 27, 0, 2) then
+            TweenService:Create(
+                switch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+            ):Play()
+        else
+            TweenService:Create(
+                switch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+            ):Play()
+        end
+    end)
+end
+
+setupSwitchHover(FlySwitch, FlyToggle)
+setupSwitchHover(FloatSwitch, FloatToggle)
+setupSwitchHover(BrightnessSwitch, BrightnessToggle)
+
+-- Button hover effects
+SetWalkSpeedButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        SetWalkSpeedButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+SetWalkSpeedButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        SetWalkSpeedButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
+SetWaypointButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        SetWaypointButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+SetWaypointButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        SetWaypointButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
+RefreshPartsButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        RefreshPartsButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+RefreshPartsButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        RefreshPartsButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
+SearchScriptButton.MouseEnter:Connect(function()
+    TweenService:Create(
+        SearchScriptButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+SearchScriptButton.MouseLeave:Connect(function()
+    TweenService:Create(
+        SearchScriptButton,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
+end)
+
+-- Filter hover effects
 VerifiedFilter.MouseEnter:Connect(function()
     TweenService:Create(
         VerifiedFilter,
@@ -2678,339 +2911,14 @@ UniversalFilter.MouseLeave:Connect(function()
     ):Play()
 end)
 
--- ==================== RIBBON SWITCHING ====================
--- Event handlers untuk ribbon
-UtamaRibbon.MouseButton1Click:Connect(function()
-    switchRibbon("Utama")
-end)
-
-TweenRibbon.MouseButton1Click:Connect(function()
-    switchRibbon("Tween")
-end)
-
-PartsRibbon.MouseButton1Click:Connect(function()
-    switchRibbon("Parts")
-end)
-
-ScriptRibbon.MouseButton1Click:Connect(function()
-    switchRibbon("Script")
-end)
-
--- Efek hover untuk ScriptRibbon
-ScriptRibbon.MouseEnter:Connect(function()
-    if ScriptContent.Visible == false then
-        TweenService:Create(
-            ScriptRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-        ):Play()
-    end
-end)
-
-ScriptRibbon.MouseLeave:Connect(function()
-    if ScriptContent.Visible == false then
-        TweenService:Create(
-            ScriptRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-        ):Play()
-    end
-end)
-
--- Efek hover pada ribbon buttons lainnya
-UtamaRibbon.MouseEnter:Connect(function()
-    if UtamaContent.Visible == false then
-        TweenService:Create(
-            UtamaRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    end
-end)
-
-UtamaRibbon.MouseLeave:Connect(function()
-    if UtamaContent.Visible == false then
-        TweenService:Create(
-            UtamaRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-        ):Play()
-    end
-end)
-
-TweenRibbon.MouseEnter:Connect(function()
-    if TweenContent.Visible == false then
-        TweenService:Create(
-            TweenRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-        ):Play()
-    end
-end)
-
-TweenRibbon.MouseLeave:Connect(function()
-    if TweenContent.Visible == false then
-        TweenService:Create(
-            TweenRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-        ):Play()
-    end
-end)
-
-PartsRibbon.MouseEnter:Connect(function()
-    if PartsContent.Visible == false then
-        TweenService:Create(
-            PartsRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-        ):Play()
-    end
-end)
-
-PartsRibbon.MouseLeave:Connect(function()
-    if PartsContent.Visible == false then
-        TweenService:Create(
-            PartsRibbon,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-        ):Play()
-    end
-end)
-
--- ==================== POPUP CONTROLS YANG DIPERBAIKI ====================
-local function togglePopup()
-    if PopupFrame.Visible then
-        -- Tutup popup dengan animasi
-        TweenService:Create(
-            PopupFrame,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-            {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}
-        ):Play()
-        
-        wait(0.2)
-        PopupFrame.Visible = false
-    else
-        -- Buka popup dengan animasi
-        PopupFrame.Visible = true
-        PopupFrame.Size = UDim2.new(0, 0, 0, 0)
-        PopupFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-        
-        updatePlayerList()
-        
-        TweenService:Create(
-            PopupFrame,
-            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-            {Size = UDim2.new(0, 350, 0, 450), Position = UDim2.new(0.5, -175, 0.5, -225)}
-        ):Play()
-    end
-end
-
--- ==================== EVENT HANDLERS POPUP KONFIRMASI YANG DIPERBAIKI ====================
-ConfirmYesButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-    
-    -- Panggil fungsi destroyScript yang sudah diperbaiki
-    destroyScript()
-end)
-
-ConfirmNoButton.MouseButton1Click:Connect(function()
-    hideConfirmPopup()
-end)
-
--- Efek hover pada tombol konfirmasi
-ConfirmYesButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        ConfirmYesButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
-    ):Play()
-end)
-
-ConfirmYesButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        ConfirmYesButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
-    ):Play()
-end)
-
-ConfirmNoButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        ConfirmNoButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-end)
-
-ConfirmNoButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        ConfirmNoButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}
-    ):Play()
-end)
-
--- Event handler untuk floating button (toggle popup)
-FloatingButton.MouseButton1Click:Connect(togglePopup)
-
--- Event handler untuk close button (show konfirmasi)
-CloseButton.MouseButton1Click:Connect(showConfirmPopup)
-
--- Efek hover pada tombol close
-CloseButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        CloseButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}
-    ):Play()
-end)
-
-CloseButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        CloseButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(220, 60, 60)}
-    ):Play()
-end)
-
--- Efek hover pada floating button
-FloatingButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        FloatingButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-    ):Play()
-end)
-
-FloatingButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        FloatingButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-    ):Play()
-end)
-
--- Efek hover pada tombol switch (termasuk brightness)
-local function setupSwitchHover(switch, toggle)
-    switch.MouseEnter:Connect(function()
-        if toggle.Position == UDim2.new(0, 27, 0, 2) then
-            TweenService:Create(
-                switch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 120, 0)}
-            ):Play()
-        else
-            TweenService:Create(
-                switch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(100, 100, 100)}
-            ):Play()
-        end
-    end)
-    
-    switch.MouseLeave:Connect(function()
-        if toggle.Position == UDim2.new(0, 27, 0, 2) then
-            TweenService:Create(
-                switch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-            ):Play()
-        else
-            TweenService:Create(
-                switch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-            ):Play()
-        end
-    end)
-end
-
-setupSwitchHover(FlySwitch, FlyToggle)
-setupSwitchHover(FloatSwitch, FloatToggle)
-setupSwitchHover(BrightnessSwitch, BrightnessToggle) -- DITAMBAHKAN
-
--- Efek hover pada tombol Set WalkSpeed
-SetWalkSpeedButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        SetWalkSpeedButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-    ):Play()
-end)
-
-SetWalkSpeedButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        SetWalkSpeedButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-    ):Play()
-end)
-
--- Efek hover pada tombol Set Waypoint
-SetWaypointButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        SetWaypointButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-    ):Play()
-end)
-
-SetWaypointButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        SetWaypointButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-    ):Play()
-end)
-
--- Efek hover pada tombol Refresh Parts
-RefreshPartsButton.MouseEnter:Connect(function()
-    TweenService:Create(
-        RefreshPartsButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
-    ):Play()
-end)
-
-RefreshPartsButton.MouseLeave:Connect(function()
-    TweenService:Create(
-        RefreshPartsButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
-    ):Play()
-end)
-
--- Deteksi ketika pemain bergabung atau keluar
-playerAddedConn = Players.PlayerAdded:Connect(updatePlayerList)
-playerRemovingConn = Players.PlayerRemoving:Connect(updatePlayerList)
-
--- Fungsi untuk menangani perubahan karakter
-local function onCharacterAdded(character)
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid.Died:Connect(function()
-        cleanUpFly()
-        cleanUpFloat()
-        cleanUpHead()
-        updatePlayerList()
-    end)
-end
-
--- Event untuk karakter yang baru ditambahkan
-if LocalPlayer.Character then
-    onCharacterAdded(LocalPlayer.Character)
-end
-
-characterAddedConn = LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-
--- Notifikasi
+-- Notifikasi awal
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "Milky Menu Loaded",
-    Text = "Menu dengan ESP, Brightness, dan fitur lengkap telah dimuat!",
+    Title = "Milky Windows Menu Loaded",
+    Text = "Jendela Windows-like telah dimuat! Drag title bar untuk memindahkan.",
     Duration = 5
 })
 
--- Pastikan semua fungsi dimatikan saat game dimatikan
+-- Pastikan cleanup saat game ditutup
 game:BindToClose(function()
     destroyScript()
 end)
