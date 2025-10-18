@@ -470,10 +470,98 @@ local SetWalkSpeedCorner = Instance.new("UICorner")
 SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
+-- Tambahkan setelah WalkSpeed Input dan sebelum Daftar Pemain
+
+-- Noclip Switch
+local NoclipFrame = Instance.new("Frame")
+NoclipFrame.Size = UDim2.new(0, 310, 0, 30)
+NoclipFrame.Position = UDim2.new(0, 20, 0, 220)
+NoclipFrame.BackgroundTransparency = 1
+NoclipFrame.ZIndex = 10002
+NoclipFrame.Parent = UtamaContent
+
+local NoclipLabel = Instance.new("TextLabel")
+NoclipLabel.Size = UDim2.new(0, 100, 1, 0)
+NoclipLabel.Position = UDim2.new(0, 0, 0, 0)
+NoclipLabel.BackgroundTransparency = 1
+NoclipLabel.Text = "Noclip:"
+NoclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+NoclipLabel.Font = Enum.Font.Gotham
+NoclipLabel.TextSize = 14
+NoclipLabel.TextXAlignment = Enum.TextXAlignment.Left
+NoclipLabel.ZIndex = 10002
+NoclipLabel.Parent = NoclipFrame
+
+local NoclipSwitch = Instance.new("TextButton")
+NoclipSwitch.Size = UDim2.new(0, 50, 0, 25)
+NoclipSwitch.Position = UDim2.new(1, -50, 0, 2)
+NoclipSwitch.Text = ""
+NoclipSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+NoclipSwitch.ZIndex = 10002
+NoclipSwitch.Parent = NoclipFrame
+
+local NoclipSwitchCorner = Instance.new("UICorner")
+NoclipSwitchCorner.CornerRadius = UDim.new(0, 12)
+NoclipSwitchCorner.Parent = NoclipSwitch
+
+local NoclipToggle = Instance.new("Frame")
+NoclipToggle.Size = UDim2.new(0, 21, 0, 21)
+NoclipToggle.Position = UDim2.new(0, 2, 0, 2)
+NoclipToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+NoclipToggle.ZIndex = 10003
+NoclipToggle.Parent = NoclipSwitch
+
+local NoclipToggleCorner = Instance.new("UICorner")
+NoclipToggleCorner.CornerRadius = UDim.new(0, 10)
+NoclipToggleCorner.Parent = NoclipToggle
+
+-- Xray Switch
+local XrayFrame = Instance.new("Frame")
+XrayFrame.Size = UDim2.new(0, 310, 0, 30)
+XrayFrame.Position = UDim2.new(0, 20, 0, 260)
+XrayFrame.BackgroundTransparency = 1
+XrayFrame.ZIndex = 10002
+XrayFrame.Parent = UtamaContent
+
+local XrayLabel = Instance.new("TextLabel")
+XrayLabel.Size = UDim2.new(0, 100, 1, 0)
+XrayLabel.Position = UDim2.new(0, 0, 0, 0)
+XrayLabel.BackgroundTransparency = 1
+XrayLabel.Text = "Xray:"
+XrayLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+XrayLabel.Font = Enum.Font.Gotham
+XrayLabel.TextSize = 14
+XrayLabel.TextXAlignment = Enum.TextXAlignment.Left
+XrayLabel.ZIndex = 10002
+XrayLabel.Parent = XrayFrame
+
+local XraySwitch = Instance.new("TextButton")
+XraySwitch.Size = UDim2.new(0, 50, 0, 25)
+XraySwitch.Position = UDim2.new(1, -50, 0, 2)
+XraySwitch.Text = ""
+XraySwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+XraySwitch.ZIndex = 10002
+XraySwitch.Parent = XrayFrame
+
+local XraySwitchCorner = Instance.new("UICorner")
+XraySwitchCorner.CornerRadius = UDim.new(0, 12)
+XraySwitchCorner.Parent = XraySwitch
+
+local XrayToggle = Instance.new("Frame")
+XrayToggle.Size = UDim2.new(0, 21, 0, 21)
+XrayToggle.Position = UDim2.new(0, 2, 0, 2)
+XrayToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+XrayToggle.ZIndex = 10003
+XrayToggle.Parent = XraySwitch
+
+local XrayToggleCorner = Instance.new("UICorner")
+XrayToggleCorner.CornerRadius = UDim.new(0, 10)
+XrayToggleCorner.Parent = XrayToggle
+
 -- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 310, 0, 120)
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 300)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.ZIndex = 10002
 PlayerListFrame.Parent = UtamaContent
@@ -979,6 +1067,7 @@ DownButtonCorner.CornerRadius = UDim.new(1, 0)
 DownButtonCorner.Parent = DownButton
 
 -- ==================== VARIABEL GLOBAL ====================
+-- ==================== VARIABEL GLOBAL ====================
 local dragging = false
 local dragInput, dragStart, startPos
 
@@ -991,6 +1080,15 @@ local flyConnection
 -- Variabel untuk float
 local isFloating = false
 local floatBodyForce
+
+-- Variabel untuk noclip
+local isNoclip = false
+local noclipConnection = nil
+
+-- Variabel untuk xray
+local isXray = false
+local originalTransparency = {}
+local xrayParts = {}
 
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
@@ -1161,6 +1259,142 @@ local function toggleBrightness()
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
         ):Play()
+    end
+end
+
+-- Fungsi untuk membersihkan noclip
+local function cleanUpNoclip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+    isNoclip = false
+    
+    if NoclipToggle and NoclipSwitch then
+        TweenService:Create(
+            NoclipToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+        ):Play()
+        TweenService:Create(
+            NoclipSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+        ):Play()
+    end
+end
+
+-- Fungsi untuk membersihkan xray
+local function cleanUpXray()
+    if isXray then
+        -- Kembalikan transparansi part ke semula
+        for part, transparency in pairs(originalTransparency) do
+            if part and part.Parent then
+                part.LocalTransparencyModifier = transparency
+            end
+        end
+        originalTransparency = {}
+        xrayParts = {}
+        
+        isXray = false
+        
+        if XrayToggle and XraySwitch then
+            TweenService:Create(
+                XrayToggle,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
+            ):Play()
+            TweenService:Create(
+                XraySwitch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
+            ):Play()
+        end
+    end
+end
+
+-- Fungsi toggle noclip
+local function toggleNoclip()
+    if isNoclip then
+        cleanUpNoclip()
+    else
+        cleanUpNoclip() -- Pastikan bersih dulu
+        
+        isNoclip = true
+        
+        TweenService:Create(
+            NoclipToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+        ):Play()
+        TweenService:Create(
+            NoclipSwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+        ):Play()
+        
+        noclipConnection = RunService.Stepped:Connect(function()
+            if not isNoclip or not LocalPlayer.Character then
+                cleanUpNoclip()
+                return
+            end
+            
+            local character = LocalPlayer.Character
+            for _, part in ipairs(character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        end)
+    end
+end
+
+-- Fungsi toggle xray
+local function toggleXray()
+    if isXray then
+        cleanUpXray()
+    else
+        cleanUpXray() -- Pastikan bersih dulu
+        
+        isXray = true
+        
+        TweenService:Create(
+            XrayToggle,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+        ):Play()
+        TweenService:Create(
+            XraySwitch,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+        ):Play()
+        
+        -- Kumpulkan semua part di workspace dan buat transparan
+        local function processModel(model)
+            for _, obj in ipairs(model:GetDescendants()) do
+                if obj:IsA("BasePart") and not obj:IsDescendantOf(LocalPlayer.Character) then
+                    if not originalTransparency[obj] then
+                        originalTransparency[obj] = obj.LocalTransparencyModifier
+                    end
+                    obj.LocalTransparencyModifier = 0.7 -- Buat semi transparan
+                    table.insert(xrayParts, obj)
+                end
+            end
+        end
+        
+        processModel(workspace)
+        
+        -- Handle part baru yang ditambahkan
+        local connection
+        connection = workspace.DescendantAdded:Connect(function(obj)
+            if isXray and obj:IsA("BasePart") and not obj:IsDescendantOf(LocalPlayer.Character) then
+                if not originalTransparency[obj] then
+                    originalTransparency[obj] = obj.LocalTransparencyModifier
+                end
+                obj.LocalTransparencyModifier = 0.7
+                table.insert(xrayParts, obj)
+            end
+        end)
     end
 end
 
@@ -2309,6 +2543,8 @@ local function destroyScript()
     cleanUpHead()
     cleanUpAllESP()
     cleanUpBrightness()
+    cleanUpNoclip()  -- Tambahkan ini
+    cleanUpXray()    -- Tambahkan ini
     
     if playerAddedConn then
         playerAddedConn:Disconnect()
@@ -2610,6 +2846,8 @@ end)
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 FloatSwitch.MouseButton1Click:Connect(toggleFloat)
 BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness)
+NoclipSwitch.MouseButton1Click:Connect(toggleNoclip)
+XraySwitch.MouseButton1Click:Connect(toggleXray)
 
 -- WalkSpeed functionality
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -2905,6 +3143,8 @@ end
 setupSwitchHover(FlySwitch, FlyToggle)
 setupSwitchHover(FloatSwitch, FloatToggle)
 setupSwitchHover(BrightnessSwitch, BrightnessToggle)
+setupSwitchHover(NoclipSwitch, NoclipToggle)
+setupSwitchHover(XraySwitch, XrayToggle)
 
 -- Button hover effects
 SetWalkSpeedButton.MouseEnter:Connect(function()
