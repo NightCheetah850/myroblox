@@ -2911,4 +2911,3 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 game:BindToClose(function()
     destroyScript()
 end)
-hapus tombol mengambang dan tambahkan tombol noclip dan xray
