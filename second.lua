@@ -293,7 +293,7 @@ UtamaContent.Parent = ContentFrame
 -- Fly Switch
 local FlyFrame = Instance.new("Frame")
 FlyFrame.Size = UDim2.new(0, 310, 0, 30)
-FlyFrame.Position = UDim2.new(0, 20, 0, 20)
+FlyFrame.Position = UDim2.new(0, 20, 0, 60)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.ZIndex = 10002
 FlyFrame.Parent = UtamaContent
@@ -333,91 +333,48 @@ local FlyToggleCorner = Instance.new("UICorner")
 FlyToggleCorner.CornerRadius = UDim.new(0, 10)
 FlyToggleCorner.Parent = FlyToggle
 
--- Noclip Switch
-local NoclipFrame = Instance.new("Frame")
-NoclipFrame.Size = UDim2.new(0, 310, 0, 30)
-NoclipFrame.Position = UDim2.new(0, 20, 0, 60)
-NoclipFrame.BackgroundTransparency = 1
-NoclipFrame.ZIndex = 10002
-NoclipFrame.Parent = UtamaContent
+-- Float Switch
+local FloatFrame = Instance.new("Frame")
+FloatFrame.Size = UDim2.new(0, 310, 0, 30)
+FloatFrame.Position = UDim2.new(0, 20, 0, 100)
+FloatFrame.BackgroundTransparency = 1
+FloatFrame.ZIndex = 10002
+FloatFrame.Parent = UtamaContent
 
-local NoclipLabel = Instance.new("TextLabel")
-NoclipLabel.Size = UDim2.new(0, 100, 1, 0)
-NoclipLabel.Position = UDim2.new(0, 0, 0, 0)
-NoclipLabel.BackgroundTransparency = 1
-NoclipLabel.Text = "Noclip:"
-NoclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-NoclipLabel.Font = Enum.Font.Gotham
-NoclipLabel.TextSize = 14
-NoclipLabel.TextXAlignment = Enum.TextXAlignment.Left
-NoclipLabel.ZIndex = 10002
-NoclipLabel.Parent = NoclipFrame
+local FloatLabel = Instance.new("TextLabel")
+FloatLabel.Size = UDim2.new(0, 100, 1, 0)
+FloatLabel.Position = UDim2.new(0, 0, 0, 0)
+FloatLabel.BackgroundTransparency = 1
+FloatLabel.Text = "Mengambang:"
+FloatLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatLabel.Font = Enum.Font.Gotham
+FloatLabel.TextSize = 14
+FloatLabel.TextXAlignment = Enum.TextXAlignment.Left
+FloatLabel.ZIndex = 10002
+FloatLabel.Parent = FloatFrame
 
-local NoclipSwitch = Instance.new("TextButton")
-NoclipSwitch.Size = UDim2.new(0, 50, 0, 25)
-NoclipSwitch.Position = UDim2.new(1, -50, 0, 2)
-NoclipSwitch.Text = ""
-NoclipSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-NoclipSwitch.ZIndex = 10002
-NoclipSwitch.Parent = NoclipFrame
+local FloatSwitch = Instance.new("TextButton")
+FloatSwitch.Size = UDim2.new(0, 50, 0, 25)
+FloatSwitch.Position = UDim2.new(1, -50, 0, 2)
+FloatSwitch.Text = ""
+FloatSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+FloatSwitch.ZIndex = 10002
+FloatSwitch.Parent = FloatFrame
 
-local NoclipSwitchCorner = Instance.new("UICorner")
-NoclipSwitchCorner.CornerRadius = UDim.new(0, 12)
-NoclipSwitchCorner.Parent = NoclipSwitch
+local FloatSwitchCorner = Instance.new("UICorner")
+FloatSwitchCorner.CornerRadius = UDim.new(0, 12)
+FloatSwitchCorner.Parent = FloatSwitch
 
-local NoclipToggle = Instance.new("Frame")
-NoclipToggle.Size = UDim2.new(0, 21, 0, 21)
-NoclipToggle.Position = UDim2.new(0, 2, 0, 2)
-NoclipToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-NoclipToggle.ZIndex = 10003
-NoclipToggle.Parent = NoclipSwitch
+local FloatToggle = Instance.new("Frame")
+FloatToggle.Size = UDim2.new(0, 21, 0, 21)
+FloatToggle.Position = UDim2.new(0, 2, 0, 2)
+FloatToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+FloatToggle.ZIndex = 10003
+FloatToggle.Parent = FloatSwitch
 
-local NoclipToggleCorner = Instance.new("UICorner")
-NoclipToggleCorner.CornerRadius = UDim.new(0, 10)
-NoclipToggleCorner.Parent = NoclipToggle
-
--- Xray Switch
-local XrayFrame = Instance.new("Frame")
-XrayFrame.Size = UDim2.new(0, 310, 0, 30)
-XrayFrame.Position = UDim2.new(0, 20, 0, 100)
-XrayFrame.BackgroundTransparency = 1
-XrayFrame.ZIndex = 10002
-XrayFrame.Parent = UtamaContent
-
-local XrayLabel = Instance.new("TextLabel")
-XrayLabel.Size = UDim2.new(0, 100, 1, 0)
-XrayLabel.Position = UDim2.new(0, 0, 0, 0)
-XrayLabel.BackgroundTransparency = 1
-XrayLabel.Text = "Xray:"
-XrayLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-XrayLabel.Font = Enum.Font.Gotham
-XrayLabel.TextSize = 14
-XrayLabel.TextXAlignment = Enum.TextXAlignment.Left
-XrayLabel.ZIndex = 10002
-XrayLabel.Parent = XrayFrame
-
-local XraySwitch = Instance.new("TextButton")
-XraySwitch.Size = UDim2.new(0, 50, 0, 25)
-XraySwitch.Position = UDim2.new(1, -50, 0, 2)
-XraySwitch.Text = ""
-XraySwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-XraySwitch.ZIndex = 10002
-XraySwitch.Parent = XrayFrame
-
-local XraySwitchCorner = Instance.new("UICorner")
-XraySwitchCorner.CornerRadius = UDim.new(0, 12)
-XraySwitchCorner.Parent = XraySwitch
-
-local XrayToggle = Instance.new("Frame")
-XrayToggle.Size = UDim2.new(0, 21, 0, 21)
-XrayToggle.Position = UDim2.new(0, 2, 0, 2)
-XrayToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-XrayToggle.ZIndex = 10003
-XrayToggle.Parent = XraySwitch
-
-local XrayToggleCorner = Instance.new("UICorner")
-XrayToggleCorner.CornerRadius = UDim.new(0, 10)
-XrayToggleCorner.Parent = XrayToggle
+local FloatToggleCorner = Instance.new("UICorner")
+FloatToggleCorner.CornerRadius = UDim.new(0, 10)
+FloatToggleCorner.Parent = FloatToggle
 
 -- Brightness Switch
 local BrightnessFrame = Instance.new("Frame")
@@ -1031,14 +988,9 @@ local flyBodyVelocity, flyBodyGyro
 local flySpeed = 50
 local flyConnection
 
--- Variabel untuk noclip
-local isNoclipping = false
-local noclipConnection = nil
-local originalCollisions = {}
-
--- Variabel untuk xray
-local isXray = false
-local originalTransparencies = {}
+-- Variabel untuk float
+local isFloating = false
+local floatBodyForce
 
 -- Variabel untuk kontrol tombol
 local upButtonPressed = false
@@ -1128,58 +1080,22 @@ local function cleanUpFly()
     end
 end
 
--- Fungsi untuk membersihkan noclip
-local function cleanUpNoclip()
-    if noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
+-- Fungsi untuk membersihkan float
+local function cleanUpFloat()
+    if floatBodyForce then
+        floatBodyForce:Destroy()
+        floatBodyForce = nil
     end
-    isNoclipping = false
+    isFloating = false
     
-    -- Restore original collisions
-    for part, collision in pairs(originalCollisions) do
-        if part and part.Parent then
-            part.CanCollide = collision
-        end
-    end
-    originalCollisions = {}
-    
-    if NoclipToggle and NoclipSwitch then
+    if FloatToggle and FloatSwitch then
         TweenService:Create(
-            NoclipToggle,
+            FloatToggle,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
         ):Play()
         TweenService:Create(
-            NoclipSwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-        ):Play()
-    end
-end
-
--- Fungsi untuk membersihkan xray
-local function cleanUpXray()
-    isXray = false
-    
-    -- Restore original transparencies
-    for part, transparency in pairs(originalTransparencies) do
-        if part and part.Parent then
-            if part:IsA("BasePart") then
-                part.Transparency = transparency
-            end
-        end
-    end
-    originalTransparencies = {}
-    
-    if XrayToggle and XraySwitch then
-        TweenService:Create(
-            XrayToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-        ):Play()
-        TweenService:Create(
-            XraySwitch,
+            FloatSwitch,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
         ):Play()
@@ -1248,83 +1164,6 @@ local function toggleBrightness()
     end
 end
 
--- ==================== FUNGSI NOCLIP ====================
-local function toggleNoclip()
-    if isNoclipping then
-        cleanUpNoclip()
-    else
-        local character = LocalPlayer.Character
-        if character then
-            cleanUpNoclip()
-            
-            isNoclipping = true
-            
-            TweenService:Create(
-                NoclipToggle,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-            ):Play()
-            TweenService:Create(
-                NoclipSwitch,
-                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-            ):Play()
-            
-            noclipConnection = RunService.Stepped:Connect(function()
-                if not isNoclipping or not character or not character.Parent then
-                    cleanUpNoclip()
-                    return
-                end
-                
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        if not originalCollisions[part] then
-                            originalCollisions[part] = part.CanCollide
-                        end
-                        part.CanCollide = false
-                    end
-                end
-            end)
-        end
-    end
-end
-
--- ==================== FUNGSI XRAY ====================
-local function toggleXray()
-    if isXray then
-        cleanUpXray()
-    else
-        cleanUpXray()
-        
-        isXray = true
-        
-        TweenService:Create(
-            XrayToggle,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-        ):Play()
-        TweenService:Create(
-            XraySwitch,
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-        ):Play()
-        
-        -- Make walls and obstacles semi-transparent
-        for _, part in pairs(workspace:GetDescendants()) do
-            if part:IsA("BasePart") and part.Transparency < 0.5 then
-                -- Only affect parts that are likely to be walls/obstacles
-                if part.Name:lower():find("wall") or 
-                   part.Name:lower():find("floor") or 
-                   part.Name:lower():find("barrier") or
-                   part.Name:lower():find("obstacle") then
-                    originalTransparencies[part] = part.Transparency
-                    part.Transparency = 0.7
-                end
-            end
-        end
-    end
-end
-
 -- ==================== FUNGSI ESP ====================
 local function createESP(partData)
     if not partData or not partData.Object or not partData.Object.Parent then
@@ -1334,36 +1173,75 @@ local function createESP(partData)
     local part = partData.Object
     
     if espHighlights[part] then
-        return false -- ESP sudah ada
+        espHighlights[part]:Destroy()
+        espHighlights[part] = nil
     end
     
-    local success, result = pcall(function()
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "MilkyESP"
-        highlight.Adornee = part
-        highlight.FillColor = Color3.fromRGB(0, 255, 0)
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-        highlight.FillTransparency = 0.5
-        highlight.OutlineTransparency = 0
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        highlight.Parent = game.CoreGui
-        
-        espHighlights[part] = highlight
-        
-        -- Connection untuk cleanup
-        espConnections[part] = part.AncestryChanged:Connect(function()
-            if not part.Parent then
-                removeESP(partData)
+    if espConnections[part] then
+        espConnections[part]:Disconnect()
+        espConnections[part] = nil
+    end
+    
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "MilkyESP_" .. part.Name
+    highlight.Adornee = part
+    highlight.FillColor = Color3.fromRGB(0, 255, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0
+    highlight.Parent = game.CoreGui
+    
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "MilkyESPBillboard_" .. part.Name
+    billboard.Adornee = part
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+    billboard.Parent = game.CoreGui
+    
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    nameLabel.Position = UDim2.new(0, 0, 0, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = part.Name
+    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    nameLabel.TextStrokeTransparency = 0
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextSize = 14
+    nameLabel.Parent = billboard
+    
+    local parentLabel = Instance.new("TextLabel")
+    parentLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    parentLabel.Position = UDim2.new(0, 0, 0.5, 0)
+    parentLabel.BackgroundTransparency = 1
+    parentLabel.Text = "Parent: " .. part.Parent.Name
+    parentLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    parentLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    parentLabel.TextStrokeTransparency = 0
+    parentLabel.Font = Enum.Font.Gotham
+    parentLabel.TextSize = 12
+    parentLabel.Parent = billboard
+    
+    espHighlights[part] = highlight
+    espHighlights[part .. "_billboard"] = billboard
+    
+    espConnections[part] = part.AncestryChanged:Connect(function()
+        if not part.Parent then
+            if espHighlights[part] then
+                espHighlights[part]:Destroy()
+                espHighlights[part] = nil
             end
-        end)
-        
-        return true
+            if espHighlights[part .. "_billboard"] then
+                espHighlights[part .. "_billboard"]:Destroy()
+                espHighlights[part .. "_billboard"] = nil
+            end
+            if espConnections[part] then
+                espConnections[part]:Disconnect()
+                espConnections[part] = nil
+            end
+        end
     end)
-    
-    if not success then
-        warn("ESP Error: " .. tostring(result))
-        return false
-    end
     
     return true
 end
@@ -1415,38 +1293,21 @@ local function searchScripts(query, filters)
     SearchStatusLabel.Text = "Mencari script..."
     SearchStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
     
-    -- Simulasi data script (karena HTTP request sering bermasalah)
-    currentScripts = {
-        {
-            title = "Universal Script Example",
-            game = "Various Games",
-            script = "print('Hello from Milky Menu!')",
-            verified = true,
-            key = false,
-            isUniversal = true,
-            isPatched = false,
-            likeCount = 150,
-            dislikeCount = 5,
-            views = 1000
-        },
-        {
-            title = "Free Fly Script",
-            game = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
-            script = "loadstring(game:HttpGet('https://example.com/fly.txt'))()",
-            verified = false,
-            key = false,
-            isUniversal = false,
-            isPatched = false,
-            likeCount = 80,
-            dislikeCount = 2,
-            views = 500
-        }
-    }
+    local url = scriptBloxAPI .. "?q=" .. query .. "&max=20"
     
-    SearchStatusLabel.Text = "Ditemukan " .. #currentScripts .. " script (Demo)"
-    SearchStatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-    return true
-end
+    if filters.verified then
+        url = url .. "&verified=1"
+    end
+    if filters.free then
+        url = url .. "&mode=free"
+    end
+    if filters.universal then
+        url = url .. "&universal=1"
+    end
+    
+    local success, result = pcall(function()
+        return game:HttpGet(url)
+    end)
     
     if success then
         local data = game:GetService("HttpService"):JSONDecode(result)
@@ -1486,43 +1347,14 @@ end
 local function executeScript(scriptCode, scriptTitle)
     if scriptCode and scriptCode ~= "" then
         cleanUpFly()
-        cleanUpNoclip()
-        cleanUpXray()
+        cleanUpFloat()
         cleanUpHead()
         cleanUpAllESP()
         cleanUpBrightness()
         
         local success, errorMessage = pcall(function()
-            -- Gunakan loadstring yang aman
-            local fn, loadError = loadstring(scriptCode)
-            if fn then
-                fn()
-            else
-                error(loadError or "Failed to load script")
-            end
+            loadstring(scriptCode)()
         end)
-        
-        if success then
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = "Script Executed",
-                Text = "Script '" .. scriptTitle .. "' berhasil dijalankan",
-                Duration = 5
-            })
-        else
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = "Script Error",
-                Text = "Gagal menjalankan script: " .. tostring(errorMessage),
-                Duration = 5
-            })
-        end
-    else
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Script Error",
-            Text = "Script code kosong",
-            Duration = 5
-        })
-    end
-end
         
         if success then
             game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -1916,8 +1748,8 @@ local function updatePartsList()
                     cleanUpFly()
                 end
                 
-                if isNoclipping then
-                    cleanUpNoclip()
+                if isFloating then
+                    cleanUpFloat()
                 end
                 
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2139,8 +1971,8 @@ local function updatePlayerList()
                             cleanUpFly()
                         end
                         
-                        if isNoclipping then
-                            cleanUpNoclip()
+                        if isFloating then
+                            cleanUpFloat()
                         end
                         
                         local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2234,8 +2066,8 @@ local function updateWaypointList()
                     cleanUpFly()
                 end
                 
-                if isNoclipping then
-                    cleanUpNoclip()
+                if isFloating then
+                    cleanUpFloat()
                 end
                 
                 local rootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2353,8 +2185,7 @@ end
 -- ==================== FUNGSI DESTROY SCRIPT ====================
 local function destroyScript()
     cleanUpFly()
-    cleanUpNoclip()
-    cleanUpXray()
+    cleanUpFloat()
     cleanUpHead()
     cleanUpAllESP()
     cleanUpBrightness()
@@ -2436,8 +2267,8 @@ local function toggleFly()
     if isFlying then
         cleanUpFly()
     else
-        if isNoclipping then
-            cleanUpNoclip()
+        if isFloating then
+            cleanUpFloat()
         end
         
         if headingPlayer then
@@ -2449,17 +2280,15 @@ local function toggleFly()
         if character and character:FindFirstChild("HumanoidRootPart") then
             cleanUpFly()
             
-            -- Gunakan BodyMover yang lebih modern
             flyBodyVelocity = Instance.new("BodyVelocity")
             flyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            flyBodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
-            flyBodyVelocity.P = 1250
+            flyBodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
             flyBodyVelocity.Parent = character.HumanoidRootPart
             
             flyBodyGyro = Instance.new("BodyGyro")
-            flyBodyGyro.MaxTorque = Vector3.new(50000, 50000, 50000)
-            flyBodyGyro.P = 3000
-            flyBodyGyro.D = 500
+            flyBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            flyBodyGyro.P = 1000
+            flyBodyGyro.D = 50
             flyBodyGyro.Parent = character.HumanoidRootPart
             
             if character:FindFirstChildOfClass("Humanoid") then
@@ -2483,10 +2312,16 @@ local function toggleFly()
             ):Play()
             
             flyConnection = RunService.RenderStepped:Connect(function()
-                if not isFlying or not flyBodyGyro or not flyBodyVelocity or not character or not character.Parent then
+                if not isFlying or not flyBodyGyro or not flyBodyVelocity then
                     if flyConnection then
                         flyConnection:Disconnect()
+                        flyConnection = nil
                     end
+                    return
+                end
+                
+                if not character or not character.Parent or not character:FindFirstChild("HumanoidRootPart") then
+                    cleanUpFly()
                     return
                 end
                 
@@ -2504,15 +2339,54 @@ local function toggleFly()
                     local horizontalVelocity = Vector3.new(0, 0, 0)
                     if character:FindFirstChildOfClass("Humanoid") then
                         local humanoid = character:FindFirstChildOfClass("Humanoid")
-                        horizontalVelocity = Vector3.new(humanoid.MoveDirection.X * flySpeed, verticalVelocity, humanoid.MoveDirection.Z * flySpeed)
+                        horizontalVelocity = Vector3.new(humanoid.MoveDirection.X * flySpeed, 0, humanoid.MoveDirection.Z * flySpeed)
                     end
                     
-                    flyBodyVelocity.Velocity = horizontalVelocity
+                    flyBodyVelocity.Velocity = horizontalVelocity + Vector3.new(0, verticalVelocity, 0)
                 end
             end)
         end
     end
 end
+
+-- ==================== FUNGSI FLOAT ====================
+local function toggleFloat()
+    if isFloating then
+        cleanUpFloat()
+    else
+        if isFlying then
+            cleanUpFly()
+        end
+        
+        if headingPlayer then
+            cleanUpHead()
+            updatePlayerList()
+        end
+        
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            cleanUpFloat()
+            
+            floatBodyForce = Instance.new("BodyForce")
+            floatBodyForce.Force = Vector3.new(0, character.HumanoidRootPart:GetMass() * workspace.Gravity, 0)
+            floatBodyForce.Parent = character.HumanoidRootPart
+            
+            isFloating = true
+            
+            TweenService:Create(
+                FloatToggle,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
+            ):Play()
+            TweenService:Create(
+                FloatSwitch,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
+            ):Play()
+        end
+    end
+end
+
 -- ==================== FUNGSI WALKSPEED ====================
 local function setWalkSpeed()
     local speed = tonumber(WalkSpeedBox.Text)
@@ -2614,8 +2488,7 @@ end)
 
 -- Switch functionality
 FlySwitch.MouseButton1Click:Connect(toggleFly)
-NoclipSwitch.MouseButton1Click:Connect(toggleNoclip)
-XraySwitch.MouseButton1Click:Connect(toggleXray)
+FloatSwitch.MouseButton1Click:Connect(toggleFloat)
 BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness)
 
 -- WalkSpeed functionality
@@ -2801,7 +2674,7 @@ local function onCharacterAdded(character)
     local humanoid = character:WaitForChild("Humanoid")
     humanoid.Died:Connect(function()
         cleanUpFly()
-        cleanUpNoclip()
+        cleanUpFloat()
         cleanUpHead()
         updatePlayerList()
     end)
@@ -2910,8 +2783,7 @@ local function setupSwitchHover(switch, toggle)
 end
 
 setupSwitchHover(FlySwitch, FlyToggle)
-setupSwitchHover(NoclipSwitch, NoclipToggle)
-setupSwitchHover(XraySwitch, XrayToggle)
+setupSwitchHover(FloatSwitch, FloatToggle)
 setupSwitchHover(BrightnessSwitch, BrightnessToggle)
 
 -- Button hover effects
@@ -3039,3 +2911,4 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 game:BindToClose(function()
     destroyScript()
 end)
+hapus tombol mengambang dan tambahkan tombol noclip dan xray
