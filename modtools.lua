@@ -2911,4 +2911,3 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 game:BindToClose(function()
     destroyScript()
 end)
-buat agar gui window nya ketika di minimize akan menutup dan menjadi floating ball. jangan mengubah kode lain selain perintah saya tersebut
