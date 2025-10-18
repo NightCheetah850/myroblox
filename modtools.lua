@@ -2137,13 +2137,16 @@ end
 
 -- ==================== FLOATING BALL ====================
 -- Floating Ball (akan muncul ketika di-minimize)
-local FloatingBall = Instance.new("ImageButton")
-FloatingBall.Size = UDim2.new(0, 50, 0, 50)
+local FloatingBall = Instance.new("TextButton") -- Ganti dari ImageButton ke TextButton
+FloatingBall.Size = UDim2.new(0, 60, 0, 60) -- Sedikit lebih besar untuk menampung teks
 FloatingBall.Position = MainWindow.Position
 FloatingBall.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
 FloatingBall.BackgroundTransparency = 0.2
-FloatingBall.Image = "rbxassetid://5534554683" -- Icon sederhana, bisa diganti
-FloatingBall.ScaleType = Enum.ScaleType.Fit
+FloatingBall.Text = "Milky"
+FloatingBall.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatingBall.Font = Enum.Font.GothamBold
+FloatingBall.TextSize = 14
+FloatingBall.TextScaled = true -- Agar teks menyesuaikan ukuran
 FloatingBall.Visible = false
 FloatingBall.ZIndex = 10000
 FloatingBall.Parent = ScreenGui
@@ -2225,7 +2228,7 @@ FloatingBall.InputBegan:Connect(function(input)
         TweenService:Create(
             FloatingBall,
             TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {Size = UDim2.new(0, 45, 0, 45)}
+            {Size = UDim2.new(0, 55, 0, 55), BackgroundTransparency = 0}
         ):Play()
         
         input.Changed:Connect(function()
@@ -2235,7 +2238,7 @@ FloatingBall.InputBegan:Connect(function(input)
                 TweenService:Create(
                     FloatingBall,
                     TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {Size = UDim2.new(0, 50, 0, 50)}
+                    {Size = UDim2.new(0, 60, 0, 60), BackgroundTransparency = 0.2}
                 ):Play()
             end
         end)
@@ -2261,12 +2264,27 @@ FloatingBall.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Double click functionality untuk extra feature
+local lastClickTime = 0
+FloatingBall.MouseButton1Click:Connect(function()
+    local currentTime = tick()
+    if currentTime - lastClickTime < 0.3 then -- Double click dalam 300ms
+        -- Double click action (bisa ditambahkan fungsionalitas tambahan)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Milky Menu",
+            Text = "Double click detected!",
+            Duration = 2
+        })
+    end
+    lastClickTime = currentTime
+end)
+
 -- Hover effects untuk floating ball
 FloatingBall.MouseEnter:Connect(function()
     TweenService:Create(
         FloatingBall,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundTransparency = 0}
+        {BackgroundTransparency = 0, TextColor3 = Color3.fromRGB(255, 255, 255)}
     ):Play()
 end)
 
@@ -2274,7 +2292,7 @@ FloatingBall.MouseLeave:Connect(function()
     TweenService:Create(
         FloatingBall,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundTransparency = 0.2}
+        {BackgroundTransparency = 0.2, TextColor3 = Color3.fromRGB(255, 255, 255)}
     ):Play()
 end)
 -- ==================== FUNGSI POPUP KONFIRMASI ====================
