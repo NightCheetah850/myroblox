@@ -470,96 +470,10 @@ local SetWalkSpeedCorner = Instance.new("UICorner")
 SetWalkSpeedCorner.CornerRadius = UDim.new(0, 6)
 SetWalkSpeedCorner.Parent = SetWalkSpeedButton
 
--- NoClip Switch
-local NoClipFrame = Instance.new("Frame")
-NoClipFrame.Size = UDim2.new(0, 310, 0, 30)
-NoClipFrame.Position = UDim2.new(0, 20, 0, 220)
-NoClipFrame.BackgroundTransparency = 1
-NoClipFrame.ZIndex = 10002
-NoClipFrame.Parent = UtamaContent
-
-local NoClipLabel = Instance.new("TextLabel")
-NoClipLabel.Size = UDim2.new(0, 100, 1, 0)
-NoClipLabel.Position = UDim2.new(0, 0, 0, 0)
-NoClipLabel.BackgroundTransparency = 1
-NoClipLabel.Text = "NoClip:"
-NoClipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-NoClipLabel.Font = Enum.Font.Gotham
-NoClipLabel.TextSize = 14
-NoClipLabel.TextXAlignment = Enum.TextXAlignment.Left
-NoClipLabel.ZIndex = 10002
-NoClipLabel.Parent = NoClipFrame
-
-local NoClipSwitch = Instance.new("TextButton")
-NoClipSwitch.Size = UDim2.new(0, 50, 0, 25)
-NoClipSwitch.Position = UDim2.new(1, -50, 0, 2)
-NoClipSwitch.Text = ""
-NoClipSwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-NoClipSwitch.ZIndex = 10002
-NoClipSwitch.Parent = NoClipFrame
-
-local NoClipSwitchCorner = Instance.new("UICorner")
-NoClipSwitchCorner.CornerRadius = UDim.new(0, 12)
-NoClipSwitchCorner.Parent = NoClipSwitch
-
-local NoClipToggle = Instance.new("Frame")
-NoClipToggle.Size = UDim2.new(0, 21, 0, 21)
-NoClipToggle.Position = UDim2.new(0, 2, 0, 2)
-NoClipToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-NoClipToggle.ZIndex = 10003
-NoClipToggle.Parent = NoClipSwitch
-
-local NoClipToggleCorner = Instance.new("UICorner")
-NoClipToggleCorner.CornerRadius = UDim.new(0, 10)
-NoClipToggleCorner.Parent = NoClipToggle
-
--- XRay Switch
-local XRayFrame = Instance.new("Frame")
-XRayFrame.Size = UDim2.new(0, 310, 0, 30)
-XRayFrame.Position = UDim2.new(0, 20, 0, 260)
-XRayFrame.BackgroundTransparency = 1
-XRayFrame.ZIndex = 10002
-XRayFrame.Parent = UtamaContent
-
-local XRayLabel = Instance.new("TextLabel")
-XRayLabel.Size = UDim2.new(0, 100, 1, 0)
-XRayLabel.Position = UDim2.new(0, 0, 0, 0)
-XRayLabel.BackgroundTransparency = 1
-XRayLabel.Text = "XRay:"
-XRayLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-XRayLabel.Font = Enum.Font.Gotham
-XRayLabel.TextSize = 14
-XRayLabel.TextXAlignment = Enum.TextXAlignment.Left
-XRayLabel.ZIndex = 10002
-XRayLabel.Parent = XRayFrame
-
-local XRaySwitch = Instance.new("TextButton")
-XRaySwitch.Size = UDim2.new(0, 50, 0, 25)
-XRaySwitch.Position = UDim2.new(1, -50, 0, 2)
-XRaySwitch.Text = ""
-XRaySwitch.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-XRaySwitch.ZIndex = 10002
-XRaySwitch.Parent = XRayFrame
-
-local XRaySwitchCorner = Instance.new("UICorner")
-XRaySwitchCorner.CornerRadius = UDim.new(0, 12)
-XRaySwitchCorner.Parent = XRaySwitch
-
-local XRayToggle = Instance.new("Frame")
-XRayToggle.Size = UDim2.new(0, 21, 0, 21)
-XRayToggle.Position = UDim2.new(0, 2, 0, 2)
-XRayToggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-XRayToggle.ZIndex = 10003
-XRayToggle.Parent = XRaySwitch
-
-local XRayToggleCorner = Instance.new("UICorner")
-XRayToggleCorner.CornerRadius = UDim.new(0, 10)
-XRayToggleCorner.Parent = XRayToggle
-
 -- Daftar Pemain
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Size = UDim2.new(0, 310, 0, 120)
-PlayerListFrame.Position = UDim2.new(0, 20, 0, 300)
+PlayerListFrame.Position = UDim2.new(0, 20, 0, 220)
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 PlayerListFrame.ZIndex = 10002
 PlayerListFrame.Parent = UtamaContent
@@ -1117,15 +1031,6 @@ local originalAmbient = Lighting.Ambient
 local originalOutdoorAmbient = Lighting.OutdoorAmbient
 local originalFogEnd = Lighting.FogEnd
 
--- Variabel untuk NoClip
-local isNoClip = false
-local noClipConnections = {}
-
--- Variabel untuk XRay
-local isXRay = false
-local originalTransparency = {}
-local xRayConnections = {}
-
 -- ==================== FUNGSI UTAMA ====================
 -- Fungsi untuk mengupdate posisi window
 local function update(input)
@@ -1256,206 +1161,6 @@ local function toggleBrightness()
             TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
         ):Play()
-    end
-end
-
--- ==================== FUNGSI NOCLIP ====================
-local function enableNoClip()
-    if isNoClip then return end
-    
-    local character = LocalPlayer.Character
-    if not character then return end
-    
-    isNoClip = true
-    
-    -- Simpan koneksi untuk membersihkan nanti
-    noClipConnections = {}
-    
-    -- Buat part menjadi tidak bisa bertabrakan
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-            -- Simpan state asli
-            part:SetAttribute("OriginalCanCollide", part.CanCollide)
-        end
-    end
-    
-    -- Monitor part baru yang ditambahkan ke karakter
-    local function onDescendantAdded(descendant)
-        if descendant:IsA("BasePart") then
-            descendant.CanCollide = false
-            descendant:SetAttribute("OriginalCanCollide", descendant.CanCollide)
-        end
-    end
-    
-    table.insert(noClipConnections, character.DescendantAdded:Connect(onDescendantAdded))
-    
-    -- Update UI
-    TweenService:Create(
-        NoClipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-    ):Play()
-    TweenService:Create(
-        NoClipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-    ):Play()
-end
-
-local function disableNoClip()
-    if not isNoClip then return end
-    
-    local character = LocalPlayer.Character
-    if character then
-        -- Kembalikan collision ke state asli
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") and part:GetAttribute("OriginalCanCollide") ~= nil then
-                part.CanCollide = part:GetAttribute("OriginalCanCollide")
-            end
-        end
-    end
-    
-    -- Hentikan koneksi
-    for _, connection in ipairs(noClipConnections) do
-        connection:Disconnect()
-    end
-    noClipConnections = {}
-    
-    isNoClip = false
-    
-    -- Update UI
-    TweenService:Create(
-        NoClipToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-    ):Play()
-    TweenService:Create(
-        NoClipSwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-end
-
-local function toggleNoClip()
-    if isNoClip then
-        disableNoClip()
-    else
-        enableNoClip()
-    end
-end
-
-local function cleanUpNoClip()
-    if isNoClip then
-        disableNoClip()
-    end
-end
-
--- ==================== FUNGSI XRAY ====================
-local function enableXRay()
-    if isXRay then return end
-    
-    isXRay = true
-    originalTransparency = {}
-    xRayConnections = {}
-    
-    local function processPart(part)
-        if part:IsA("BasePart") and not part:IsDescendantOf(LocalPlayer.Character) then
-            -- Simpat transparency asli
-            originalTransparency[part] = part.Transparency
-            -- Set transparency untuk XRay
-            if part.Transparency < 0.5 then
-                part.Transparency = 0.5
-            end
-        end
-    end
-    
-    local function scanWorkspace(parent)
-        for _, child in ipairs(parent:GetChildren()) do
-            if child:IsA("BasePart") then
-                processPart(child)
-            elseif child:IsA("Model") or child:IsA("Folder") then
-                if not child:IsDescendantOf(LocalPlayer.Character) then
-                    scanWorkspace(child)
-                end
-            end
-        end
-    end
-    
-    -- Scan workspace saat ini
-    scanWorkspace(workspace)
-    
-    -- Monitor part baru yang ditambahkan
-    local function onChildAdded(child)
-        if child:IsA("BasePart") then
-            processPart(child)
-        elseif child:IsA("Model") or child:IsA("Folder") then
-            if not child:IsDescendantOf(LocalPlayer.Character) then
-                wait(0.1) -- Tunggu sebentar untuk memastikan model terload
-                scanWorkspace(child)
-            end
-        end
-    end
-    
-    table.insert(xRayConnections, workspace.DescendantAdded:Connect(onChildAdded))
-    
-    -- Update UI
-    TweenService:Create(
-        XRayToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 27, 0, 2), BackgroundColor3 = Color3.fromRGB(0, 200, 0)}
-    ):Play()
-    TweenService:Create(
-        XRaySwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
-    ):Play()
-end
-
-local function disableXRay()
-    if not isXRay then return end
-    
-    -- Kembalikan transparency ke state asli
-    for part, originalTrans in pairs(originalTransparency) do
-        if part and part.Parent then
-            part.Transparency = originalTrans
-        end
-    end
-    
-    originalTransparency = {}
-    
-    -- Hentikan koneksi
-    for _, connection in ipairs(xRayConnections) do
-        connection:Disconnect()
-    end
-    xRayConnections = {}
-    
-    isXRay = false
-    
-    -- Update UI
-    TweenService:Create(
-        XRayToggle,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, 2, 0, 2), BackgroundColor3 = Color3.fromRGB(200, 200, 200)}
-    ):Play()
-    TweenService:Create(
-        XRaySwitch,
-        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}
-    ):Play()
-end
-
-local function toggleXRay()
-    if isXRay then
-        disableXRay()
-    else
-        enableXRay()
-    end
-end
-
-local function cleanUpXRay()
-    if isXRay then
-        disableXRay()
     end
 end
 
@@ -1646,8 +1351,6 @@ local function executeScript(scriptCode, scriptTitle)
         cleanUpHead()
         cleanUpAllESP()
         cleanUpBrightness()
-        cleanUpNoClip()
-        cleanUpXRay()
         
         local success, errorMessage = pcall(function()
             loadstring(scriptCode)()
@@ -2486,8 +2189,6 @@ local function destroyScript()
     cleanUpHead()
     cleanUpAllESP()
     cleanUpBrightness()
-    cleanUpNoClip()
-    cleanUpXRay()
     
     if playerAddedConn then
         playerAddedConn:Disconnect()
@@ -2789,8 +2490,6 @@ end)
 FlySwitch.MouseButton1Click:Connect(toggleFly)
 FloatSwitch.MouseButton1Click:Connect(toggleFloat)
 BrightnessSwitch.MouseButton1Click:Connect(toggleBrightness)
-NoClipSwitch.MouseButton1Click:Connect(toggleNoClip)
-XRaySwitch.MouseButton1Click:Connect(toggleXRay)
 
 -- WalkSpeed functionality
 SetWalkSpeedButton.MouseButton1Click:Connect(setWalkSpeed)
@@ -2977,8 +2676,6 @@ local function onCharacterAdded(character)
         cleanUpFly()
         cleanUpFloat()
         cleanUpHead()
-        cleanUpNoClip()
-        cleanUpXRay()
         updatePlayerList()
     end)
 end
@@ -3088,8 +2785,6 @@ end
 setupSwitchHover(FlySwitch, FlyToggle)
 setupSwitchHover(FloatSwitch, FloatToggle)
 setupSwitchHover(BrightnessSwitch, BrightnessToggle)
-setupSwitchHover(NoClipSwitch, NoClipToggle)
-setupSwitchHover(XRaySwitch, XRayToggle)
 
 -- Button hover effects
 SetWalkSpeedButton.MouseEnter:Connect(function()
@@ -3216,3 +2911,4 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 game:BindToClose(function()
     destroyScript()
 end)
+buat agar gui window nya ketika di minimize akan menutup dan menjadi floating ball. jangan mengubah kode lain selain perintah saya tersebut
