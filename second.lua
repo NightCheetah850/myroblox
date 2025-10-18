@@ -978,9 +978,59 @@ local DownButtonCorner = Instance.new("UICorner")
 DownButtonCorner.CornerRadius = UDim.new(1, 0)
 DownButtonCorner.Parent = DownButton
 
+-- ==================== FLOATING BALL ====================
+-- Floating Ball (untuk minimized state)
+local FloatingBall = Instance.new("Frame")
+FloatingBall.Size = UDim2.new(0, 50, 0, 50)
+FloatingBall.Position = UDim2.new(0.8, 0, 0.1, 0)
+FloatingBall.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+FloatingBall.BorderSizePixel = 0
+FloatingBall.Visible = false
+FloatingBall.ZIndex = 10000
+FloatingBall.Parent = ScreenGui
+
+local FloatingBallCorner = Instance.new("UICorner")
+FloatingBallCorner.CornerRadius = UDim.new(1, 0)
+FloatingBallCorner.Parent = FloatingBall
+
+-- Shadow untuk Floating Ball
+local FloatingBallShadow = Instance.new("Frame")
+FloatingBallShadow.Size = UDim2.new(1, 6, 1, 6)
+FloatingBallShadow.Position = UDim2.new(0, -3, 0, -3)
+FloatingBallShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+FloatingBallShadow.BackgroundTransparency = 0.8
+FloatingBallShadow.BorderSizePixel = 0
+FloatingBallShadow.ZIndex = 9999
+FloatingBallShadow.Parent = FloatingBall
+
+local FloatingBallShadowCorner = Instance.new("UICorner")
+FloatingBallShadowCorner.CornerRadius = UDim.new(1, 0)
+FloatingBallShadowCorner.Parent = FloatingBallShadow
+
+-- Icon/Text untuk Floating Ball
+local FloatingBallIcon = Instance.new("TextLabel")
+FloatingBallIcon.Size = UDim2.new(1, 0, 1, 0)
+FloatingBallIcon.Position = UDim2.new(0, 0, 0, 0)
+FloatingBallIcon.BackgroundTransparency = 1
+FloatingBallIcon.Text = "M"
+FloatingBallIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+FloatingBallIcon.Font = Enum.Font.GothamBold
+FloatingBallIcon.TextSize = 18
+FloatingBallIcon.ZIndex = 10001
+FloatingBallIcon.Parent = FloatingBall
+
+-- Animasi pulsing untuk Floating Ball
+local FloatingBallPulse = Instance.new("UIScale")
+FloatingBallPulse.Scale = 1
+FloatingBallPulse.Parent = FloatingBall
+
 -- ==================== VARIABEL GLOBAL ====================
 local dragging = false
 local dragInput, dragStart, startPos
+
+-- Variabel untuk drag floating ball
+local floatingBallDragging = false
+local floatingBallDragInput, floatingBallDragStart, floatingBallStartPos
 
 -- Variabel untuk fly
 local isFlying = false
@@ -1040,6 +1090,89 @@ local function update(input)
         startPos.X.Offset + delta.X, 
         startPos.Y.Scale, 
         startPos.Y.Offset + delta.Y
+    )
+end
+
+-- ==================== FUNGSI FLOATING BALL ====================
+local function minimizeToFloatingBall()
+    -- Simpan posisi terakhir window
+    local lastWindowPosition = MainWindow.Position
+    
+    -- Animasi minimize ke floating ball
+    local ballCenter = FloatingBall.AbsolutePosition + Vector2.new(25, 25) -- Pusat floating ball
+    local windowCenter = MainWindow.AbsolutePosition + Vector2.new(MainWindow.AbsoluteSize.X/2, MainWindow.AbsoluteSize.Y/2)
+    
+    -- Hitung scale dan posisi untuk animasi
+    local targetScale = 0.1
+    local targetPosition = UDim2.new(0, ballCenter.X - (MainWindow.AbsoluteSize.X * targetScale)/2, 
+                                     0, ballCenter.Y - (MainWindow.AbsoluteSize.Y * targetScale)/2)
+    
+    -- Animasi scale down dan move ke floating ball
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    
+    local scaleTween = TweenService:Create(MainWindow, tweenInfo, {
+        Size = UDim2.new(0, MainWindow.AbsoluteSize.X * targetScale, 0, MainWindow.AbsoluteSize.Y * targetScale),
+        Position = targetPosition
+    })
+    
+    local transparencyTween = TweenService:Create(MainWindow, tweenInfo, {
+        BackgroundTransparency = 1
+    })
+    
+    scaleTween:Play()
+    transparencyTween:Play()
+    
+    scaleTween.Completed:Connect(function()
+        MainWindow.Visible = false
+        FloatingBall.Visible = true
+        
+        -- Mulai animasi pulsing
+        local pulseTween = TweenService:Create(
+            FloatingBallPulse,
+            TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
+            {Scale = 1.2}
+        )
+        pulseTween:Play()
+    end)
+end
+
+local function restoreFromFloatingBall()
+    -- Hentikan animasi pulsing
+    for _, tween in ipairs(FloatingBall:GetTweens()) do
+        tween:Cancel()
+    end
+    FloatingBallPulse.Scale = 1
+    
+    -- Sembunyikan floating ball
+    FloatingBall.Visible = false
+    
+    -- Tampilkan window
+    MainWindow.Visible = true
+    
+    -- Animasi restore
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    
+    local scaleTween = TweenService:Create(MainWindow, tweenInfo, {
+        Size = UDim2.new(0, 350, 0, 450),
+        Position = UDim2.new(0.1, 0, 0.1, 0) -- Kembali ke posisi default
+    })
+    
+    local transparencyTween = TweenService:Create(MainWindow, tweenInfo, {
+        BackgroundTransparency = 0
+    })
+    
+    scaleTween:Play()
+    transparencyTween:Play()
+end
+
+-- Fungsi update drag untuk floating ball
+local function updateFloatingBall(input)
+    local delta = input.Position - floatingBallDragStart
+    FloatingBall.Position = UDim2.new(
+        floatingBallStartPos.X.Scale, 
+        floatingBallStartPos.X.Offset + delta.X, 
+        floatingBallStartPos.Y.Scale, 
+        floatingBallStartPos.Y.Offset + delta.Y
     )
 end
 
@@ -2137,22 +2270,16 @@ end
 
 -- ==================== FUNGSI WINDOW CONTROLS ====================
 local function minimizeWindow()
-    TweenService:Create(
-        MainWindow,
-        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 350, 0, 30)}
-    ):Play()
+    -- Ganti dengan minimize ke floating ball
+    minimizeToFloatingBall()
     
     ContentArea.Visible = false
     MinimizeButton.Text = "+"
 end
 
 local function restoreWindow()
-    TweenService:Create(
-        MainWindow,
-        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 350, 0, 450)}
-    ):Play()
+    -- Ganti dengan restore dari floating ball
+    restoreFromFloatingBall()
     
     ContentArea.Visible = true
     MinimizeButton.Text = "_"
@@ -2200,6 +2327,11 @@ local function destroyScript()
     
     if characterAddedConn then
         characterAddedConn:Disconnect()
+    end
+    
+    -- Hentikan semua animasi floating ball
+    for _, tween in ipairs(FloatingBall:GetTweens()) do
+        tween:Cancel()
     end
     
     if ScreenGui then
@@ -2664,6 +2796,86 @@ DownButton.InputEnded:Connect(function(input)
             {BackgroundTransparency = 0.5}
         ):Play()
     end
+end)
+
+-- Floating Ball drag functionality
+FloatingBall.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        floatingBallDragging = true
+        floatingBallDragStart = input.Position
+        floatingBallStartPos = FloatingBall.Position
+        
+        -- Hentikan sementara animasi pulsing saat didrag
+        for _, tween in ipairs(FloatingBall:GetTweens()) do
+            tween:Cancel()
+        end
+        
+        -- Efek tekan
+        TweenService:Create(
+            FloatingBall,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Size = UDim2.new(0, 45, 0, 45)}
+        ):Play()
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                floatingBallDragging = false
+                
+                -- Kembalikan size dan mulai lagi animasi pulsing
+                TweenService:Create(
+                    FloatingBall,
+                    TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {Size = UDim2.new(0, 50, 0, 50)}
+                ):Play()
+                
+                -- Mulai lagi animasi pulsing
+                local pulseTween = TweenService:Create(
+                    FloatingBallPulse,
+                    TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
+                    {Scale = 1.2}
+                )
+                pulseTween:Play()
+            end
+        end)
+    end
+end)
+
+FloatingBall.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        floatingBallDragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == floatingBallDragInput and floatingBallDragging then
+        updateFloatingBall(input)
+    end
+end)
+
+-- Floating Ball click untuk restore
+FloatingBall.MouseButton1Click:Connect(function()
+    if not floatingBallDragging then -- Hanya restore jika bukan drag operation
+        restoreFromFloatingBall()
+        ContentArea.Visible = true
+        MinimizeButton.Text = "_"
+    end
+end)
+
+-- Floating Ball hover effects
+FloatingBall.MouseEnter:Connect(function()
+    TweenService:Create(
+        FloatingBall,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 100, 180)}
+    ):Play()
+end)
+
+FloatingBall.MouseLeave:Connect(function()
+    TweenService:Create(
+        FloatingBall,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundColor3 = Color3.fromRGB(0, 120, 215)}
+    ):Play()
 end)
 
 -- Player events
