@@ -2135,29 +2135,148 @@ local function setWaypoint()
     end
 end
 
--- ==================== FUNGSI WINDOW CONTROLS ====================
+-- ==================== FLOATING BALL ====================
+-- Floating Ball (akan muncul ketika di-minimize)
+local FloatingBall = Instance.new("ImageButton")
+FloatingBall.Size = UDim2.new(0, 50, 0, 50)
+FloatingBall.Position = MainWindow.Position
+FloatingBall.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+FloatingBall.BackgroundTransparency = 0.2
+FloatingBall.Image = "rbxassetid://5534554683" -- Icon sederhana, bisa diganti
+FloatingBall.ScaleType = Enum.ScaleType.Fit
+FloatingBall.Visible = false
+FloatingBall.ZIndex = 10000
+FloatingBall.Parent = ScreenGui
+
+local FloatingBallCorner = Instance.new("UICorner")
+FloatingBallCorner.CornerRadius = UDim.new(1, 0)
+FloatingBallCorner.Parent = FloatingBall
+
+-- Shadow untuk floating ball
+local FloatingBallShadow = Instance.new("Frame")
+FloatingBallShadow.Size = UDim2.new(1, 6, 1, 6)
+FloatingBallShadow.Position = UDim2.new(0, -3, 0, -3)
+FloatingBallShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+FloatingBallShadow.BackgroundTransparency = 0.7
+FloatingBallShadow.BorderSizePixel = 0
+FloatingBallShadow.ZIndex = 9999
+FloatingBallShadow.Parent = FloatingBall
+
+local FloatingBallShadowCorner = Instance.new("UICorner")
+FloatingBallShadowCorner.CornerRadius = UDim.new(1, 0)
+FloatingBallShadowCorner.Parent = FloatingBallShadow
+
+-- Variabel untuk drag floating ball
+local ballDragging = false
+local ballDragInput, ballDragStart, ballStartPos
+
+-- ==================== FUNGSI WINDOW CONTROLS (MODIFIED) ====================
 local function minimizeWindow()
+    -- Simpan posisi untuk floating ball
+    FloatingBall.Position = MainWindow.Position
+    FloatingBall.Visible = true
+    
     TweenService:Create(
         MainWindow,
         TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
         {Size = UDim2.new(0, 350, 0, 30)}
     ):Play()
     
+    -- Sembunyikan window setelah animasi
+    wait(0.3)
+    MainWindow.Visible = false
     ContentArea.Visible = false
     MinimizeButton.Text = "+"
 end
 
 local function restoreWindow()
+    MainWindow.Visible = true
+    MainWindow.Position = FloatingBall.Position -- Restore dari posisi ball
+    
     TweenService:Create(
         MainWindow,
         TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
         {Size = UDim2.new(0, 350, 0, 450)}
     ):Play()
     
+    FloatingBall.Visible = false
     ContentArea.Visible = true
     MinimizeButton.Text = "_"
 end
 
+-- ==================== DRAG FUNCTIONALITY UNTUK FLOATING BALL ====================
+local function updateBall(input)
+    local delta = input.Position - ballDragStart
+    FloatingBall.Position = UDim2.new(
+        ballStartPos.X.Scale, 
+        ballStartPos.X.Offset + delta.X, 
+        ballStartPos.Y.Scale, 
+        ballStartPos.Y.Offset + delta.Y
+    )
+end
+
+FloatingBall.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        ballDragging = true
+        ballDragStart = input.Position
+        ballStartPos = FloatingBall.Position
+        
+        -- Efek ketika ditekan
+        TweenService:Create(
+            FloatingBall,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Size = UDim2.new(0, 45, 0, 45)}
+        ):Play()
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                ballDragging = false
+                -- Kembali ke ukuran semula
+                TweenService:Create(
+                    FloatingBall,
+                    TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {Size = UDim2.new(0, 50, 0, 50)}
+                ):Play()
+            end
+        end)
+    end
+end)
+
+FloatingBall.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        ballDragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == ballDragInput and ballDragging then
+        updateBall(input)
+    end
+end)
+
+-- Klik floating ball untuk restore
+FloatingBall.MouseButton1Click:Connect(function()
+    if not ballDragging then -- Hanya restore jika tidak sedang drag
+        restoreWindow()
+    end
+end)
+
+-- Hover effects untuk floating ball
+FloatingBall.MouseEnter:Connect(function()
+    TweenService:Create(
+        FloatingBall,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundTransparency = 0}
+    ):Play()
+end)
+
+FloatingBall.MouseLeave:Connect(function()
+    TweenService:Create(
+        FloatingBall,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundTransparency = 0.2}
+    ):Play()
+end)
 -- ==================== FUNGSI POPUP KONFIRMASI ====================
 local function showConfirmPopup()
     ConfirmPopup.Visible = true
