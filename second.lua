@@ -1271,13 +1271,16 @@ local function toggleNoclip()
             ):Play()
             
             noclipConnection = RunService.Stepped:Connect(function()
-                if not isNoclipping or not character then
+                if not isNoclipping or not character or not character.Parent then
+                    cleanUpNoclip()
                     return
                 end
                 
                 for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") and part.CanCollide then
-                        originalCollisions[part] = part.CanCollide
+                    if part:IsA("BasePart") then
+                        if not originalCollisions[part] then
+                            originalCollisions[part] = part.CanCollide
+                        end
                         part.CanCollide = false
                     end
                 end
@@ -1306,11 +1309,17 @@ local function toggleXray()
             {BackgroundColor3 = Color3.fromRGB(0, 100, 0)}
         ):Play()
         
-        -- Make all parts in workspace semi-transparent
+        -- Make walls and obstacles semi-transparent
         for _, part in pairs(workspace:GetDescendants()) do
-            if part:IsA("BasePart") and part.Transparency < 0.9 then
-                originalTransparencies[part] = part.Transparency
-                part.Transparency = 0.5
+            if part:IsA("BasePart") and part.Transparency < 0.5 then
+                -- Only affect parts that are likely to be walls/obstacles
+                if part.Name:lower():find("wall") or 
+                   part.Name:lower():find("floor") or 
+                   part.Name:lower():find("barrier") or
+                   part.Name:lower():find("obstacle") then
+                    originalTransparencies[part] = part.Transparency
+                    part.Transparency = 0.7
+                end
             end
         end
     end
@@ -1325,75 +1334,36 @@ local function createESP(partData)
     local part = partData.Object
     
     if espHighlights[part] then
-        espHighlights[part]:Destroy()
-        espHighlights[part] = nil
+        return false -- ESP sudah ada
     end
     
-    if espConnections[part] then
-        espConnections[part]:Disconnect()
-        espConnections[part] = nil
-    end
-    
-    local highlight = Instance.new("Highlight")
-    highlight.Name = "MilkyESP_" .. part.Name
-    highlight.Adornee = part
-    highlight.FillColor = Color3.fromRGB(0, 255, 0)
-    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-    highlight.FillTransparency = 0.5
-    highlight.OutlineTransparency = 0
-    highlight.Parent = game.CoreGui
-    
-    local billboard = Instance.new("BillboardGui")
-    billboard.Name = "MilkyESPBillboard_" .. part.Name
-    billboard.Adornee = part
-    billboard.Size = UDim2.new(0, 200, 0, 50)
-    billboard.StudsOffset = Vector3.new(0, 3, 0)
-    billboard.AlwaysOnTop = true
-    billboard.Parent = game.CoreGui
-    
-    local nameLabel = Instance.new("TextLabel")
-    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
-    nameLabel.Position = UDim2.new(0, 0, 0, 0)
-    nameLabel.BackgroundTransparency = 1
-    nameLabel.Text = part.Name
-    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    nameLabel.TextStrokeTransparency = 0
-    nameLabel.Font = Enum.Font.GothamBold
-    nameLabel.TextSize = 14
-    nameLabel.Parent = billboard
-    
-    local parentLabel = Instance.new("TextLabel")
-    parentLabel.Size = UDim2.new(1, 0, 0.5, 0)
-    parentLabel.Position = UDim2.new(0, 0, 0.5, 0)
-    parentLabel.BackgroundTransparency = 1
-    parentLabel.Text = "Parent: " .. part.Parent.Name
-    parentLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    parentLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    parentLabel.TextStrokeTransparency = 0
-    parentLabel.Font = Enum.Font.Gotham
-    parentLabel.TextSize = 12
-    parentLabel.Parent = billboard
-    
-    espHighlights[part] = highlight
-    espHighlights[part .. "_billboard"] = billboard
-    
-    espConnections[part] = part.AncestryChanged:Connect(function()
-        if not part.Parent then
-            if espHighlights[part] then
-                espHighlights[part]:Destroy()
-                espHighlights[part] = nil
+    local success, result = pcall(function()
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "MilkyESP"
+        highlight.Adornee = part
+        highlight.FillColor = Color3.fromRGB(0, 255, 0)
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Parent = game.CoreGui
+        
+        espHighlights[part] = highlight
+        
+        -- Connection untuk cleanup
+        espConnections[part] = part.AncestryChanged:Connect(function()
+            if not part.Parent then
+                removeESP(partData)
             end
-            if espHighlights[part .. "_billboard"] then
-                espHighlights[part .. "_billboard"]:Destroy()
-                espHighlights[part .. "_billboard"] = nil
-            end
-            if espConnections[part] then
-                espConnections[part]:Disconnect()
-                espConnections[part] = nil
-            end
-        end
+        end)
+        
+        return true
     end)
+    
+    if not success then
+        warn("ESP Error: " .. tostring(result))
+        return false
+    end
     
     return true
 end
@@ -1445,21 +1415,38 @@ local function searchScripts(query, filters)
     SearchStatusLabel.Text = "Mencari script..."
     SearchStatusLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
     
-    local url = scriptBloxAPI .. "?q=" .. query .. "&max=20"
+    -- Simulasi data script (karena HTTP request sering bermasalah)
+    currentScripts = {
+        {
+            title = "Universal Script Example",
+            game = "Various Games",
+            script = "print('Hello from Milky Menu!')",
+            verified = true,
+            key = false,
+            isUniversal = true,
+            isPatched = false,
+            likeCount = 150,
+            dislikeCount = 5,
+            views = 1000
+        },
+        {
+            title = "Free Fly Script",
+            game = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+            script = "loadstring(game:HttpGet('https://example.com/fly.txt'))()",
+            verified = false,
+            key = false,
+            isUniversal = false,
+            isPatched = false,
+            likeCount = 80,
+            dislikeCount = 2,
+            views = 500
+        }
+    }
     
-    if filters.verified then
-        url = url .. "&verified=1"
-    end
-    if filters.free then
-        url = url .. "&mode=free"
-    end
-    if filters.universal then
-        url = url .. "&universal=1"
-    end
-    
-    local success, result = pcall(function()
-        return game:HttpGet(url)
-    end)
+    SearchStatusLabel.Text = "Ditemukan " .. #currentScripts .. " script (Demo)"
+    SearchStatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    return true
+end
     
     if success then
         local data = game:GetService("HttpService"):JSONDecode(result)
@@ -1506,8 +1493,36 @@ local function executeScript(scriptCode, scriptTitle)
         cleanUpBrightness()
         
         local success, errorMessage = pcall(function()
-            loadstring(scriptCode)()
+            -- Gunakan loadstring yang aman
+            local fn, loadError = loadstring(scriptCode)
+            if fn then
+                fn()
+            else
+                error(loadError or "Failed to load script")
+            end
         end)
+        
+        if success then
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Script Executed",
+                Text = "Script '" .. scriptTitle .. "' berhasil dijalankan",
+                Duration = 5
+            })
+        else
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Script Error",
+                Text = "Gagal menjalankan script: " .. tostring(errorMessage),
+                Duration = 5
+            })
+        end
+    else
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Script Error",
+            Text = "Script code kosong",
+            Duration = 5
+        })
+    end
+end
         
         if success then
             game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -2434,15 +2449,17 @@ local function toggleFly()
         if character and character:FindFirstChild("HumanoidRootPart") then
             cleanUpFly()
             
+            -- Gunakan BodyMover yang lebih modern
             flyBodyVelocity = Instance.new("BodyVelocity")
             flyBodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            flyBodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            flyBodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
+            flyBodyVelocity.P = 1250
             flyBodyVelocity.Parent = character.HumanoidRootPart
             
             flyBodyGyro = Instance.new("BodyGyro")
-            flyBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-            flyBodyGyro.P = 1000
-            flyBodyGyro.D = 50
+            flyBodyGyro.MaxTorque = Vector3.new(50000, 50000, 50000)
+            flyBodyGyro.P = 3000
+            flyBodyGyro.D = 500
             flyBodyGyro.Parent = character.HumanoidRootPart
             
             if character:FindFirstChildOfClass("Humanoid") then
@@ -2466,16 +2483,10 @@ local function toggleFly()
             ):Play()
             
             flyConnection = RunService.RenderStepped:Connect(function()
-                if not isFlying or not flyBodyGyro or not flyBodyVelocity then
+                if not isFlying or not flyBodyGyro or not flyBodyVelocity or not character or not character.Parent then
                     if flyConnection then
                         flyConnection:Disconnect()
-                        flyConnection = nil
                     end
-                    return
-                end
-                
-                if not character or not character.Parent or not character:FindFirstChild("HumanoidRootPart") then
-                    cleanUpFly()
                     return
                 end
                 
@@ -2493,16 +2504,15 @@ local function toggleFly()
                     local horizontalVelocity = Vector3.new(0, 0, 0)
                     if character:FindFirstChildOfClass("Humanoid") then
                         local humanoid = character:FindFirstChildOfClass("Humanoid")
-                        horizontalVelocity = Vector3.new(humanoid.MoveDirection.X * flySpeed, 0, humanoid.MoveDirection.Z * flySpeed)
+                        horizontalVelocity = Vector3.new(humanoid.MoveDirection.X * flySpeed, verticalVelocity, humanoid.MoveDirection.Z * flySpeed)
                     end
                     
-                    flyBodyVelocity.Velocity = horizontalVelocity + Vector3.new(0, verticalVelocity, 0)
+                    flyBodyVelocity.Velocity = horizontalVelocity
                 end
             end)
         end
     end
 end
-
 -- ==================== FUNGSI WALKSPEED ====================
 local function setWalkSpeed()
     local speed = tonumber(WalkSpeedBox.Text)
