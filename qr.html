@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator QR Code Otomatis</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+        }
+        
+        .qr-container {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #qrcode {
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-text {
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .footer {
+            margin-top: 25px;
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .example-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .example-link {
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .example-link:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generator QR Code Otomatis</h1>
+        <p class="description">Masukkan URL atau teks di bawah ini dan QR Code akan langsung ditampilkan tanpa perlu menekan tombol!</p>
+        
+        <div class="input-group">
+            <label for="url-input">URL atau Teks:</label>
+            <input type="text" id="url-input" placeholder="https://example.com" value="https://github.com">
+        </div>
+        
+        <div class="example-links">
+            <div class="example-link" data-url="https://www.google.com">Google</div>
+            <div class="example-link" data-url="https://www.youtube.com">YouTube</div>
+            <div class="example-link" data-url="https://www.wikipedia.org">Wikipedia</div>
+            <div class="example-link" data-url="Selamat datang di generator QR Code!">Teks Sederhana</div>
+        </div>
+        
+        <div class="qr-container" id="qr-container">
+            <h3>QR Code Anda:</h3>
+            <div id="qrcode"></div>
+            <p class="info-text">QR Code akan diperbarui secara otomatis saat Anda mengetik</p>
+        </div>
+        
+        <p class="footer">Dibuat dengan ❤️ menggunakan JavaScript</p>
+    </div>
+
+    <script>
+        function generateQRCode() {
+            const urlInput = document.getElementById('url-input').value.trim();
+            
+            if (!urlInput) {
+                document.getElementById('qrcode').innerHTML = '<p style="color: #999; padding: 20px;">Masukkan URL atau teks untuk melihat QR Code</p>';
+                return;
+            }
+            
+            // Bersihkan QR Code sebelumnya
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // Generate QR Code baru
+            QRCode.toCanvas(document.getElementById('qrcode'), urlInput, {
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            }, function(error) {
+                if (error) {
+                    console.error(error);
+                    document.getElementById('qrcode').innerHTML = '<p style="color: red; padding: 20px;">Terjadi kesalahan saat membuat QR Code.</p>';
+                }
+            });
+        }
+        
+        // Generate QR Code saat halaman dimuat
+        window.addEventListener('load', function() {
+            generateQRCode();
+        });
+        
+        // Generate QR Code saat input berubah
+        document.getElementById('url-input').addEventListener('input', generateQRCode);
+        
+        // Tambahkan event listener untuk contoh link
+        document.querySelectorAll('.example-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('url-input').value = this.getAttribute('data-url');
+                generateQRCode();
+            });
+        });
+    </script>
+</body>
+</html>
